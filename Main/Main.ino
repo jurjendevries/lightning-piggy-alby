@@ -90,8 +90,6 @@ void setup() {
 
     String connectedMsg = baseConnectMsg + " OK!";
     displayFit(connectedMsg, 0, 1, displayWidth(), 20, 1); // somehow 104 causes yPos 120 and that causes the last line to be cut off
-
-    delay(1000);
 }
 
 void loop() {    
