@@ -13,7 +13,7 @@ String getTimeFromNTP() {
 
   Serial.println("Extracting weekday and time from received data");
 
-  String datetimeAsString = String(doc["datetime"]);
+  String datetimeAsString = doc["datetime"];
 
   int dayOfWeek = doc["day_of_week"];
   String dayOfWeekAsString = getDayOfWeekString(dayOfWeek);
