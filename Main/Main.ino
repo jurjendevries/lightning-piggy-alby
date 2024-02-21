@@ -8,6 +8,7 @@
 //#define LILYGO_T5_V266
 
 #include <boards.h>
+#include <string.h>
 
 #include "logos.h"
 #include "config.h"
@@ -30,13 +31,15 @@
 #include "Fonts/LatoMedium20pt.h"
 #include "Fonts/LatoMedium26pt.h"
 
+#include "Constants.h"
+
 // Global variables for display
 GxIO_Class io(SPI,  EPD_CS, EPD_DC,  EPD_RSET);
 GxEPD_Class display(io, EPD_RSET, EPD_BUSY);
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("Staring Lightning Piggy " + getFullVersion());
+    Serial.println("Starting Lightning Piggy " + getFullVersion());
 
     // turn on the green LED-IO12 on the PCB, to show the board is on
     // it will turn off when the board hibernates
@@ -49,33 +52,67 @@ void setup() {
     setup_display();
 
     // allow some time to show low battery warning
-    if (displayVoltageWarning()) delay(5000);
+    if (displayVoltageWarning()) {
+       delay(5000);
+    }
+
+    if (settingLanguage == LANGUAGE_EN_US) {
+      displayFit("Behold, today's pearl of wisdom", 0, 20, displayWidth(), 40, 1); 
+      displayFit("from Dad is...:", 0, 40, displayWidth(), 60, 1); 
+    }
+    else if (settingLanguage == LANGUAGE_DA){
+      displayFit("Klar! Her kommer dagens perle af", 0, 20, displayWidth(), 40, 1); 
+      displayFit("visdom fra far...:", 0, 40, displayWidth(), 60, 1); 
+    }
+
+    String slogan = getRandomBootSlogan();
+    Serial.println("slogan " + slogan);
+    displayFit(slogan, 0, 65, displayWidth(), 160, 4); 
+
+    delay(3000);
+
+    // erase the screen 
+    display.fillScreen(GxEPD_WHITE);
+    updateWindow(0, 0, displayWidth(), displayHeight());
+
+    String baseConnectMsg = "Connecting to " + String(ssid) + "...";
+    String connectingMsg = baseConnectMsg + "    ";
+    displayFit(connectingMsg, 0, 1, displayWidth(), 20, 1); // somehow 104 causes yPos 120 and that causes the last line to be cut off
 
     // piggy logo indicates board is starting
-    showLogo(piggyLogo, 104, 104, ((displayWidth() / 2) - 104) / 2, 0);
-
-    displayFit("Connecting to " + String(ssid) + "...", 0, 103, displayWidth(), displayHeight(), 2); // somehow 104 causes yPos 120 and that causes the last line to be cut off
+    showLogo(piggyLogo, 104, 104, ((displayWidth() / 2) - 104) / 2, 16);
 
     #ifndef DEBUG
     connectWifi();
     #endif
 
-    // bitcoin logo indicates wifi is connected
-    showLogo(epd_bitmap_Bitcoin, 104, 104, (((displayWidth() / 2) - 104) / 2) + (displayWidth() / 2), 0);
+    displayHealthAndStatus();
+
+    String connectedMsg = baseConnectMsg + " OK!";
+    displayFit(connectedMsg, 0, 1, displayWidth(), 20, 1); // somehow 104 causes yPos 120 and that causes the last line to be cut off
+
+    delay(1000);
 }
 
-
-void loop() {
-    int balance = getWalletBalance();
-
-    // erase the previous screen (bootup with logos)
+void loop() {    
+    // erase the setup screen 
     display.fillScreen(GxEPD_WHITE);
     updateWindow(0, 0, displayWidth(), displayHeight());
 
-    // build the new screen:
-    int yAfterBalance = printBalance(balance);
+    showLogo(epd_bitmap_Bitcoin, 40, 40, (displayWidth() / 2) + 78, 67);
 
-    displayHealthAndStatus();
+    int balance = getWalletBalance();
+
+    // build the new screen:
+    int yAfterBalance  = 0;
+    bool balanceOk = balance != NOT_SPECIFIED;
+
+    if (balanceOk) {
+       yAfterBalance = printBalance(balance);
+    }
+    else {
+       displayBoldMessage("GET WALLET ERROR", 30);
+    }
 
     String lnurlp = getLNURLp();
     int xBeforeLNURLp = displayWidth();
@@ -87,11 +124,31 @@ void loop() {
         xBeforeLNURLp = showLNURLpQR(lnurlp);
     }
 
-    getLNURLPayments(2, xBeforeLNURLp, yAfterBalance);
+    getLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance);
 
+    float btcPrice = getBitcoinPrice();
+
+    String currentTime = getTimeFromNTP(); 
+
+    bool btcPriceOk = btcPrice != NOT_SPECIFIED;
+    if (btcPriceOk && balanceOk) {
+        float balanceValue = btcPrice / 100000000 * balance;
+        String balanceValueToShow = floatToString(balanceValue, 2) + getCurrentCurrencyCode();
+        Serial.println("balanceValue" + balanceValueToShow);
+
+        String currentBtcPriceToShow = formatFloatWithSeparator(btcPrice);
+        bool addCurrencyCodeToCurrentBtcPrice = strlen(currentBtcPriceToShow.c_str()) <= 6; 
+        if (addCurrencyCodeToCurrentBtcPrice) {
+           currentBtcPriceToShow += getCurrentCurrencyCode();
+        }
+        displayBoldMessage(" " + balanceValueToShow + " (" + currentBtcPriceToShow + ")", displayHeight() - 4);
+    }
+
+    displayTime(currentTime);
     displayVoltageWarning();
 
     if (wifiConnected()) checkShowUpdateAvailable();
 
-    hibernate(6 * 60 * 60);
+    int sleepTimeSeconds = sleepTimeMinutes * 60;
+    hibernate(sleepTimeSeconds);
 }

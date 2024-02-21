@@ -110,7 +110,9 @@ int fitMaxText(String text, int maxWidth) {
 
 // Try to fit a String into a rectangle, including the borders.
 // returns: the y position after fitting the text
-int displayFit(String paymentDetail, int startX, int startY, int endX, int endY, int fontSize) {
+int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize) {
+  Serial.println("displayFit " + text + " length: " + String(text.length()));
+
   // Don't go past the end of the display and remember pixels start from zero, so [0,max-1]
   if (endX >= displayWidth()) {
     endX = displayWidth() - 1;
@@ -130,13 +132,13 @@ int displayFit(String paymentDetail, int startX, int startY, int endX, int endY,
 
     yPos = startY;
     int textPos = 0;
-    while (textPos < paymentDetail.length()) {
+    while (textPos < text.length()) {
       // Try to fit everything that still needs displaying:
-      String paymentDetailWithoutAlreadyPrintedPart = paymentDetail.substring(textPos);
-      int chars = fitMaxText(paymentDetailWithoutAlreadyPrintedPart, endX);
+      String textWithoutAlreadyPrintedPart = text.substring(textPos);
+      int chars = fitMaxText(textWithoutAlreadyPrintedPart, endX);
 
       // Print the text that fits:
-      String textLine = paymentDetail.substring(textPos, textPos+chars);
+      String textLine = text.substring(textPos, textPos+chars);
       //Serial.println("first line that fits: " + textLine);
 
       int16_t x1, y1;
@@ -184,6 +186,15 @@ int printBalance(int balance) {
     return h;
 }
 
+void displayTime(String time) {
+    Serial.println("displayTime: " + time);
+   
+    setFont(1);
+    display.setCursor(186, 120);
+    display.setTextColor(GxEPD_BLACK);
+    display.print(time);
+    updateWindow(0, 0, displayWidth() - 1, displayHeight() - 1);
+}
 
 void printTextCentered(char* str) {
     int16_t x1, y1;
@@ -207,4 +218,23 @@ void printTextCenteredX(String str, uint16_t yPos) {
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {
   display.drawBitmap(logo, posX, posY, sizeX, sizeY, GxEPD_WHITE);
   updateWindow(posX, posY, sizeX, sizeY);
+}
+
+void displayBoldMessage(String text, int y) {
+    Serial.println("Displaying warning: " + text);
+    int16_t x1, y1;
+    uint16_t w, h;
+
+    setFont(2);
+    const char * chars = text.c_str();
+    display.setCursor(1, y);
+    display.getTextBounds((char*)chars, 1, y, &x1, &y1, &w, &h);
+    Serial.println("Got warning bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h));
+    display.fillRect(x1, y1-4, w+8, h+8, GxEPD_BLACK);
+    //display.fillRect(x1, y1-4, w+4, h+4, GxEPD_BLACK);
+    display.setTextColor(GxEPD_WHITE);
+    display.print((char*)chars);
+    updateWindow(x1, y1-4, w+8, h+8);
+    //updateWindow(x1, y1-4, w+4, h+4);
+    display.setTextColor(GxEPD_BLACK);
 }

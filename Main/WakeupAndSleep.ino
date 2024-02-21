@@ -3,7 +3,7 @@
 
 #define BUTTON_PIN_BITMASK 4294967296 // 2^32 means GPIO32
 
-void print_reset_reasons() {
+String print_reset_reasons() {
     Serial.println("CPU0 reset reason:");
     print_reset_reason(rtc_get_reset_reason(0));
     verbose_print_reset_reason(rtc_get_reset_reason(0));
@@ -11,6 +11,8 @@ void print_reset_reasons() {
     Serial.println("CPU1 reset reason:");
     print_reset_reason(rtc_get_reset_reason(1));
     verbose_print_reset_reason(rtc_get_reset_reason(1));
+
+    return "cpu 0: " + String(rtc_get_reset_reason(0)) + " cpu 1: " + String(rtc_get_reset_reason(1));
 }
 
 void print_reset_reason(int reason) {
@@ -62,7 +64,7 @@ void verbose_print_reset_reason(int reason) {
 Method to print the reason by which ESP32
 has been awaken from sleep
 */
-void print_wakeup_reason(){
+String print_wakeup_reason(){
   esp_sleep_wakeup_cause_t wakeup_reason;
 
   wakeup_reason = esp_sleep_get_wakeup_cause();
@@ -76,6 +78,8 @@ void print_wakeup_reason(){
     case ESP_SLEEP_WAKEUP_ULP : Serial.println("Wakeup caused by ULP program"); break;
     default : Serial.printf("Wakeup was not caused by deep sleep, wakeup reason: %d\n",wakeup_reason); break;
   }
+
+  return "Wakeup Reason (%d): " + String(wakeup_reason);
 }
 
 /*
@@ -96,9 +100,9 @@ void hibernate(int sleepTimeSeconds) {
 
   uint64_t deepSleepTime = (uint64_t)sleepTimeSeconds * (uint64_t)1000 * (uint64_t)1000;
   esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON); // RTC peripherals needs to stay on for GPIO32's pulldown to work
-  esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
-  esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
-  esp_sleep_pd_config(ESP_PD_DOMAIN_XTAL,         ESP_PD_OPTION_OFF);
+  //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);
+  //esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_FAST_MEM, ESP_PD_OPTION_OFF);
+  //esp_sleep_pd_config(ESP_PD_DOMAIN_XTAL,         ESP_PD_OPTION_OFF);
   esp_sleep_enable_timer_wakeup(deepSleepTime);
 
   // Enable GPIO39 (user button) wakeup
