@@ -30,14 +30,6 @@ const unsigned char epd_bitmap_Bitcoin [] PROGMEM = {
 	0x00, 0x3f, 0xff, 0xff, 0xff, 0xc7, 0xff, 0xff
 };
 
-// Array of all bitmaps for convenience. (Total bytes used to store images in PROGMEM = 224)
-const int epd_bitmap_allArray_LEN = 1;
-const unsigned char* epd_bitmap_allArray[1] = {
-	epd_bitmap_Bitcoin
-};
-
-
-
 // How to use:
 // 1) Use image https://stock.adobe.com/be_nl/images/pig-line-icon-logo-piglet-face-piggy-head-vector-illustration/248415906
 // 2) Image Settings:
