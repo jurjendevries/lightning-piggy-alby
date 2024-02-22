@@ -12,4 +12,7 @@ extern const int LANGUAGE_DA = 2;
 const char * NOTCONFIGURED = "REPLACETHISBY";
 const unsigned int NOTCONFIGURED_LENGTH = 13;
 
+// Maximum time to show the bootslogan
+extern const int MAX_BOOTSLOGAN_SECONDS = 15;
+
 #endif

@@ -3,7 +3,16 @@ String bitcoinSlogans[] = {
   "Bitcoin is nerds gold",
   "In Bitcoin we trust",
   "Be your own bank",
-  "HODL"
+  "HODL",
+  "Not your keys, not your coins.",
+  "There are 100,000,000 sats in a bitcoin.",
+  "Bitcoin was predicted by Henry Ford, Friedrich Hayek and Milton Friedman",
+  "'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks' -- Satoshi Nakamoto",
+  "'If you don't believe me or don't get it, I don't have time to try to convince you, sorry.' -- Satoshi Nakamoto",
+  "'The heat from your computer is not wasted if you need to heat your home.' -- Satoshi Nakamoto",
+  "'Stay humble, stack sats.' -- Matt Odell",
+  "'Bitcoin is a strange game where the only winning move is to play.' -- Bitstein",
+  "'If privacy is outlawed, only outlaws heart will have privacy' -- Phil Zimmermann"
 };
 
 
@@ -16,18 +25,27 @@ String getRandomBootSlogan() {
 }
 
 void showBootSlogan() {
-   if (settingLanguage == LANGUAGE_EN_US) {
-      displayFit("Behold, today's pearl of wisdom", 0, 20, displayWidth(), 40, 1);
-      displayFit("from Dad is...:", 0, 40, displayWidth(), 60, 1);
-    }
-    else if (settingLanguage == LANGUAGE_DA){
-      displayFit("Klar! Her kommer dagens perle af", 0, 20, displayWidth(), 40, 1);
-      displayFit("visdom fra far...:", 0, 40, displayWidth(), 60, 1);
-    }
+  if (strncmp(showSloganAtBoot,"YES", 3) != 0) {
+    Serial.println("Not showing slogan at boot because showSloganAtBoot is not 'YES'.");
+    return;
+  }
 
-    String slogan = getRandomBootSlogan();
-    Serial.println("slogan " + slogan);
-    displayFit(slogan, 0, 65, displayWidth(), 160, 4);
+  int displayY = 5;
+  int timeToWait = 0;
 
-    delay(3000);
+  if (isConfigured(bootSloganPrelude)) {
+    displayY = displayFit(String(bootSloganPrelude), 0, displayY, displayWidth(), displayHeight()/5, 3);
+    timeToWait = 1000; // since the prelude is always the same, there's no need to wait a long time to allow reading it
+  }
+
+  String slogan = getRandomBootSlogan();
+  Serial.println("Showing boot slogan: " + slogan);
+  displayFit(slogan, 0, displayY, displayWidth(), displayHeight(), 4);
+
+  // Assuming a 7 year old averages one 4-letter word per second, that's 5 characters per second.
+  timeToWait += strlen(slogan.c_str()) * 1000 / 5;
+  // Limit to a maximum
+  timeToWait = min(timeToWait, MAX_BOOTSLOGAN_SECONDS*1000);
+  Serial.println("Waiting " + String(timeToWait) + "ms (of max. " + String(MAX_BOOTSLOGAN_SECONDS) + "s) to allow the bootslogan to be read...");
+  delay(timeToWait);
 }

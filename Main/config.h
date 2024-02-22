@@ -6,6 +6,7 @@
 
 // These values get replaced with the user provided values by the Web Serial Installer for Lightning Piggy.
 // But you can also replace them manually yourself here if you don't plan on using the Web Installer.
+
 const char* ssid     = "REPLACETHISBYWIFISSID_REPLACETHISBYWIFISSID_REPLACETHISBYWIFISSID"; // wifi SSID here
 const char* password = "REPLACETHISBYWIFIKEY_REPLACETHISBYWIFIKEY_REPLACETHISBYWIFIKEY"; // wifi password here
 const char* lnbitsHost = "REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST"; // HOST NAME HERE E.G. legend.lnbits.com
@@ -28,3 +29,9 @@ const char* defaultThousandsSeparator = ",";
 
 const char* decimalSeparator = "REPLACETHISBYDECIMALSEPARATOR_REPLACETHISBYDECIMALSEPARATOR_REPLACETHISBYDECIMALSEPARATOR";
 const char* defaultDecimalSeparator = ".";
+
+// A bit of text to show before the boot slogan:
+const char* bootSloganPrelude = "REPLACETHISBYBOOTSLOGANPRELUDE_REPLACETHISBYBOOTSLOGANPRELUDE_REPLACETHISBYBOOTSLOGANPRELUDE";
+
+// Whether or not to show the boot slogan. Set to "YES" if you want it:
+const char* showSloganAtBoot = "REPLACETHISBYSHOWBOOTSLOGAN_REPLACETHISBYSHOWBOOTSLOGAN_REPLACETHISBYSHOWBOOTSLOGAN";
