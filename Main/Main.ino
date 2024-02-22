@@ -62,6 +62,8 @@ void setup() {
     display.fillScreen(GxEPD_WHITE);
     updateWindow(0, 0, displayWidth(), displayHeight());
 
+    setup_watchdog();
+
     String baseConnectMsg = "Connecting to " + String(ssid) + "...";
     String connectingMsg = baseConnectMsg + "    ";
     displayFit(connectingMsg, 0, 1, displayWidth(), 20, 1);
@@ -71,6 +73,7 @@ void setup() {
 
     #ifndef DEBUG
     connectWifi();
+    short_watchdog_timeout(); // after the long wifi connection stage, the next operations shouldn't take long
     #endif
 
     displayHealthAndStatus();
@@ -86,6 +89,7 @@ void loop() {
 
     showLogo(epd_bitmap_Bitcoin, 40, 40, (displayWidth() / 2) + 78, 67);
 
+    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     int balance = getWalletBalance();
 
     // build the new screen:
@@ -98,6 +102,7 @@ void loop() {
        displayBoldMessage("GET WALLET ERROR", 30);
     }
 
+    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     String lnurlp = getLNURLp();
     int xBeforeLNURLp = displayWidth();
     if (lnurlp == "null") {
@@ -107,16 +112,19 @@ void loop() {
     } else {
         xBeforeLNURLp = showLNURLpQR(lnurlp);
     }
-
+    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     getLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance);
 
+    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     showFiatValues(balance);
 
     String currentTime = getTimeFromNTP(); 
+    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     displayTime(currentTime);
 
     displayVoltageWarning();
 
+    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     if (wifiConnected()) checkShowUpdateAvailable();
 
     int sleepTimeSeconds = sleepTimeMinutes * 60;
