@@ -71,5 +71,5 @@ void showFiatValues(int balance) {
   }
   toDisplay += "(" + currentBtcPriceToShow + ")";
 
-  displayBoldMessage(toDisplay, displayHeight() - 4);
+  displayBoldMessage(toDisplay, displayHeight() - 4); // bold text adds 1 pixel before + 2 pixels after + 1 pixel because displayHeight() starts counting at 0
 }
