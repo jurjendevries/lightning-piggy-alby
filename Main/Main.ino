@@ -118,8 +118,8 @@ void loop() {
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     showFiatValues(balance);
 
-    String currentTime = getTimeFromNTP(); 
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+    String currentTime = getTimeFromNTP();
     displayTime(currentTime);
 
     displayVoltageWarning();
@@ -127,6 +127,6 @@ void loop() {
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     if (wifiConnected()) checkShowUpdateAvailable();
 
-    int sleepTimeSeconds = sleepTimeMinutes * 60;
-    hibernate(sleepTimeSeconds);
+    watchdogWasntTriggered();
+    hibernate(sleepTimeMinutes * 60);
 }

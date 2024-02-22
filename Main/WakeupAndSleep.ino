@@ -32,6 +32,17 @@
 // 21:10:44.795 -> EXT_CPU_RESET
 // 21:10:44.795 -> for APP CPU, reseted by PRO CPU
 
+// Wakeup from deepsleep by timer:
+// 22:05:08.530 -> CPU0 reset reason:
+// 22:05:08.530 -> DEEPSLEEP_RESET
+// 22:05:08.530 -> Deep Sleep reset digital core
+// 22:05:08.530 -> CPU1 reset reason:
+// 22:05:08.530 -> EXT_CPU_RESET
+// 22:05:08.530 -> for APP CPU, reseted by PRO CPU
+// 22:05:08.530 -> Wakeup from sleep count: 1
+// 22:05:08.530 -> Wakeup caused by timer
+
+
 #include "driver/rtc_io.h"  // for rtc_gpio_pullup_dis and rtc_gpio_pulldown_en
 #include <rom/rtc.h>        // for rtc_get_reset_reason
 
