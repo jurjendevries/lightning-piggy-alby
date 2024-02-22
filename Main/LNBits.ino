@@ -87,7 +87,7 @@ void getLNURLPayments(int limit, int maxX, int startY) {
 
       // Only do lnurlp payments
       const char* tag = areaElems["extra"]["tag"];
-      if(strcmp(tag,"lnurlp") == 0) {
+      if(strncmp(tag,"lnurlp",6) == 0) {
 
         // Payment always has an amount
         long long amount = areaElems["amount"]; // long long to support amounts above 999999000 millisats
