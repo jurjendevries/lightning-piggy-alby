@@ -90,9 +90,8 @@ void loop() {
 
     // build the new screen:
     int yAfterBalance  = 0;
-    bool balanceOk = balance != NOT_SPECIFIED;
 
-    if (balanceOk) {
+    if (balance != NOT_SPECIFIED) {
        yAfterBalance = printBalance(balance);
     }
     else {
