@@ -220,8 +220,9 @@ void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int p
   updateWindow(posX, posY, sizeX, sizeY);
 }
 
+// Shows a black rectangle that's slightly bigger than the text; from (-2,-1) inclusive until (+2,+2) inclusive
 void displayBoldMessage(String text, int y) {
-    Serial.println("Displaying warning: " + text);
+    Serial.println("Displaying bold message: " + text);
     int16_t x1, y1;
     uint16_t w, h;
 
@@ -229,12 +230,10 @@ void displayBoldMessage(String text, int y) {
     const char * chars = text.c_str();
     display.setCursor(1, y);
     display.getTextBounds((char*)chars, 1, y, &x1, &y1, &w, &h);
-    Serial.println("Got warning bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h));
-    display.fillRect(x1, y1-4, w+8, h+8, GxEPD_BLACK);
-    //display.fillRect(x1, y1-4, w+4, h+4, GxEPD_BLACK);
+    Serial.println("Got bold message bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h));
+    display.fillRect(x1-2, y1-1, w+3, h+3, GxEPD_BLACK);
     display.setTextColor(GxEPD_WHITE);
     display.print((char*)chars);
-    updateWindow(x1, y1-4, w+8, h+8);
-    //updateWindow(x1, y1-4, w+4, h+4);
+    updateWindow(x1-2, y1-1, w+3, h+3);
     display.setTextColor(GxEPD_BLACK);
 }
