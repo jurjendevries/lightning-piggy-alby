@@ -24,7 +24,7 @@ String getCurrentCurrencyCode() {
   if (strncmp(btcPriceCurrencyChar, "USD", 3) == 0) {
       return "$";
   } else if (strncmp(btcPriceCurrencyChar, "DKK", 3) == 0) {
-      return "KR";
+      return "kr";
   } else if (strncmp(btcPriceCurrencyChar, "EUR", 3) == 0) {
       return "E";
   } else {
