@@ -15,7 +15,7 @@ String getRandomBootSlogan() {
   return bitcoinSlogans[randomIndex]; 
 }
 
-function showBootSlogan() {
+void showBootSlogan() {
    if (settingLanguage == LANGUAGE_EN_US) {
       displayFit("Behold, today's pearl of wisdom", 0, 20, displayWidth(), 40, 1);
       displayFit("from Dad is...:", 0, 40, displayWidth(), 60, 1);

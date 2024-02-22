@@ -1,3 +1,12 @@
+// Returns true if the value is configured, otherwise false.
+bool isConfigured(const char * configName) {
+  if (strncmp(configName, NOTCONFIGURED, NOTCONFIGURED_LENGTH) == 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 String formatFloatWithSeparator(float number) 
 {
   if (number < 1000) {
@@ -12,46 +21,39 @@ String formatFloatWithSeparator(float number)
 }
 
 String getCurrentCurrencyCode() {
-  switch (btcPriceCurrency) {
-    case CURRENCY_USD:
+  if (strncmp(btcPriceCurrencyChar, "USD", 3) == 0) {
       return "$";
-    case CURRENCY_DKK:
+  } else if (strncmp(btcPriceCurrencyChar, "DKK", 3) == 0) {
       return "KR";
-    default:
-      return "NA";
+  } else if (strncmp(btcPriceCurrencyChar, "EUR", 3) == 0) {
+      return "E";
+  } else {
+    return "NA";
   }
 }
 
 char getCurrentCurrencyDecimalSeparator() {
-  switch (btcPriceCurrency) {
-    case CURRENCY_USD:
-      return '.';
-    case CURRENCY_DKK:
-      return ',';
-    default:
-      return ' ';
+   if (isConfigured(decimalSeparator)) {
+    return decimalSeparator[0];
+  } else {
+    return defaultDecimalSeparator[0];
   }
 }
 
 char getCurrentCurrencyThousandsSeparator() {
-  switch (btcPriceCurrency) {
-    case CURRENCY_USD:
-      return ',';
-    case CURRENCY_DKK:
-      return '.';
-    default:
-      return ' ';
+  if (isConfigured(thousandsSeparator)) {
+    return thousandsSeparator[0];
+  } else {
+    return defaultThousandsSeparator[0];
   }
 }
 
+// Replace dot with CurrencyDecimalSeparator
 String floatToString(float number, int decimals) {
-  if (btcPriceCurrency == CURRENCY_USD) {
-    return String(number, decimals);
-  }
-
   char buffer[15]; 
 
-  dtostrf(number, 6, decimals, buffer);
+  // Minimum width of 0 means it takes whatever width is required
+  dtostrf(number, 0, decimals, buffer);
 
   for (int i = 0; i < strlen(buffer); i++) {
     if (buffer[i] == '.') {

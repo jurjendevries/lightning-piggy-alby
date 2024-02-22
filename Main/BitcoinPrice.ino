@@ -2,6 +2,7 @@
 #include "Constants.h"
 
 float getBitcoinPrice() {
+  String btcPriceCurrency = String(btcPriceCurrencyChar);
   Serial.println("Getting Bitcoin price...");
 
   #ifdef DEBUG
@@ -9,11 +10,7 @@ float getBitcoinPrice() {
   #endif
 
   // Get the data
-  String path = "/v1/bpi/currentprice/BTC.json";
-  if (btcPriceCurrency == CURRENCY_DKK) {
-    path = "/v1/bpi/currentprice/DKK.json";
-  }
-
+  String path = "/v1/bpi/currentprice/" + btcPriceCurrency + ".json";
   String priceData = getEndpointData("api.coindesk.com", path, false);
   DynamicJsonDocument doc(8192); // the size of the list of links is unknown so don't skimp here
 
@@ -27,15 +24,52 @@ float getBitcoinPrice() {
 
   Serial.println("Extracting bitcoin price from received data");
 
-  float btcPrice = (float)NOT_SPECIFIED;
-  if (btcPriceCurrency == CURRENCY_USD) {
-     btcPrice = doc["bpi"]["USD"]["rate_float"];
-  }
-  else if (btcPriceCurrency == CURRENCY_DKK) {
-    btcPrice = doc["bpi"]["DKK"]["rate_float"];
+  float btcPrice = doc["bpi"][btcPriceCurrency]["rate_float"];
+
+  if (btcPrice == 0.0) {
+    Serial.println("BTC Price not found, returning NOT_SPECIFIED");
+    return (float)NOT_SPECIFIED;
   }
 
-  Serial.println("BTC Price" + String(btcPrice, 2));
-
+  Serial.println("BTC Price: " + String(btcPrice, 2));
   return btcPrice;
+}
+
+// This shows something like:
+// 123.23$ (51234.1$)
+// 123.23KR (512021)
+// 123.23E (51234.1E)
+void showFiatValues(int balance) {
+  if (!isConfigured(btcPriceCurrencyChar)) {
+    Serial.println("Not showing fiat values because no fiat currency is configured.");
+    return;
+  }
+
+  float btcPrice = getBitcoinPrice();
+
+  if (btcPrice == NOT_SPECIFIED) {
+    Serial.println("Not showing fiat values because couldn't find Bitcoin price.");
+    return;
+  }
+
+  String toDisplay = "";
+
+  // Try to add the fiat balance
+  if (balance == NOT_SPECIFIED) {
+    Serial.println("Not showing fiat balance because couldn't find Bitcoin balance.");
+  } else {
+    float balanceValue = btcPrice / 100000000 * balance;
+    toDisplay += floatToString(balanceValue, 2) + getCurrentCurrencyCode() + " ";
+    Serial.println("balanceValue: " + toDisplay + " ");
+  }
+
+  // Add the Bitcoin price
+  String currentBtcPriceToShow = formatFloatWithSeparator(btcPrice);
+  // Only add currency code if the price is not too long, to save screen space
+  if (strlen(currentBtcPriceToShow.c_str()) <= 6) {
+     currentBtcPriceToShow += getCurrentCurrencyCode();
+  }
+  toDisplay += "(" + currentBtcPriceToShow + ")";
+
+  displayBoldMessage(toDisplay, displayHeight() - 4);
 }

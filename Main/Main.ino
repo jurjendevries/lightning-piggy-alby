@@ -111,25 +111,11 @@ void loop() {
 
     getLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance);
 
-    float btcPrice = getBitcoinPrice();
+    showFiatValues(balance);
 
     String currentTime = getTimeFromNTP(); 
-
-    bool btcPriceOk = btcPrice != NOT_SPECIFIED;
-    if (btcPriceOk && balanceOk) {
-        float balanceValue = btcPrice / 100000000 * balance;
-        String balanceValueToShow = floatToString(balanceValue, 2) + getCurrentCurrencyCode();
-        Serial.println("balanceValue" + balanceValueToShow);
-
-        String currentBtcPriceToShow = formatFloatWithSeparator(btcPrice);
-        bool addCurrencyCodeToCurrentBtcPrice = strlen(currentBtcPriceToShow.c_str()) <= 6; 
-        if (addCurrencyCodeToCurrentBtcPrice) {
-           currentBtcPriceToShow += getCurrentCurrencyCode();
-        }
-        displayBoldMessage(" " + balanceValueToShow + " (" + currentBtcPriceToShow + ")", displayHeight() - 4);
-    }
-
     displayTime(currentTime);
+
     displayVoltageWarning();
 
     if (wifiConnected()) checkShowUpdateAvailable();

@@ -11,15 +11,20 @@ const char* password = "REPLACETHISBYWIFIKEY_REPLACETHISBYWIFIKEY_REPLACETHISBYW
 const char* lnbitsHost = "REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST"; // HOST NAME HERE E.G. legend.lnbits.com
 const char* invoiceKey = "REPLACETHISBYLNBITSKEY_REPLACETHISBYLNBITSKEY_REPLACETHISBYLNBITSKEY"; // lnbits wallet invoice hey here
 
-
 // Regular configuration values
 const char* checkUpdateHost = "m.lightningpiggy.com";
 
 const int sleepTimeMinutes = 60;
 
-const int btcPriceCurrency = CURRENCY_USD;
+// If the fiat currency (btcPriceCurrencyChar) is not configured, then no fiat values are shown
+const char* btcPriceCurrencyChar = "REPLACETHISBYFIATCURRENCY_REPLACETHISBYFIATCURRENCY_REPLACETHISBYFIATCURRENCY";
 
 const char* timezone = "Europe/Copenhagen";
 
 const int settingLanguage = LANGUAGE_EN_US;
 
+const char* thousandsSeparator = "REPLACETHISBYTHOUSANDSSEPARATOR_REPLACETHISBYTHOUSANDSSEPARATOR_REPLACETHISBYTHOUSANDSSEPARATOR";
+const char* defaultThousandsSeparator = ",";
+
+const char* decimalSeparator = "REPLACETHISBYDECIMALSEPARATOR_REPLACETHISBYDECIMALSEPARATOR_REPLACETHISBYDECIMALSEPARATOR";
+const char* defaultDecimalSeparator = ".";

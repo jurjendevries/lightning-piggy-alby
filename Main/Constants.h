@@ -9,4 +9,7 @@ extern const int CURRENCY_DKK = 2;
 extern const int LANGUAGE_EN_US = 1;
 extern const int LANGUAGE_DA = 2;
 
+const char * NOTCONFIGURED = "REPLACETHISBY";
+const unsigned int NOTCONFIGURED_LENGTH = 13;
+
 #endif
