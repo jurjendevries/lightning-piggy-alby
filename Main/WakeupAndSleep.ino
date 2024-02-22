@@ -1,7 +1,47 @@
+// Both task watchdog AND ESP.restart() causes same reset reason:
+// rst:0xc (SW_CPU_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+// 20:45:32.576 -> CPU0 reset reason:
+// 20:45:32.576 -> SW_CPU_RESET
+// 20:45:32.576 -> Software reset CPU
+// 20:45:32.576 -> CPU1 reset reason:
+// 20:45:32.576 -> SW_CPU_RESET
+// 20:45:32.576 -> Software reset CPU
+
+// RTC Watchdog Timer (RTC_WDT) restarts:
+// 20:50:45.192 -> CPU0 reset reason:
+// 20:50:45.192 -> RTCWDT_SYS_RESET
+// 20:50:45.192 -> RTC Watch dog Reset digital core
+// 20:50:45.192 -> CPU1 reset reason:
+// 20:50:45.192 -> EXT_CPU_RESET
+// 20:50:45.192 -> for APP CPU, reseted by PRO CPU
+// 20:50:45.192 -> Wakeup was not caused by deep sleep, wakeup reason: 0
+
+// Physical reset button pressed OR software uploaded using firmware flasher:
+// 21:09:28.165 -> CPU0 reset reason:
+// 21:09:28.165 -> POWERON_RESET
+// 21:09:28.165 -> Vbat power on reset
+// 21:09:28.165 -> CPU1 reset reason:
+// 21:09:28.165 -> EXT_CPU_RESET
+// 21:09:28.165 -> for APP CPU, reseted by PRO CPU
+
+// Physical off-on sliding switch:
+// 21:10:44.795 -> CPU0 reset reason:
+// 21:10:44.795 -> RTCWDT_RTC_RESET
+// 21:10:44.795 -> RTC Watch dog reset digital core and rtc module
+// 21:10:44.795 -> CPU1 reset reason:
+// 21:10:44.795 -> EXT_CPU_RESET
+// 21:10:44.795 -> for APP CPU, reseted by PRO CPU
+
 #include "driver/rtc_io.h"  // for rtc_gpio_pullup_dis and rtc_gpio_pulldown_en
 #include <rom/rtc.h>        // for rtc_get_reset_reason
 
 #define BUTTON_PIN_BITMASK 4294967296 // 2^32 means GPIO32
+
+// "Data in RTC memory is initialised whenever the SoC restarts, except when waking from deep sleep.
+// When waking from deep sleep, the values which were present before going to sleep are kept."
+// if the device wakes up from sleep, wakeup_count is preserved and incremented.
+// if the device wakes up from something else, like a watchdog trigger, the wakeup_count is reset
+RTC_DATA_ATTR int wakeup_count;
 
 String print_reset_reasons() {
     Serial.println("CPU0 reset reason:");
@@ -28,7 +68,7 @@ void print_reset_reason(int reason) {
     case 9 : Serial.println ("RTCWDT_SYS_RESET");break;       /**<9,  RTC Watch dog Reset digital core*/
     case 10 : Serial.println ("INTRUSION_RESET");break;       /**<10, Instrusion tested to reset CPU*/
     case 11 : Serial.println ("TGWDT_CPU_RESET");break;       /**<11, Time Group reset CPU*/
-    case 12 : Serial.println ("SW_CPU_RESET");break;          /**<12, Software reset CPU*/
+    case 12 : Serial.println ("SW_CPU_RESET");break;          /**<12, Software reset CPU: happens after ESP.reset() as well as Task Watchdog Timer (TWDT) reset */
     case 13 : Serial.println ("RTCWDT_CPU_RESET");break;      /**<13, RTC Watch dog Reset CPU*/
     case 14 : Serial.println ("EXT_CPU_RESET");break;         /**<14, for APP CPU, reseted by PRO CPU*/
     case 15 : Serial.println ("RTCWDT_BROWN_OUT_RESET");break;/**<15, Reset when the vdd voltage is not stable*/
@@ -65,10 +105,10 @@ Method to print the reason by which ESP32
 has been awaken from sleep
 */
 String print_wakeup_reason(){
-  esp_sleep_wakeup_cause_t wakeup_reason;
+  Serial.println("Wakeup from sleep count: " + String(wakeup_count));
+  wakeup_count++;
 
-  wakeup_reason = esp_sleep_get_wakeup_cause();
-
+  esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
   switch(wakeup_reason)
   {
     case ESP_SLEEP_WAKEUP_EXT0 : Serial.println("Wakeup caused by external signal using EXT0 RTC_IO"); break;
@@ -79,7 +119,7 @@ String print_wakeup_reason(){
     default : Serial.printf("Wakeup was not caused by deep sleep, wakeup reason: %d\n",wakeup_reason); break;
   }
 
-  return "Wakeup Reason (%d): " + String(wakeup_reason);
+  return "This is the " + String(wakeup_count) + "th wakeup in a row, for reason (%d): " + String(wakeup_reason);
 }
 
 /*
