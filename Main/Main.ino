@@ -64,7 +64,7 @@ void setup() {
 
     String baseConnectMsg = "Connecting to " + String(ssid) + "...";
     String connectingMsg = baseConnectMsg + "    ";
-    displayFit(connectingMsg, 0, 1, displayWidth(), 20, 1); // somehow 104 causes yPos 120 and that causes the last line to be cut off
+    displayFit(connectingMsg, 0, 1, displayWidth(), 20, 1);
 
     // piggy logo indicates board is starting
     showLogo(piggyLogo, 104, 104, ((displayWidth() / 2) - 104) / 2, 16);
@@ -76,7 +76,7 @@ void setup() {
     displayHealthAndStatus();
 
     String connectedMsg = baseConnectMsg + " OK!";
-    displayFit(connectedMsg, 0, 1, displayWidth(), 20, 1); // somehow 104 causes yPos 120 and that causes the last line to be cut off
+    displayFit(connectedMsg, 0, 1, displayWidth(), 20, 1);
 }
 
 void loop() {    
