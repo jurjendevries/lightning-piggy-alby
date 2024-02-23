@@ -64,3 +64,13 @@ String floatToString(float number, int decimals) {
 
   return String(buffer); 
 }
+
+String ipToString(IPAddress ip) { // IP v4 only
+  String ips;
+  ips.reserve(16);
+  ips = ip[0];  ips += '.';
+  ips += ip[1]; ips += '.';
+  ips += ip[2]; ips += '.';
+  ips += ip[3];
+  return ips;
+}
