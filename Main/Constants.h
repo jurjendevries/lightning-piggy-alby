@@ -16,6 +16,6 @@ const unsigned int NOTCONFIGURED_LENGTH = 13;
 extern const int MAX_BOOTSLOGAN_SECONDS = 15;
 
 extern const int MAX_WATCHDOG_REBOOTS = 3;
-extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 18;
+extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 6;
 
 #endif
