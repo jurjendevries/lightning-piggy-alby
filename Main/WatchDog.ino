@@ -3,7 +3,7 @@
 
 // When to restart (s)
 #define WDT_TIMEOUT 20
-#define WDT_TIMEOUT_LONG 80
+#define WDT_TIMEOUT_LONG 60
 
 // "noinit" DRAM is not initialized during software restarts so it's the perfect place to keep this counter
 // without the need to resort to limited-write-cycle flash storage such as EEPROM, NVS, flash,...
@@ -50,24 +50,29 @@ void watchdogWasntTriggered() {
 void setup_watchdog() {
   Serial.println("Configuring WDT Watch Dog Timer...");
   //esp_task_wdt_add(NULL); // only needed for task watchdog timer
-  set_watchdog_time(WDT_TIMEOUT_LONG);
+  enable_watchdog(WDT_TIMEOUT_LONG);
 
   updateMaxWatchdogRebootCount();
   Serial.println("This is the " + String(max_watchdog_reboot_count) + "nd time MAX_WATCHDOG_REBOOTS has been reached.");
 
   updateWatchdogRebootCount();
   if (watchdog_reboot_count >= MAX_WATCHDOG_REBOOTS) {
+    longsleepAfterMaxWatchdogReboots();
+  }
+}
+
+void longsleepAfterMaxWatchdogReboots() {
     max_watchdog_reboot_count++;
     rtc_max_watchdog_reboot_count = max_watchdog_reboot_count;  // save the value in a variable that is preserved across deepsleep
 
     int sleepHours = SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS * max_watchdog_reboot_count;
-    String errorMsg = "WARNING: After " + String(watchdog_reboot_count) + " infinite loops/hangs, going to sleep for ";
-    errorMsg += String(sleepHours) + " hours. This has happened " + String(max_watchdog_reboot_count) + " times in a row now.";
+    String errorMsg = "After " + String(watchdog_reboot_count) + " failure restarts, sleeping for ";
+    errorMsg += String(sleepHours) + "h now. This happened " + String(max_watchdog_reboot_count) + " times in a row already.";
     Serial.println(errorMsg);
-    displayFit(errorMsg, 1, 1, displayWidth(), displayHeight(), 4);
+    // Wifi errors go up to y=55 so this error starts at y=56
+    displayFit(errorMsg, 0, 56, displayWidth(), displayHeight(), 4);
 
     hibernate(sleepHours*60*60);
-  }
 }
 
 void set_watchdog_time(int seconds) {
@@ -77,11 +82,23 @@ void set_watchdog_time(int seconds) {
   // esp_task_wdt_init(seconds*1000, true);
 
   // for RTC watchdog:
+  rtc_wdt_set_time(RTC_WDT_STAGE0, seconds*1000);
+}
+
+void enable_watchdog(int seconds) {
+  // For Task watchdog:
+  // esp_task_wdt_init(seconds*1000, true);
+
+  // for RTC watchdog:
   rtc_wdt_protect_off();      //Disable RTC WDT write protection
   rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_SYSTEM);
-  rtc_wdt_set_time(RTC_WDT_STAGE0, seconds*1000);
+  set_watchdog_time(seconds);
   rtc_wdt_enable();           //Start the RTC WDT timer
-  rtc_wdt_protect_on();       //Enable RTC WDT write protection
+  // rtc_wdt_protect_on();       // Not really needed
+}
+
+bool nextWatchdogRebootWillReachMax() {
+  return (watchdog_reboot_count+1 >= MAX_WATCHDOG_REBOOTS);
 }
 
 void short_watchdog_timeout() {

@@ -64,7 +64,7 @@ void setup() {
 
     setup_watchdog();
 
-    String baseConnectMsg = "Connecting to " + String(ssid) + "...";
+    String baseConnectMsg = "Connecting to " + String(ssid);
     String connectingMsg = baseConnectMsg + "    ";
     displayFit(connectingMsg, 0, 1, displayWidth(), 20, 1);
 

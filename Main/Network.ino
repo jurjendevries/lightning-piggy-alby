@@ -23,25 +23,43 @@ void wifiEventCallback(int workaround) {
   // Full list at ~/.arduino15/packages/esp32/hardware/esp32/1.0.6/tools/sdk/include/esp32/esp_event_legacy.h
   if(eventid == SYSTEM_EVENT_STA_DISCONNECTED) {
     uint8_t reason = event->event_info.disconnected.reason;
-    details = "Wifi disconnected with reason: " + String(reason) + " which means " + String(reason2str(reason));
+    details = "Wifi error " + String(reason) + ": " + String(reason2str(reason));
+
+    if (reason == WIFI_REASON_MIC_FAILURE || reason == WIFI_REASON_AUTH_FAIL || reason == WIFI_REASON_AUTH_EXPIRE || reason == WIFI_REASON_ASSOC_EXPIRE || reason == WIFI_REASON_4WAY_HANDSHAKE_TIMEOUT) {
+      details += ". Wrong password? Max. WPA2 security.";
+    } else if (reason == WIFI_REASON_NO_AP_FOUND) {
+      details += ". Wrong SSID? Only 2.4Ghz supported.";
+    }
 
     // Write the disconnection reason to the display for troubleshooting
-    displayFit(details, 0, 16, displayWidth(), 60, 1);
+    displayFit(details, 0, 16, displayWidth(), 55, 1);
 
-    // Speed up the reboot to conserve power by making the watchdog more agressive.
+    // Reboot or longsleep after unrecoverable errors OR if it's been trying for a long time already.
     // Full list at ~/.arduino15/packages/esp32/hardware/esp32/1.0.6/tools/sdk/include/esp32/esp_wifi_types.h
     // Especially:
     // - NO_AP_FOUND
     // - AUTH_FAIL
     // - ASSOC_FAIL
-    // - AUTH_EXPIRE : wrong password but that's returned here as simply "disconnected" :-/
+    // - AUTH_EXPIRE : wrong password but not an end state
+    //
     // - 4WAY_HANDSHAKE_TIMEOUT? some kind of end state, happens with wrong password
     // - ASSOC_EXPIRE? some kind of end sate
     // - AUTH_LEAVE? end state, happened when adding and changing password during connection
-    if (reason == WIFI_REASON_4WAY_HANDSHAKE_TIMEOUT || reason == WIFI_REASON_ASSOC_EXPIRE || reason == WIFI_REASON_AUTH_LEAVE) {
-      Serial.println("WARNING: WiFi 4WAY_HANDSHAKE_TIMEOUT is unrecoverable, triggering quick watchdog restart");
-      short_watchdog_timeout();
-    }
+    // - WIFI_REASON_MIC_FAILURE? with wrong password, endstate
+
+    // Boot takes around 11 seconds until wifi connection.
+    if ((reason == WIFI_REASON_4WAY_HANDSHAKE_TIMEOUT || reason == WIFI_REASON_ASSOC_EXPIRE || reason == WIFI_REASON_AUTH_LEAVE || reason == WIFI_REASON_MIC_FAILURE)
+      || (millis() > 25*1000)) {
+      Serial.println("WARNING: This wifi error is unrecoverable, needs restart.");
+      // If the next watchdog restart will trigger the max and long sleep,
+      // then do that right now, so the error on-screen stays for troubleshooting.
+      if (nextWatchdogRebootWillReachMax()) {
+        longsleepAfterMaxWatchdogReboots();
+      } else {
+        // Allow the watchdog to restart soon.
+        short_watchdog_timeout();
+      }
+    } // else it's a non-final error and still early after boot so do nothing
   } else if(eventid == SYSTEM_EVENT_STA_GOT_IP) {
       details = "Obtained IP address: " + ipToString(WiFi.localIP());
   }
