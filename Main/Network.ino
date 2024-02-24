@@ -136,10 +136,12 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
   client.setInsecure(); // see https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/README.md
 
   if (!client.connect(host, 443)) {
-    Serial.println("Server down");
+    String error = "Could not connect to " + String(host) + " on port 443";
+    Serial.println(error);
+    // TODO: place this in the upcoming notification area
     setFont(2);
-    printTextCentered((char*)String("No internet :-(").c_str());
-    hibernate(30 * 60);
+    printTextCentered((char*)error.c_str());
+    return "";
   }
 
   String request = "GET " + endpointUrl + " HTTP/1.1\r\n" +

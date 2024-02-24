@@ -142,6 +142,53 @@ void print_GPIO_wake_up(){
   Serial.println((log(GPIO_reason))/log(2), 0);
 }
 
+/*
+ * The sleep duration of the piggy should depend on the battery voltage.
+ * 0 means the piggy should not go to sleep
+ *
+ * >4.18V => nosleep
+ * >4.10V => wakeup every 1 hour
+ * >4.00V => wakeup every 2 hours
+ * >3.90V => wakeup every 4 hours
+ * >3.80V => wakeup every 6 hours
+ * >3.70V => wakeup every 8 hours
+ * <3.70V => wakeup every 10 hours (should not happen because battery completely drained)
+ */
+int batteryVoltageToSleepSeconds(double voltage) {
+  if (voltage > 4.18) {
+    return 0; // don't go to sleep
+  } else if (voltage > 4.10) {
+    return 60*60;
+  } else if (voltage > 4.0) {
+    return 2*60*60;
+  } else if (voltage > 3.9) {
+    return 4*60*60;
+  } else if (voltage > 3.8) {
+    return 6*60*60;
+  } else if (voltage > 3.7) {
+    return 8*60*60;
+  } else {
+    return 10*60*60;
+  }
+}
+
+void hibernateDependingOnBattery() {
+  Serial.println("FREE HEAP MEMORY: " + String(ESP.getFreeHeap()));
+  double voltage = getBatteryVoltage();
+  if (voltage < 0) {
+    Serial.println("Device is not battery powered so not sleeping.");
+    return;
+  }
+  int sleepTimeSeconds = batteryVoltageToSleepSeconds(voltage);
+  if (sleepTimeSeconds == 0) {
+    Serial.println("Device has extremely full battery so not sleeping.");
+    return;
+  } else {
+    Serial.println("Battery voltage is " + String(voltage) + " so sleeping for " + String(sleepTimeSeconds) + "seconds.");
+    hibernate(sleepTimeSeconds);
+  }
+}
+
 
 void hibernate(int sleepTimeSeconds) {
   Serial.println("Going to sleep for " + String(sleepTimeSeconds) + " seconds...");

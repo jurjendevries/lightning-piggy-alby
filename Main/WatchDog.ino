@@ -72,6 +72,9 @@ void longsleepAfterMaxWatchdogReboots() {
     // Wifi errors go up to y=55 so this error starts at y=56
     displayFit(errorMsg, 0, 56, displayWidth(), displayHeight(), 4);
 
+    // Unconditional hibernate because, in case of these frequent watchdog reboots,
+    // it's probably better to go to sleep and try again some time later,
+    // instead of retrying infinitely. Even while USB-powered.
     hibernate(sleepHours*60*60);
 }
 

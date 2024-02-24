@@ -80,15 +80,15 @@ void setup() {
 
     String connectedMsg = baseConnectMsg + " OK!";
     displayFit(connectedMsg, 0, 1, displayWidth(), 20, 1);
-}
 
-void loop() {    
     // erase the setup screen 
     display.fillScreen(GxEPD_WHITE);
     updateWindow(0, 0, displayWidth(), displayHeight());
 
     showLogo(epd_bitmap_Bitcoin, 40, 40, (displayWidth() / 2) + 78, 67);
+}
 
+void loop() {
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     int balance = getWalletBalance();
 
@@ -128,5 +128,5 @@ void loop() {
     if (wifiConnected()) checkShowUpdateAvailable();
 
     watchdogWasntTriggered();
-    hibernate(sleepTimeMinutes * 60);
+    hibernateDependingOnBattery();
 }
