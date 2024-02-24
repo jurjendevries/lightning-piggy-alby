@@ -50,7 +50,7 @@ void wifiEventCallback(int workaround) {
     // Boot takes around 11 seconds until wifi connection.
     if ((reason == WIFI_REASON_4WAY_HANDSHAKE_TIMEOUT || reason == WIFI_REASON_ASSOC_EXPIRE || reason == WIFI_REASON_AUTH_LEAVE || reason == WIFI_REASON_MIC_FAILURE)
       || (millis() > 25*1000)) {
-      Serial.println("WARNING: This wifi error is unrecoverable, needs restart.");
+      Serial.println("WARNING: This wifi error is unrecoverable or it's taking too long, needs restart.");
       // If the next watchdog restart will trigger the max and long sleep,
       // then do that right now, so the error on-screen stays for troubleshooting.
       if (nextWatchdogRebootWillReachMax()) {
