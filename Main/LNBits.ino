@@ -44,6 +44,7 @@ int getWalletBalance() {
 void getLNURLPayments(int limit, int maxX, int startY) {
 
   // Draw a line under the total sats amount
+  // Draws at 0,22 with size 179,1 on 250x122px display
   display.fillRect(0, startY+2, maxX-3, 1, GxEPD_BLACK);
   startY+=4;
 

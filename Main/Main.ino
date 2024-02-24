@@ -96,7 +96,10 @@ void loop() {
     int yAfterBalance  = 0;
 
     if (balance != NOT_SPECIFIED) {
-       yAfterBalance = printBalance(balance);
+      String walletBalanceText = String(balance) + " sats";
+      // height on 122px display should be 20px so (height - 2) / 6
+      // width on 250px display should be 192px so width * 3 / 4
+      yAfterBalance = displayFit(walletBalanceText,0,0,(displayWidth() * 3)/4,(displayHeight()-2)/6,5);
     }
     else {
        displayBoldMessage("GET WALLET ERROR", 30);
@@ -111,6 +114,7 @@ void loop() {
       Serial.println("You probably don't want to go for 'fixed amount', but rather for any amount.");
     } else {
         xBeforeLNURLp = showLNURLpQR(lnurlp);
+        // xBeforeLNURLp = 192 on 250px wide display
     }
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     getLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance);

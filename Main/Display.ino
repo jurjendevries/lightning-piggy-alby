@@ -169,23 +169,6 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
   return yPos;
 }
 
-/*
- * returns: vertical cursor after printing balance
- */
-int printBalance(int balance) {
-    String walletBalanceText = String(balance) + " sats";
-
-    int16_t x1, y1;
-    uint16_t w, h;
-    setFont(4);
-    display.getTextBounds(walletBalanceText, 0, 0, &x1, &y1, &w, &h); // Got balance text bounds: 2,-19,181,20
-    Serial.println("Got balance text bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h)); // typical value for Lato_Medium_26: 1,-19,118,20
-    display.setCursor(1, h);
-    display.print(walletBalanceText);
-    updateWindow(0,0,w+2,h+5); // for some mysterious reason, this needs a bit of extra margin around the text (2,5) instead of (1,0)
-    return h;
-}
-
 void displayTime(String time) {
     Serial.println("displayTime: " + time);
    
