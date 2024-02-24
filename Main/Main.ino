@@ -68,8 +68,8 @@ void setup() {
     String connectingMsg = baseConnectMsg + "    ";
     displayFit(connectingMsg, 0, 1, displayWidth(), 20, 1);
 
-    // piggy logo indicates board is starting
-    showLogo(piggyLogo, 104, 104, ((displayWidth() / 2) - 104) / 2, 16);
+    // logo indicates board is starting
+    showLogo(epd_bitmap_Lightning_Piggy, 250, 100, (displayWidth() - 250) / 2, 20);
 
     #ifndef DEBUG
     connectWifi();
