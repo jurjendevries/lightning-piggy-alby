@@ -17,6 +17,8 @@
 // 20:50:45.192 -> Wakeup was not caused by deep sleep, wakeup reason: 0
 
 // Physical reset button pressed OR software uploaded using firmware flasher:
+// 13:37:19.815 -> rst:0x1 (POWERON_RESET),boot:0x17 (SPI_FAST_FLASH_BOOT)
+// 13:37:19.815 -> configsip: 0, SPIWP:0xee
 // 21:09:28.165 -> CPU0 reset reason:
 // 21:09:28.165 -> POWERON_RESET
 // 21:09:28.165 -> Vbat power on reset
@@ -174,11 +176,21 @@ int batteryVoltageToSleepSeconds(double voltage) {
 
 void hibernateDependingOnBattery() {
   Serial.println("FREE HEAP MEMORY: " + String(ESP.getFreeHeap()));
+
+  int resetReason = rtc_get_reset_reason(0);
+  esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
+  if ((resetReason == POWERON_RESET || wakeup_reason == ESP_SLEEP_WAKEUP_EXT0 || wakeup_reason == ESP_SLEEP_WAKEUP_EXT1)
+    && millis() < (AWAKE_SECONDS_AFTER_MANUAL_WAKEUP*1000)) {
+    Serial.println("Device was woken up manually less than " + String(AWAKE_SECONDS_AFTER_MANUAL_WAKEUP) + "s ago, not sleeping yet because a payment might come in..");
+    return;
+  }
+
   double voltage = getBatteryVoltage();
   if (voltage < 0) {
     Serial.println("Device is not battery powered so not sleeping.");
     return;
   }
+
   int sleepTimeSeconds = batteryVoltageToSleepSeconds(voltage);
   if (sleepTimeSeconds == 0) {
     Serial.println("Device has extremely full battery so not sleeping.");
