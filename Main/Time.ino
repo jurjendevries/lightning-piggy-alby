@@ -23,7 +23,24 @@ String getTimeFromNTP() {
 }
 
 String getDayOfWeekString(int dayOfWeek) {
-  if (settingLanguage == LANGUAGE_EN_US) {
+  if (strncmp(localeSetting,"dk",2) == 0) {
+     switch(dayOfWeek) {
+        case 0:
+          return "Søn";
+        case 1:
+          return "Man";
+        case 2:
+          return "Tir";
+        case 3:
+          return "Ons";
+        case 4:
+          return "Tor";
+        case 5:
+          return "Fre";
+        case 6:
+          return "Lør";
+    }
+  } else {
      switch(dayOfWeek) {
         case 0:
           return "Sun";
@@ -41,24 +58,4 @@ String getDayOfWeekString(int dayOfWeek) {
           return "Sat";
     }
   }
-  else if (settingLanguage == LANGUAGE_DA) {
-     switch(dayOfWeek) {
-        case 0:
-          return "Søn";
-        case 1:
-          return "Man";
-        case 2:
-          return "Tir";
-        case 3:
-          return "Ons";
-        case 4:
-          return "Tor";
-        case 5:
-          return "Fre";
-        case 6:
-          return "Lør";
-    }
-  }
-
-  return "NA";
 }

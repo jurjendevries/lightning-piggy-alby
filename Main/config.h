@@ -23,7 +23,11 @@ const char* btcPriceCurrencyChar = "REPLACETHISBYFIATCURRENCY_REPLACETHISBYFIATC
 // Example: Europe/Copenhagen
 const char* timezone = "REPLACETHISBYTIMEZONE_REPLACETHISBYTIMEZONE_REPLACETHISBYTIMEZONE";
 
-const int settingLanguage = LANGUAGE_EN_US;
+// Use the language codes from https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
+// Optionally, add the territory string in capitals.
+// Example: en for English, da for Danish, nl for Dutch, de for German
+// Or: en_US for American English, da_DK for Danish (Denmark), nl_BE for Flemish, de_CH for Swiss High German
+const char* localeSetting = "REPLACETHISBYLOCALE_REPLACETHISBYLOCALE_REPLACETHISBYLOCALE";
 
 const char* thousandsSeparator = "REPLACETHISBYTHOUSANDSSEPARATOR_REPLACETHISBYTHOUSANDSSEPARATOR_REPLACETHISBYTHOUSANDSSEPARATOR";
 const char* defaultThousandsSeparator = ",";
