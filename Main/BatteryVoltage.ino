@@ -1,6 +1,7 @@
 
-int xPosOfHealthAndStatus = displayWidth();
-int yPosOfHealthAndStatus = displayHeight();
+// These values are remembered to know what to erase upon the next draw
+int xPosOfHealthAndStatus = NOT_SPECIFIED;
+int yPosOfHealthAndStatus = NOT_SPECIFIED;
 
 // Returns the VBAT value.
 // If we're not on battery but USB powered, then it returns a negative VBAT value.
@@ -34,17 +35,22 @@ double getBatteryVoltage() {
 }
 
 // This function also displays the LOW BATTERY warning:
-void displayHealthAndStatus() {
+void displayHealthAndStatus(bool showsleep) {
     setFont(1);
     int16_t x1, y1;
     uint16_t w, h;
     int verticalSpace = 2; // space between each item
-    int yStart = displayHeight() - 14; // leave room for 1 row of small text, the "last updated"
+    int yStart = displayHeight() - 16; // leave room for 1 row of small text, the "last updated"
     int yPos = yStart;
     int xOffset = 1;
     int minX = displayWidth(); // track min X to know which area of display to update
 
-    display.fillRect(xPosOfHealthAndStatus, yPosOfHealthAndStatus, displayWidth()-1, yStart, GxEPD_WHITE); // Clear old health and status if it's not the first
+    if (xPosOfHealthAndStatus != NOT_SPECIFIED || yPosOfHealthAndStatus != NOT_SPECIFIED) {
+      Serial.println("Clearing health and status by drawing white rectangle: " + String(xPosOfHealthAndStatus) + "," + String(yPosOfHealthAndStatus) + " to " + String(displayWidth()-1) + "," + String(yStart));
+      display.fillRect(xPosOfHealthAndStatus, yPosOfHealthAndStatus, displayWidth()-1, yStart, GxEPD_WHITE);
+    } else{
+      Serial.println("Not clearing health and status because it has never been drawn before.");
+    }
 
     /* Temperature sensor is missing and workaround shows too high or needs calibration...
     String tempString = String(readTemp1(false), 1); // one digit after comma
@@ -85,14 +91,17 @@ void displayHealthAndStatus() {
     display.print((char*)versionChar);
     yPos = yPos - h - verticalSpace;
 
-    String wifiString = "Wifi:";
-    if (wifiConnected()) {
-      int wifiStrengthPercent = strengthPercent(getStrength(5));
-      Serial.println("wifi strength percent: " + String(wifiStrengthPercent));
-      wifiString += String(wifiStrengthPercent) + "%";
-    } else {
-      wifiString += "off";
+    String wifiString = "..zzzZZZZ";
+    if (!showsleep) {
+      wifiString = "Wifi:";
+      if (wifiConnected()) {
+        int wifiStrengthPercent = strengthPercent(getStrength(5));
+        wifiString += String(wifiStrengthPercent) + "%";
+      } else {
+        wifiString += "off";
+      }
     }
+    Serial.println("Displaying wifi string: " + wifiString);
     const char *wifiChar = wifiString.c_str();
     display.getTextBounds((char*)wifiChar, 0, 0, &x1, &y1, &w, &h);
     display.setCursor(displayWidth()-w-xOffset,yPos);
@@ -100,8 +109,8 @@ void displayHealthAndStatus() {
     display.print((char*)wifiChar);
     yPos = yPos - h - verticalSpace;
 
-    //Serial.println("minX,yPos = " + String(minX) + "," + String(yPos)); // minX,yPos = 192,67
-    updateWindow(minX, yPos, displayWidth()-minX, yStart);
+    Serial.println("health and status updateWindow minX,yPos = " + String(minX) + "," + String(yPos) + " with width " + String(displayWidth()-minX) + " and height " + String(yStart-yPos)); // minX,yPos = 192,67
+    updateWindow(minX, yPos, displayWidth()-minX, yStart-yPos);
     xPosOfHealthAndStatus = minX;
     yPosOfHealthAndStatus = yPos;
 }

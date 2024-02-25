@@ -208,6 +208,8 @@ void hibernate(int sleepTimeSeconds) {
   // Disconnect wifi cleanly because some access points will refuse reconnections if this is forgotten...
   disconnectWifi();
 
+  displayHealthAndStatus(true); // update health and status one last time, with sleep indication
+
   uint64_t deepSleepTime = (uint64_t)sleepTimeSeconds * (uint64_t)1000 * (uint64_t)1000;
   esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON); // RTC peripherals needs to stay on for GPIO32's pulldown to work
   // disabled to allow for wakeup_count to stay: esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_SLOW_MEM, ESP_PD_OPTION_OFF);

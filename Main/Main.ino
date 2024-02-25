@@ -99,7 +99,7 @@ void setup() {
 }
 
 void loop() {
-    displayHealthAndStatus();
+    displayHealthAndStatus(false);
 
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     int balance = getWalletBalance();
