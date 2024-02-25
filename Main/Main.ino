@@ -122,9 +122,11 @@ void loop() {
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     showFiatValues(balance);
 
-    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-    String currentTime = getTimeFromNTP();
-    displayTime(currentTime);
+    if (isConfigured(timezone)) {
+      feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+      String currentTime = getTimeFromNTP();
+      if (currentTime.length()>0) displayTime(currentTime);
+    }
 
     displayVoltageWarning();
 

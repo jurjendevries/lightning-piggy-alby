@@ -20,7 +20,8 @@ const int sleepTimeMinutes = 60;
 // If the fiat currency (btcPriceCurrencyChar) is not configured, then no fiat values are shown
 const char* btcPriceCurrencyChar = "REPLACETHISBYFIATCURRENCY_REPLACETHISBYFIATCURRENCY_REPLACETHISBYFIATCURRENCY";
 
-const char* timezone = "Europe/Copenhagen";
+// Example: Europe/Copenhagen
+const char* timezone = "REPLACETHISBYTIMEZONE_REPLACETHISBYTIMEZONE_REPLACETHISBYTIMEZONE";
 
 const int settingLanguage = LANGUAGE_EN_US;
 
