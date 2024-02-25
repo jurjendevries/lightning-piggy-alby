@@ -37,6 +37,8 @@
 GxIO_Class io(SPI,  EPD_CS, EPD_DC,  EPD_RSET);
 GxEPD_Class display(io, EPD_RSET, EPD_BUSY);
 
+int xBeforeLNURLp; // global variable gets updated in setup() function after drawing the LNURLp QR code
+
 void setup() {
     Serial.begin(115200);
     Serial.println("Starting Lightning Piggy " + getFullVersion());
@@ -62,14 +64,14 @@ void setup() {
     display.fillScreen(GxEPD_WHITE);
     updateWindow(0, 0, displayWidth(), displayHeight());
 
+    // logo indicates board is starting
+    showLogo(epd_bitmap_Lightning_Piggy, 250, 100, (displayWidth() - 250) / 2, 20);
+
     setup_watchdog();
 
     String baseConnectMsg = "Connecting to " + String(ssid);
     String connectingMsg = baseConnectMsg + "    ";
     displayFit(connectingMsg, 0, 1, displayWidth(), 20, 1);
-
-    // logo indicates board is starting
-    showLogo(epd_bitmap_Lightning_Piggy, 250, 100, (displayWidth() - 250) / 2, 20);
 
     #ifndef DEBUG
     connectWifi();
@@ -85,7 +87,21 @@ void setup() {
     display.fillScreen(GxEPD_WHITE);
     updateWindow(0, 0, displayWidth(), displayHeight());
 
-    showLogo(epd_bitmap_Bitcoin, 40, 40, (displayWidth() / 2) + 78, 67);
+    // Show the QR code just once, not in the loop()
+    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+    String lnurlp = getLNURLp();
+    xBeforeLNURLp = displayWidth();
+    if (lnurlp == "null") {
+      Serial.println("Warning, could not find lnurlp link for this wallet, did you create one?");
+      Serial.println("You can do so by activating the LNURLp extension in LNBits, clicking on the extension, and clicking 'NEW PAY LINK'");
+      Serial.println("You probably don't want to go for 'fixed amount', but rather for any amount.");
+    } else {
+        xBeforeLNURLp = showLNURLpQR(lnurlp);
+        // xBeforeLNURLp = 192 on 250px wide display
+    }
+
+    showLogo(epd_bitmap_Bitcoin, 40, 40, displayWidth()-1 - ((displayWidth()-xBeforeLNURLp+40)/2), (displayWidth()-xBeforeLNURLp)+1);
+
 }
 
 void loop() {
@@ -105,17 +121,6 @@ void loop() {
        displayBoldMessage("GET WALLET ERROR", 30);
     }
 
-    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-    String lnurlp = getLNURLp();
-    int xBeforeLNURLp = displayWidth();
-    if (lnurlp == "null") {
-      Serial.println("Warning, could not find lnurlp link for this wallet, did you create one?");
-      Serial.println("You can do so by activating the LNURLp extension in LNBits, clicking on the extension, and clicking 'NEW PAY LINK'");
-      Serial.println("You probably don't want to go for 'fixed amount', but rather for any amount.");
-    } else {
-        xBeforeLNURLp = showLNURLpQR(lnurlp);
-        // xBeforeLNURLp = 192 on 250px wide display
-    }
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     getLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance);
 
