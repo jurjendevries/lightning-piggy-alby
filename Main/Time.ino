@@ -1,4 +1,7 @@
 String getTimeFromNTP() {
+  #ifdef DEBUG
+  return "Wed 12:34";
+  #endif
   String timeData = getEndpointData("worldtimeapi.org", "/api/timezone/" + String(timezone), false);
 
   DynamicJsonDocument doc(8192); 

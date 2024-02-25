@@ -1,4 +1,7 @@
 
+int xPosOfHealthAndStatus = displayWidth();
+int yPosOfHealthAndStatus = displayHeight();
+
 // Returns the VBAT value.
 // If we're not on battery but USB powered, then it returns a negative VBAT value.
 double getBatteryVoltage() {
@@ -36,9 +39,12 @@ void displayHealthAndStatus() {
     int16_t x1, y1;
     uint16_t w, h;
     int verticalSpace = 2; // space between each item
-    int yPos = displayHeight() - verticalSpace;
+    int yStart = displayHeight() - 14; // leave room for 1 row of small text, the "last updated"
+    int yPos = yStart;
     int xOffset = 1;
     int minX = displayWidth(); // track min X to know which area of display to update
+
+    display.fillRect(xPosOfHealthAndStatus, yPosOfHealthAndStatus, displayWidth()-1, yStart, GxEPD_WHITE); // Clear old health and status if it's not the first
 
     /* Temperature sensor is missing and workaround shows too high or needs calibration...
     String tempString = String(readTemp1(false), 1); // one digit after comma
@@ -95,7 +101,9 @@ void displayHealthAndStatus() {
     yPos = yPos - h - verticalSpace;
 
     //Serial.println("minX,yPos = " + String(minX) + "," + String(yPos)); // minX,yPos = 192,67
-    updateWindow(minX, yPos, displayWidth()-minX, displayHeight()-yPos);
+    updateWindow(minX, yPos, displayWidth()-minX, yStart);
+    xPosOfHealthAndStatus = minX;
+    yPosOfHealthAndStatus = yPos;
 }
 
 // returns true if voltage is low, false otherwise

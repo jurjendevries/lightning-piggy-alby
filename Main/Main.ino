@@ -78,8 +78,6 @@ void setup() {
     short_watchdog_timeout(); // after the long wifi connection stage, the next operations shouldn't take long
     #endif
 
-    displayHealthAndStatus();
-
     // erase the setup screen 
     display.fillScreen(GxEPD_WHITE);
     updateWindow(0, 0, displayWidth(), displayHeight());
@@ -97,11 +95,12 @@ void setup() {
         // xBeforeLNURLp = 192 on 250px wide display
     }
 
-    showLogo(epd_bitmap_Bitcoin, 40, 40, displayWidth()-1 - ((displayWidth()-xBeforeLNURLp+40)/2), (displayWidth()-xBeforeLNURLp)+1);
-
+//    showLogo(epd_bitmap_Bitcoin, 40, 40, displayWidth()-1 - ((displayWidth()-xBeforeLNURLp+40)/2), (displayWidth()-xBeforeLNURLp)+1);
 }
 
 void loop() {
+    displayHealthAndStatus();
+
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     int balance = getWalletBalance();
 
