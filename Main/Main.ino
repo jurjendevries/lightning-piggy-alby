@@ -65,13 +65,13 @@ void setup() {
     updateWindow(0, 0, displayWidth(), displayHeight());
 
     // logo indicates board is starting
-    showLogo(epd_bitmap_Lightning_Piggy, 250, 100, (displayWidth() - 250) / 2, 20);
+    showLogo(epd_bitmap_Lightning_Piggy, 250, 100, (displayWidth() - 250) / 2, 0);
 
     setup_watchdog();
 
     String baseConnectMsg = "Connecting to " + String(ssid);
     String connectingMsg = baseConnectMsg + "    ";
-    displayFit(connectingMsg, 0, 1, displayWidth(), 20, 1);
+    displayFit(connectingMsg, 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
 
     #ifndef DEBUG
     connectWifi();
@@ -79,9 +79,6 @@ void setup() {
     #endif
 
     displayHealthAndStatus();
-
-    String connectedMsg = baseConnectMsg + " OK!";
-    displayFit(connectedMsg, 0, 1, displayWidth(), 20, 1);
 
     // erase the setup screen 
     display.fillScreen(GxEPD_WHITE);

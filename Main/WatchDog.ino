@@ -67,10 +67,10 @@ void longsleepAfterMaxWatchdogReboots() {
 
     int sleepHours = SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS * max_watchdog_reboot_count;
     String errorMsg = "After " + String(watchdog_reboot_count) + " failure restarts, sleeping for ";
-    errorMsg += String(sleepHours) + "h now. This happened " + String(max_watchdog_reboot_count) + " times in a row already.";
+    errorMsg += String(sleepHours) + "h now. Happened " + String(max_watchdog_reboot_count) + " times in a row already.";
     Serial.println(errorMsg);
-    // Wifi errors go up to y=55 so this error starts at y=56
-    displayFit(errorMsg, 0, 56, displayWidth(), displayHeight(), 4);
+    // Wifi errors go up to y=40 so this error starts at y=41 and ends at displayHeight()-16 because "connecting to <SSID>" starts at displayHeight()-15
+    displayFit(errorMsg, 0, 41, displayWidth(), displayHeight()-16, 4);
 
     // Unconditional hibernate because, in case of these frequent watchdog reboots,
     // it's probably better to go to sleep and try again some time later,

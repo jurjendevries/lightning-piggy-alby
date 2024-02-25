@@ -32,7 +32,7 @@ void wifiEventCallback(int workaround) {
     }
 
     // Write the disconnection reason to the display for troubleshooting
-    displayFit(details, 0, 16, displayWidth(), 55, 1);
+    displayFit(details, 0, 0, displayWidth(), 40, 1);
 
     // Reboot or longsleep after unrecoverable errors OR if it's been trying for a long time already.
     // Full list at ~/.arduino15/packages/esp32/hardware/esp32/1.0.6/tools/sdk/include/esp32/esp_wifi_types.h
