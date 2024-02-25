@@ -172,9 +172,9 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 void displayTime(String time) {
     Serial.println("displayTime: " + time);
     setFont(1);
-    display.setCursor(182, 120);
+    display.setCursor((displayWidth()*73)/100, displayHeight()-1);
     display.setTextColor(GxEPD_BLACK);
-    display.fillRect(182, 105, displayWidth()-1, displayHeight()-1, GxEPD_WHITE); // Clear old time if device didn't power off
+    display.fillRect((displayWidth()*73)/100, displayHeight()-14, displayWidth()-1, displayHeight()-1, GxEPD_WHITE); // Clear old time if device didn't power off
     display.print(time);
     // Partial update doesn't work here, not sure why:
     // updateWindow(182, 105, displayWidth()-1, displayHeight()-1);
