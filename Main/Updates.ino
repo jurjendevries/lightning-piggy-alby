@@ -1,6 +1,8 @@
 String currentVersion = "1.9.5";
 String newVersion = ""; // used by the update checker
 
+int lastChecked = NOT_SPECIFIED;
+
 #ifdef LILYGO_T5_V266
   String hardwareBoard  = "LILYGOT5V266";
 #elif defined LILYGO_T5_V213
@@ -19,14 +21,27 @@ String newVersion = ""; // used by the update checker
   String hardwareDisplay = "UNKNOWNDISPLAY";
 #endif
 
+bool isUpdateAvailable() {
+  return (newVersion != "" && newVersion != currentVersion);
+}
+
 void checkShowUpdateAvailable() {
-  if (newVersion == "") {
-      newVersion = checkNewVersion();
-      Serial.println("checkNewVersion returned: " + newVersion);
-      if (newVersion != "" && newVersion != currentVersion) {
-        showUpdateAvailable();
+  if (lastChecked == NOT_SPECIFIED || (millis()-lastChecked > CHECK_UPDATE_PERIOD_SECONDS*1000)) {
+    newVersion = checkNewVersion();
+    Serial.println("checkNewVersion returned: " + newVersion);
+    if (newVersion != "") {
+      lastChecked = millis();
+      if (isUpdateAvailable()) {
+        Serial.println("Update available!");
+      } else {
+        Serial.println("No update available.");
       }
+    } else {
+      Serial.println("checkNewVersion() returned '' so could not check for updates");
     }
+  } else {
+    Serial.println("Already checked for updates recently, not doing it again.");
+  }
 }
 
 String getShortDisplayInfo() {
@@ -69,9 +84,4 @@ String getFullVersion() {
 String checkNewVersion() {
   Serial.print("Checking for updates: ");
   return getEndpointData(checkUpdateHost, "/", false);
-}
-
-void showUpdateAvailable() {
-  Serial.println("Update available!");
-  // TODO: display "update available" somewhere
 }

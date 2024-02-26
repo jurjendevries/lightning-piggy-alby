@@ -83,7 +83,9 @@ void displayHealthAndStatus(bool showsleep) {
     display.print((char*)displayChar);
     yPos = yPos - h - verticalSpace;
 
-    String versionString = "v" + getShortVersion();
+    String versionString = "v";
+    if (isUpdateAvailable()) versionString = "UP!";
+    versionString += getShortVersion();
     const char *versionChar = versionString.c_str();
     display.getTextBounds((char*)versionChar, 0, 0, &x1, &y1, &w, &h);
     display.setCursor(displayWidth()-w-xOffset,yPos);
