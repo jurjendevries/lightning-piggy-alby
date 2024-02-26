@@ -106,7 +106,7 @@ void loop() {
       String walletBalanceText = String(balance) + " sats";
       // height on 122px display should be 20px so (height - 2) / 6
       // width on 250px display should be 192px so width * 3 / 4
-      yAfterBalance = displayFit(walletBalanceText,0,0,(displayWidth() * 3)/4,(displayHeight()-2)/6,5);
+      yAfterBalance = displayFit(walletBalanceText,0,0,xBeforeLNURLp,displayHeight()/7,5);
     }
     else {
        displayBoldMessage("Get wallet error", 22);
