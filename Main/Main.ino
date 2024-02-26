@@ -69,33 +69,28 @@ void setup() {
 
     setup_watchdog();
 
-    String baseConnectMsg = "Connecting to " + String(ssid);
-    String connectingMsg = baseConnectMsg + "    ";
-    displayFit(connectingMsg, 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
-
+    displayFit("Wifi: " + String(ssid), 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
     #ifndef DEBUG
     connectWifi();
     short_watchdog_timeout(); // after the long wifi connection stage, the next operations shouldn't take long
     #endif
 
-    // erase the setup screen 
-    display.fillScreen(GxEPD_WHITE);
-    updateWindow(0, 0, displayWidth(), displayHeight());
-
-    // Show the QR code just once, not in the loop()
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+    displayFit("Fetching " + String(lnbitsHost), 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
     String lnurlp = getLNURLp();
-    xBeforeLNURLp = displayWidth();
+
+    display.fillScreen(GxEPD_WHITE);  // erase the setup screen
+    updateWindow(0, 0, displayWidth(), displayHeight());
     if (lnurlp == "null") {
+      xBeforeLNURLp = displayWidth();
       Serial.println("Warning, could not find lnurlp link for this wallet, did you create one?");
       Serial.println("You can do so by activating the LNURLp extension in LNBits, clicking on the extension, and clicking 'NEW PAY LINK'");
       Serial.println("You probably don't want to go for 'fixed amount', but rather for any amount.");
     } else {
-        xBeforeLNURLp = showLNURLpQR(lnurlp);
-        // xBeforeLNURLp = 192 on 250px wide display
+        xBeforeLNURLp = showLNURLpQR(lnurlp); // xBeforeLNURLp = 192 on 250px wide display
     }
 
-//    showLogo(epd_bitmap_Bitcoin, 40, 40, displayWidth()-1 - ((displayWidth()-xBeforeLNURLp+40)/2), (displayWidth()-xBeforeLNURLp)+1);
+    // showLogo(epd_bitmap_Bitcoin, 40, 40, displayWidth()-1 - ((displayWidth()-xBeforeLNURLp+40)/2), (displayWidth()-xBeforeLNURLp)+1);
 }
 
 void loop() {
