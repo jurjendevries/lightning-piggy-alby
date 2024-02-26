@@ -215,7 +215,7 @@ void displayBoldMessage(String text, int y) {
     const char * chars = text.c_str();
     display.setCursor(1, y);
     display.getTextBounds((char*)chars, 1, y, &x1, &y1, &w, &h);
-    Serial.println("Got bold message bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h));
+    Serial.println("Got bold message bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h)); // for displayHeight()-4 (fiat value) this results in: 2,104,125,17
     display.fillRect(x1-2, y1-1, w+3, h+3, GxEPD_BLACK);
     display.setTextColor(GxEPD_WHITE);
     display.print((char*)chars);

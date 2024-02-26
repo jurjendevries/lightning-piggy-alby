@@ -109,7 +109,7 @@ void loop() {
       yAfterBalance = displayFit(walletBalanceText,0,0,(displayWidth() * 3)/4,(displayHeight()-2)/6,5);
     }
     else {
-       displayBoldMessage("GET WALLET ERROR", 30);
+       displayBoldMessage("Get wallet error", 22);
     }
 
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
