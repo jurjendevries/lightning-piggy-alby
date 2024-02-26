@@ -45,7 +45,11 @@ void showFiatValues(int balance) {
     return;
   }
 
+  #ifdef DEBUG
+  float btcPrice = 123456.78;
+  #else
   float btcPrice = getBitcoinPrice();
+  #endif
 
   if (btcPrice == NOT_SPECIFIED) {
     Serial.println("Not showing fiat values because couldn't find Bitcoin price.");
