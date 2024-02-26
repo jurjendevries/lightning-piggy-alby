@@ -148,7 +148,7 @@ void print_GPIO_wake_up(){
  * The sleep duration of the piggy should depend on the battery voltage.
  * 0 means the piggy should not go to sleep
  *
- * >4.18V => nosleep
+ * >4.18V => nosleep (the heuristic to detect battery by measuring the voltage variance fails sometimes, but in that case, the voltage is 4.23V so device stays on)
  * >4.10V => wakeup every 1 hour
  * >4.00V => wakeup every 2 hours
  * >3.90V => wakeup every 4 hours
