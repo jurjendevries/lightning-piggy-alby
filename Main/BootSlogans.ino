@@ -30,7 +30,7 @@ void showBootSlogan() {
     return;
   }
 
-  int displayY = 5;
+  int displayY = 2;
   int timeToWait = 0;
 
   if (isConfigured(bootSloganPrelude)) {
@@ -40,7 +40,7 @@ void showBootSlogan() {
 
   String slogan = getRandomBootSlogan();
   Serial.println("Showing boot slogan: " + slogan);
-  displayFit(slogan, 0, displayY, displayWidth(), displayHeight(), 4);
+  displayFit(slogan, 0, displayY+5, displayWidth(), displayHeight(), 4);
 
   // Assuming a 7 year old averages one 4-letter word per second, that's 5 characters per second.
   timeToWait += strlen(slogan.c_str()) * 1000 / 5;
