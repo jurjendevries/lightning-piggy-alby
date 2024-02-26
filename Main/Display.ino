@@ -170,6 +170,7 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 }
 
 void displayTime(String time) {
+    if (time.length() == 0) return;
     Serial.println("displayTime: " + time);
     setFont(1);
     display.setCursor((displayWidth()*73)/100, displayHeight());

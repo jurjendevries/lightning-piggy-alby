@@ -111,6 +111,9 @@ void displayHealthAndStatus(bool showsleep) {
     display.print((char*)wifiChar);
     yPos = yPos - h - verticalSpace;
 
+    // Display Time again because it gets partially erased here (not sure why)
+    displayTime(getLastTime());
+
     Serial.println("health and status updateWindow minX,yPos = " + String(minX) + "," + String(yPos) + " with width " + String(displayWidth()-minX) + " and height " + String(yStart-yPos)); // minX,yPos = 192,67
     updateWindow(minX, yPos, displayWidth()-minX, yStart-yPos);
     xPosOfHealthAndStatus = minX;

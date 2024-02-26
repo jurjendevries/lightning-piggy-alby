@@ -1,3 +1,5 @@
+String lastTime = "";
+
 String getTimeFromNTP() {
   #ifdef DEBUG
   return "Wed 12:34";
@@ -22,7 +24,12 @@ String getTimeFromNTP() {
   String dayOfWeekAsString = getDayOfWeekString(dayOfWeek);
   String time = datetimeAsString.substring(datetimeAsString.indexOf("T") + 1, datetimeAsString.indexOf("T") + 6); // Extract only the time (hh:mm)
 
-  return dayOfWeekAsString + " " + time;
+  lastTime = dayOfWeekAsString + " " + time;
+  return lastTime;
+}
+
+String getLastTime() {
+  return lastTime;
 }
 
 String getDayOfWeekString(int dayOfWeek) {
