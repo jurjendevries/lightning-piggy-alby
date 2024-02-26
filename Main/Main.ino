@@ -113,7 +113,9 @@ void loop() {
     }
 
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-    getLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance);
+    int maxYforLNURLPayments = displayHeight()-1;
+    if (isConfigured(btcPriceCurrencyChar)) maxYforLNURLPayments -= 20; // leave room for fiat values at the bottom (fontsize 2 = 18 + 2 extra for the black background)
+    showLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance, maxYforLNURLPayments);
 
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     showFiatValues(balance);

@@ -41,7 +41,7 @@ int getWalletBalance() {
  * 
  * @param limit 
  */
-void getLNURLPayments(int limit, int maxX, int startY) {
+void showLNURLPayments(int limit, int maxX, int startY, int maxY) {
 
   // Draw a line under the total sats amount
   // Draws at 0,22 with size 179,1 on 250x122px display
@@ -114,13 +114,13 @@ void getLNURLPayments(int limit, int maxX, int startY) {
 
         // Display the message
         // If not enough space is available (because the first message took it all) then claw it back
-        if (yPos > displayHeight() * 0.8) {
+        if (yPos > maxY * 0.8) {
           Serial.println("Not enough vertical space is provided, taking it...");
-          yPos = displayHeight() * 0.8;
+          yPos = maxY * 0.8;
           Serial.println("yPos = " + String(yPos));
         }
 
-        yPos = displayFit(paymentDetail, 0, yPos, maxX, displayHeight(), 3);
+        yPos = displayFit(paymentDetail, 0, yPos, maxX, maxY, 3);
         yPos += 2; // leave some margin between the comments
       } else {
         Serial.println("Skipping because extra tag is not lnurlp...");
