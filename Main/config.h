@@ -18,9 +18,14 @@ const char* checkUpdateHost = "m.lightningpiggy.com";
 const int sleepTimeMinutes = 60;
 
 // If the fiat currency (btcPriceCurrencyChar) is not configured, then no fiat values are shown
+// Example: USD, EUR, DKK,...
 const char* btcPriceCurrencyChar = "REPLACETHISBYFIATCURRENCY_REPLACETHISBYFIATCURRENCY_REPLACETHISBYFIATCURRENCY";
 
-// Example: Europe/Copenhagen
+// The ESP32 can't keep a time when it's off because it doesn't have a battery, so it needs to be fetched from a server
+const char* timeServer = "worldtimeapi.org";
+// timezone is added after this path, so it becomes: https://worldtimeapi.org/api/timezone/Europe/Copenhagen
+const char* timeServerPath = "/api/timezone/";
+// Configure the timezone here, example: Europe/Copenhagen
 const char* timezone = "REPLACETHISBYTIMEZONE_REPLACETHISBYTIMEZONE_REPLACETHISBYTIMEZONE";
 
 // Use the language codes from https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
@@ -35,7 +40,8 @@ const char* defaultThousandsSeparator = ",";
 const char* decimalSeparator = "REPLACETHISBYDECIMALSEPARATOR_REPLACETHISBYDECIMALSEPARATOR_REPLACETHISBYDECIMALSEPARATOR";
 const char* defaultDecimalSeparator = ".";
 
-// A bit of text to show before the boot slogan:
+// A bit of text to show before the boot slogan.
+// Example: "Here's a bit of wisdom:"
 const char* bootSloganPrelude = "REPLACETHISBYBOOTSLOGANPRELUDE_REPLACETHISBYBOOTSLOGANPRELUDE_REPLACETHISBYBOOTSLOGANPRELUDE";
 
 // Whether or not to show the boot slogan. Set to "YES" if you want it:
