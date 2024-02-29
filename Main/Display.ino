@@ -174,7 +174,6 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
   return yPos;
 }
 
-
 void displayTime(bool useLast) {
   String currentTime = getLastTime();
   if (!useLast) {
@@ -182,25 +181,6 @@ void displayTime(bool useLast) {
     currentTime = getTimeFromNTP();
   }
   displayFit(currentTime, (displayWidth()*73)/100, displayHeight()-13, displayWidth(), displayHeight(), 1);
-}
-
-void printTextCentered(char* str) {
-    int16_t x1, y1;
-    uint16_t w, h;
-
-    display.getTextBounds(str, 0, 0, &x1, &y1, &w, &h);
-    display.setCursor(displayWidth() / 2 - w / 2,
-                    displayHeight() / 2 - h / 2 );
-    display.print(str);
-}
-
-void printTextCenteredX(String str, uint16_t yPos) {
-    int16_t x1, y1;
-    uint16_t w, h;
-
-    display.getTextBounds(str, 0, 0, &x1, &y1, &w, &h);
-    display.setCursor(displayWidth() / 2 - w / 2, yPos );
-    display.print(str);
 }
 
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {
