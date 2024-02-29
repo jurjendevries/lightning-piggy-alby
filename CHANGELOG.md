@@ -1,10 +1,12 @@
 **2.0.0**
 
 Extended battery life:
+
 ⁃ Infinite wifi retry, infinite HTTP response waiting time and other long battery-draining exceptions are adressed with a "smart" watchdog.
 ⁃ The wake-up frequency now adapts based on a seven-point profile correlated with battery voltage.
 
 User experience improvements:
+
 ⁃ Realtime balance and payment updates also happen under battery power after manual wakeups, thanks to new awake/sleep status decision logic.
 ⁃ Notification code enhancements that help the user to easily troubleshoot any possible errors.
 ⁃ On-screen indication when the device is sleeping vs awake.
@@ -12,11 +14,13 @@ User experience improvements:
 ⁃ New startup screen logo by Bitko.
 
 Optional new features:
+
 - Fiat balance and Bitcoin price with configurable fiat currency (USD, EUR, DKK,...)
 - Random bootup "slogan" with configurable prelude
 - Show last updated day and time
 
 Removed features:
+
 - Disabled HAL sensor value as it wasn't useful
 
 Many thanks to @lonerookie for his awesome pull request full of new features and improvements!
