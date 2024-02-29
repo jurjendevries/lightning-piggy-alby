@@ -31,7 +31,7 @@ float getBitcoinPrice() {
     return (float)NOT_SPECIFIED;
   }
 
-  Serial.println("BTC Price: " + String(btcPrice, 2));
+  Serial.println("BTC Price: " + String(btcPrice, 0));
   return btcPrice;
 }
 
@@ -39,14 +39,14 @@ float getBitcoinPrice() {
 // 123.23$ (51234.1$)
 // 123.23KR (512021)
 // 123.23E (51234.1E)
-void showFiatValues(int balance) {
+void showFiatValues(int balance, int maxX) {
   if (!isConfigured(btcPriceCurrencyChar)) {
     Serial.println("Not showing fiat values because no fiat currency is configured.");
     return;
   }
 
   #ifdef DEBUG
-  float btcPrice = 123456.78;
+  float btcPrice = 60456;
   #else
   float btcPrice = getBitcoinPrice();
   #endif
@@ -75,5 +75,6 @@ void showFiatValues(int balance) {
   }
   toDisplay += "(" + currentBtcPriceToShow + ")";
 
-  displayBoldMessage(toDisplay, displayHeight() - 4); // bold text adds 1 pixel before + 2 pixels after + 1 pixel because displayHeight() starts counting at 0
+  //displayBoldMessage(toDisplay, displayHeight() - 4); // bold text adds 1 pixel before + 2 pixels after + 1 pixel because displayHeight() starts counting at 0
+  displayFit(toDisplay, 0, displayHeight() - 20, maxX, displayHeight(), 2, true);
 }

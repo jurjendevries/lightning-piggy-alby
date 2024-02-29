@@ -118,7 +118,7 @@ void loop() {
     showLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance, maxYforLNURLPayments);
 
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-    showFiatValues(balance);
+    showFiatValues(balance, xBeforeLNURLp);
 
     displayTime(false);
 

@@ -108,23 +108,35 @@ int fitMaxText(String text, int maxWidth) {
   return maxLength;
 }
 
+int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize) {
+    return displayFit(text, startX, startY, endX, endY, fontSize, false);
+}
+
 // Try to fit a String into a rectangle, including the borders.
 // returns: the y position after fitting the text
-int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize) {
+int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool bold) {
   Serial.println("displayFit " + text + " length: " + String(text.length()));
 
   if (text.length() == 0) {
     Serial.println("Aborting displayFit due to zero length text.");
-    return startY;
+    return startYbig;
+  }
+
+  int startX = startXbig;
+  int startY = startYbig;
+  int endX = endXbig;
+  int endY = endYbig;
+  if (bold) {
+    // black rectangle is slightly bigger than the text; from (-2,-1) inclusive until (+2,+2) inclusive
+    startX = startXbig + 2;
+    startY = startYbig + 1;
+    endX = endXbig - 2;
+    endY = endYbig - 2;
   }
 
   // Don't go past the end of the display and remember pixels start from zero, so [0,max-1]
-  if (endX >= displayWidth()) {
-    endX = displayWidth() - 1;
-  }
-  if (endY >= displayHeight()) {
-    endY = displayHeight() - 1;
-  }
+  endX = min(displayWidth()-1,endX);
+  endY = min(displayHeight()-1,endY);
 
   int spaceBetweenLines = 1;
   int yPos;
@@ -133,7 +145,11 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
     setFont(fontSize);
 
     // empty the entire rectangle
-    display.fillRect(startX, startY, endX-startX+1, endY-startY+1, GxEPD_WHITE);
+    if (!bold) {
+      display.fillRect(startXbig, startYbig, endXbig-startXbig, endYbig-startYbig, GxEPD_WHITE);
+    } else {
+      display.fillRect(startXbig, startYbig, endXbig-startXbig, endYbig-startYbig, GxEPD_BLACK);
+    }
 
     yPos = startY;
     int textPos = 0;
@@ -151,6 +167,11 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
       display.getTextBounds(textLine, 0, 0, &x1, &y1, &w, &h);
       //Serial.println("getTextBounds of textLine: " + String(x1) + "," + String(y1) + ","+ String(w) + ","+ String(h));
       display.setCursor(startX, yPos + h); // bottom of the line
+      if (!bold) {
+        display.setTextColor(GxEPD_BLACK);
+      } else {
+        display.setTextColor(GxEPD_WHITE);
+      }
       display.print(textLine);
 
       textPos += chars;
@@ -170,7 +191,6 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
   }
 
   updateWindow(startX, startY, endX-startX+1, endY-startY+1);
-
   return yPos;
 }
 
