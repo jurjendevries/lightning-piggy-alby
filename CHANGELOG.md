@@ -2,16 +2,16 @@
 
 Extended battery life:
 
-⁃ Infinite wifi retry, infinite HTTP response waiting time and other long battery-draining exceptions are adressed with a "smart" watchdog.
-⁃ The wake-up frequency now adapts based on a seven-point profile correlated with battery voltage.
+- Infinite wifi retry, infinite HTTP response waiting time and other long battery-draining exceptions are adressed with a "smart" watchdog.
+- The wake-up frequency now adapts based on a seven-point profile correlated with battery voltage.
 
 User experience improvements:
 
-⁃ Realtime balance and payment updates also happen under battery power after manual wakeups, thanks to new awake/sleep status decision logic.
-⁃ Notification code enhancements that help the user to easily troubleshoot any possible errors.
-⁃ On-screen indication when the device is sleeping vs awake.
+- Realtime balance and payment updates also happen under battery power after manual wakeups, thanks to new awake/sleep status decision logic.
+- Notification code enhancements that help the user to easily troubleshoot any possible errors.
+- On-screen indication when the device is sleeping vs awake.
 - New on-screen software update visibility.
-⁃ New startup screen logo by Bitko.
+- New startup screen logo by Bitko.
 
 Optional new features:
 
