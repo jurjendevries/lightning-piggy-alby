@@ -1,7 +1,12 @@
 String lastTime = "";
 
 String getTimeFromNTP() {
+  // Later on, this could validate the timezone even more,
+  // and show a clear error if there's something wrong with it.
+  if (!isConfigured(timezone)) return "";
+
   #ifdef DEBUG
+  lastTime = "Wed 12:34";
   return "Wed 12:34";
   #endif
   String timeData = getEndpointData(timeServer, String(timeServerPath) + String(timezone), false);

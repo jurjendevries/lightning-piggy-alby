@@ -113,6 +113,11 @@ int fitMaxText(String text, int maxWidth) {
 int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize) {
   Serial.println("displayFit " + text + " length: " + String(text.length()));
 
+  if (text.length() == 0) {
+    Serial.println("Aborting displayFit due to zero length text.");
+    return startY;
+  }
+
   // Don't go past the end of the display and remember pixels start from zero, so [0,max-1]
   if (endX >= displayWidth()) {
     endX = displayWidth() - 1;
@@ -145,14 +150,14 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
       uint16_t w, h;
       display.getTextBounds(textLine, 0, 0, &x1, &y1, &w, &h);
       //Serial.println("getTextBounds of textLine: " + String(x1) + "," + String(y1) + ","+ String(w) + ","+ String(h));
-      display.setCursor(0, yPos + h); // bottom of the line
+      display.setCursor(startX, yPos + h); // bottom of the line
       display.print(textLine);
 
       textPos += chars;
       yPos += h + spaceBetweenLines;
     }
     yPos -= spaceBetweenLines; // remove the last space between lines
-    //Serial.println("After writing the paymentDetail, yPos = " + String(yPos) + " while endY = " + String(endY));
+    //Serial.println("After writing the text, yPos = " + String(yPos) + " while endY = " + String(endY));
 
     // Check if the entire text fit:
     if (yPos <= endY) {
@@ -169,17 +174,14 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
   return yPos;
 }
 
-void displayTime(String time) {
-    if (time.length() == 0) return;
-    Serial.println("displayTime: " + time);
-    setFont(1);
-    display.setCursor((displayWidth()*73)/100, displayHeight());
-    display.setTextColor(GxEPD_BLACK);
-    display.fillRect((displayWidth()*73)/100, displayHeight()-13, displayWidth()-1, displayHeight(), GxEPD_WHITE); // Clear old time if device didn't power off
-    display.print(time);
-    // Partial update doesn't work here, not sure why:
-    // updateWindow(182, 105, displayWidth()-1, displayHeight()-1);
-    updateWindow(0, 0, displayWidth() - 1, displayHeight());
+
+void displayTime(bool useLast) {
+  String currentTime = getLastTime();
+  if (!useLast) {
+    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+    currentTime = getTimeFromNTP();
+  }
+  displayFit(currentTime, (displayWidth()*73)/100, displayHeight()-13, displayWidth(), displayHeight(), 1);
 }
 
 void printTextCentered(char* str) {
