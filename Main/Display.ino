@@ -116,7 +116,7 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 // Try to fit a String into a rectangle, including the borders.
 // bool bold == true means black background, white text
 // returns: the y position after fitting the text
-int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool bold) {
+int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert) {
   Serial.println("displayFit " + text + " length: " + String(text.length()));
 
   if (text.length() == 0) {
@@ -128,16 +128,16 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   int startY = startYbig;
   int endX = endXbig;
   int endY = endYbig;
-  int boldOffsetXbefore = 2;
-  int boldOffsetYbefore = 0;
-  int boldOffsetXafter = 2;
-  int boldOffsetYafter = 2;
-  if (bold) {
+  int invertOffsetXbefore = 2;
+  int invertOffsetYbefore = 0;
+  int invertOffsetXafter = 2;
+  int invertOffsetYafter = 2;
+  if (invert) {
     // black rectangle is slightly bigger than the text; from (-2,-1) inclusive until (+2,+2) inclusive
-    startX = startXbig + boldOffsetXbefore;
-    startY = startYbig + boldOffsetYbefore;
-    endX = endXbig - boldOffsetXafter;
-    endY = endYbig - boldOffsetYafter;
+    startX = startXbig + invertOffsetXbefore;
+    startY = startYbig + invertOffsetYbefore;
+    endX = endXbig - invertOffsetXafter;
+    endY = endYbig - invertOffsetYafter;
   }
 
   // Don't go past the end of the display and remember pixels start from zero, so [0,max-1]
@@ -168,10 +168,10 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
       display.getTextBounds(textLine, 0, 0, &x1, &y1, &w, &h);
       //Serial.println("getTextBounds of textLine: " + String(x1) + "," + String(y1) + ","+ String(w) + ","+ String(h));
       display.setCursor(startX, yPos + h); // bottom of the line
-      if (!bold) {
+      if (!invert) {
         display.setTextColor(GxEPD_BLACK);
       } else {
-        display.fillRect(startX-boldOffsetXbefore, yPos-boldOffsetYbefore,w + boldOffsetXbefore + boldOffsetXafter, h + boldOffsetYbefore + boldOffsetYafter, GxEPD_BLACK);
+        display.fillRect(startX-invertOffsetXbefore, yPos-invertOffsetYbefore,w+invertOffsetXbefore+invertOffsetXafter, h+invertOffsetYbefore+invertOffsetYafter, GxEPD_BLACK);
         display.setTextColor(GxEPD_WHITE);
       }
       display.print(textLine);
