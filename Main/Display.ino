@@ -201,7 +201,7 @@ void displayTime(bool useLast) {
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     currentTime = getTimeFromNTP();
   }
-  displayFit(currentTime, (displayWidth()*73)/100, displayHeight()-13, displayWidth(), displayHeight(), 1);
+  displayFit(currentTime, (displayWidth()*79)/100, displayHeight()-13, displayWidth(), displayHeight(), 1);
 }
 
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {

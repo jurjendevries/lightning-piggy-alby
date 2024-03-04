@@ -6,8 +6,8 @@ String getTimeFromNTP() {
   if (!isConfigured(timezone)) return "";
 
   #ifdef DEBUG
-  lastTime = "Wed 12:34";
-  return "Wed 12:34";
+  lastTime = "W 23:39";
+  return "W 23:39";
   #endif
   String timeData = getEndpointData(timeServer, String(timeServerPath) + String(timezone), false);
 
@@ -29,7 +29,7 @@ String getTimeFromNTP() {
   String dayOfWeekAsString = getDayOfWeekString(dayOfWeek);
   String time = datetimeAsString.substring(datetimeAsString.indexOf("T") + 1, datetimeAsString.indexOf("T") + 6); // Extract only the time (hh:mm)
 
-  lastTime = dayOfWeekAsString + " " + time;
+  lastTime = dayOfWeekAsString + time;
   return lastTime;
 }
 
@@ -41,36 +41,36 @@ String getDayOfWeekString(int dayOfWeek) {
   if (strncmp(localeSetting,"dk",2) == 0) {
      switch(dayOfWeek) {
         case 0:
-          return "Søn";
+          return "S";
         case 1:
-          return "Man";
+          return "M";
         case 2:
-          return "Tir";
+          return "T";
         case 3:
-          return "Ons";
+          return "O";
         case 4:
-          return "Tor";
+          return "T";
         case 5:
-          return "Fre";
+          return "F";
         case 6:
-          return "Lør";
+          return "L";
     }
   } else {
      switch(dayOfWeek) {
         case 0:
-          return "Sun";
+          return "S";
         case 1:
-          return "Mon";
+          return "M";
         case 2:
-          return "Tue";
+          return "T";
         case 3:
-          return "Wed";
+          return "W";
         case 4:
-          return "Thu";
+          return "T";
         case 5:
-          return "Fri";
+          return "F";
         case 6:
-          return "Sat";
+          return "S";
     }
   }
 }
