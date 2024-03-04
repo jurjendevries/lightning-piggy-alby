@@ -123,7 +123,7 @@ bool displayVoltageWarning() {
     // Print big fat warning on top of everything if low battery
     if (voltage > 0 && voltage < 3.8) {
       String lowBatString = " ! LOW BATTERY (" + String(voltage) + "V) ! ";
-      displayBoldMessage(lowBatString, displayHeight()-12);
+      dispalyFit(lowBatString, 0, displayHeight()-12-18, displayWidth(), displayHeight()-12,2, true);
       return true;
     } else {
       return false;

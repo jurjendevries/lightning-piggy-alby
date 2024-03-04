@@ -114,6 +114,7 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 
 
 // Try to fit a String into a rectangle, including the borders.
+// bool bold == true means black background, white text
 // returns: the y position after fitting the text
 int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool bold) {
   Serial.println("displayFit " + text + " length: " + String(text.length()));
@@ -207,22 +208,4 @@ void displayTime(bool useLast) {
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {
   display.drawBitmap(logo, posX, posY, sizeX, sizeY, GxEPD_WHITE);
   updateWindow(posX, posY, sizeX, sizeY);
-}
-
-// Shows a black rectangle that's slightly bigger than the text; from (-2,-1) inclusive until (+2,+2) inclusive
-void displayBoldMessage(String text, int y) {
-    Serial.println("Displaying bold message: " + text);
-    int16_t x1, y1;
-    uint16_t w, h;
-
-    setFont(2);
-    const char * chars = text.c_str();
-    display.setCursor(1, y);
-    display.getTextBounds((char*)chars, 1, y, &x1, &y1, &w, &h);
-    Serial.println("Got bold message bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h)); // for displayHeight()-4 (fiat value) this results in: 2,104,125,17
-    display.fillRect(x1-2, y1-1, w+3, h+3, GxEPD_BLACK);
-    display.setTextColor(GxEPD_WHITE);
-    display.print((char*)chars);
-    updateWindow(x1-2, y1-1, w+3, h+3);
-    display.setTextColor(GxEPD_BLACK);
 }
