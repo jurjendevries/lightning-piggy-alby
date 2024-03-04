@@ -112,6 +112,7 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
     return displayFit(text, startX, startY, endX, endY, fontSize, false);
 }
 
+
 // Try to fit a String into a rectangle, including the borders.
 // returns: the y position after fitting the text
 int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool bold) {
@@ -126,12 +127,16 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   int startY = startYbig;
   int endX = endXbig;
   int endY = endYbig;
+  int boldOffsetXbefore = 2;
+  int boldOffsetYbefore = 0;
+  int boldOffsetXafter = 2;
+  int boldOffsetYafter = 2;
   if (bold) {
     // black rectangle is slightly bigger than the text; from (-2,-1) inclusive until (+2,+2) inclusive
-    startX = startXbig + 2;
-    startY = startYbig + 1;
-    endX = endXbig - 2;
-    endY = endYbig - 2;
+    startX = startXbig + boldOffsetXbefore;
+    startY = startYbig + boldOffsetYbefore;
+    endX = endXbig - boldOffsetXafter;
+    endY = endYbig - boldOffsetYafter;
   }
 
   // Don't go past the end of the display and remember pixels start from zero, so [0,max-1]
@@ -144,12 +149,7 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   while (fontSize > 0) {
     setFont(fontSize);
 
-    // empty the entire rectangle
-    if (!bold) {
-      display.fillRect(startXbig, startYbig, endXbig-startXbig, endYbig-startYbig, GxEPD_WHITE);
-    } else {
-      display.fillRect(startXbig, startYbig, endXbig-startXbig, endYbig-startYbig, GxEPD_BLACK);
-    }
+    display.fillRect(startXbig, startYbig, endXbig-startXbig, endYbig-startYbig, GxEPD_WHITE);
 
     yPos = startY;
     int textPos = 0;
@@ -170,6 +170,7 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
       if (!bold) {
         display.setTextColor(GxEPD_BLACK);
       } else {
+        display.fillRect(startX-boldOffsetXbefore, yPos-boldOffsetYbefore,w + boldOffsetXbefore + boldOffsetXafter, h + boldOffsetYbefore + boldOffsetYafter, GxEPD_BLACK);
         display.setTextColor(GxEPD_WHITE);
       }
       display.print(textLine);
