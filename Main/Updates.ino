@@ -1,4 +1,3 @@
-String currentVersion = "2.1.1";
 String newVersion = ""; // used by the update checker
 
 int lastChecked = NOT_SPECIFIED;
