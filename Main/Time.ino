@@ -37,40 +37,21 @@ String getLastTime() {
   return lastTime;
 }
 
+// In alphabetical order
 String getDayOfWeekString(int dayOfWeek) {
-  if (strncmp(localeSetting,"dk",2) == 0) {
-     switch(dayOfWeek) {
-        case 0:
-          return "S";
-        case 1:
-          return "M";
-        case 2:
-          return "T";
-        case 3:
-          return "O";
-        case 4:
-          return "T";
-        case 5:
-          return "F";
-        case 6:
-          return "L";
-    }
+  if (dayOfWeek < 0 || dayOfWeek > 6) {
+    Serial.println("Invalid day of week: " + String(dayOfWeek));
+    return "";
+  }
+  if (strncmp(localeSetting,"de",2) == 0) {
+     return deWeekdays[dayOfWeek];
+  } else if (strncmp(localeSetting,"dk",2) == 0) {
+     return dkWeekdays[dayOfWeek];
+  } else if (strncmp(localeSetting,"nl",2) == 0) {
+    return nlWeekdays[dayOfWeek];
+  } else if (strncmp(localeSetting,"es",2) == 0) {
+    return esWeekdays[dayOfWeek];
   } else {
-     switch(dayOfWeek) {
-        case 0:
-          return "S";
-        case 1:
-          return "M";
-        case 2:
-          return "T";
-        case 3:
-          return "W";
-        case 4:
-          return "T";
-        case 5:
-          return "F";
-        case 6:
-          return "S";
-    }
+     return enWeekdays[dayOfWeek];
   }
 }

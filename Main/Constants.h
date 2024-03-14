@@ -22,5 +22,11 @@ extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 6;
 
 #define CHECK_UPDATE_PERIOD_SECONDS 24*60*60
 
+// In alphabetical order
+const char * deWeekdays[] = { "S", "M", "D", "M", "D", "F", "S"};
+const char * dkWeekdays[] = { "S", "M", "T", "O", "T", "F", "L"};
+const char * esWeekdays[] = { "D", "L", "M", "M", "J", "V", "S"};
+const char * enWeekdays[] = { "S", "M", "T", "W", "T", "F", "S"};
+const char * nlWeekdays[] = { "Z", "M", "D", "W", "D", "V", "Z"};
 
 #endif
