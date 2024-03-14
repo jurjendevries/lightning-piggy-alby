@@ -27,8 +27,10 @@ String getCurrentCurrencyCode() {
       return "kr";
   } else if (strncmp(btcPriceCurrencyChar, "EUR", 3) == 0) {
       return "E";
+  } else if (strncmp(btcPriceCurrencyChar, "CHF", 3) == 0) {
+    return "Fr";
   } else {
-    return "NA";
+    return "";
   }
 }
 
