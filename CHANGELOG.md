@@ -1,3 +1,11 @@
+**2.1.1**
+- Add support for CHF currency symbol (Fr)
+- Add support for German, Dutch and Spanish weekdays
+- Add more boot slogans
+- Fix display artifacts below horizontal line
+- Don't show "NA" for unknown currency symbols
+- Show only first character of weekdays
+
 **2.0.0**
 
 Extended battery life:
