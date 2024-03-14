@@ -45,7 +45,8 @@ void showLNURLPayments(int limit, int maxX, int startY, int maxY) {
 
   // Draw a line under the total sats amount
   // Draws at 0,22 with size 179,1 on 250x122px display
-  display.fillRect(0, startY+2, maxX-3, 1, GxEPD_BLACK);
+  display.fillRect(0, startY+3, maxX-3, 1, GxEPD_BLACK);
+  updateWindow(0, startY+3, maxX-3, 1);
   startY+=4;
 
   Serial.println("Getting " + String(limit) + " LNURL payments...");
