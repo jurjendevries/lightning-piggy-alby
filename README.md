@@ -46,3 +46,23 @@ Make sure the Arduino IDE has permissions to access the serial port:
 
 **Known issues:**
 - There's an issue with the 2.13 inch GDEM0213B74 display, somehow the display becomes blank after updateWindow() calls.
+
+How to release
+==============
+- Update version number in Constants.h
+- Update CHANGELOG.md
+- Make sure config.h has no changes (cp Main/config.h /tmp; git checkout Main/config.h)
+- In Main.ino, make sure you have:
+#define LILYGO_T5_V213
+//#define LILYGO_T5_V266
+- Compile the project
+- Copy /tmp/build_*/Main.ino.bin to lightningpiggy.github.io/firmware/ttgo_lilygo_2.13_inch_epaper_latest/Main.ino.bin
+- Update the version number in lightningpiggy.github.io/manifests/manifest_ttgo_lilygo_2.13_inch_epaper_latest.json
+- In Main.ino, make sure you have:
+//#define LILYGO_T5_V213
+#define LILYGO_T5_V266
+- Compile the project
+- Copy /tmp/build_*/Main.ino.bin to lightningpiggy.github.io/firmware/ttgo_lilygo_2.66_inch_epaper_latest/Main.ino.bin
+- Update the version number in lightningpiggy.github.io/manifests/manifest_ttgo_lilygo_2.66_inch_epaper_latest.json
+- Revert back to default code with custom config (cp /tmp/config.h Main/config.h; git checkout Main/Main.ino)
+- Test the webinstaller
