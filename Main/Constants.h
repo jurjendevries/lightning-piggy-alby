@@ -29,6 +29,13 @@ const char * esWeekdays[] = { "D", "L", "M", "M", "J", "V", "S"};
 const char * enWeekdays[] = { "S", "M", "T", "W", "T", "F", "S"};
 const char * nlWeekdays[] = { "Z", "M", "D", "W", "D", "V", "Z"};
 
-String currentVersion = "2.1.1";
+String currentVersion = "2.1.2";
+
+typedef enum {
+    STR2INT_SUCCESS,
+    STR2INT_OVERFLOW,
+    STR2INT_UNDERFLOW,
+    STR2INT_INCONVERTIBLE
+} str2int_errno;
 
 #endif

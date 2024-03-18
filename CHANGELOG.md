@@ -1,3 +1,8 @@
+**2.1.2**
+- Translate English boot slogans to Dutch
+- New feature: optional configurable "balance bias" to account for sats that are in cold storage
+- New feature: optional configurable static LNURLp instead of fetching it from the LNBits API every time
+
 **2.1.1**
 - Add support for CHF currency symbol (Fr)
 - Add support for German, Dutch and Spanish weekdays

@@ -47,3 +47,7 @@ const char* bootSloganPrelude = "REPLACETHISBYBOOTSLOGANPRELUDE_REPLACETHISBYBOO
 
 // Whether or not to show the boot slogan. Set to "YES" if you want it:
 const char* showSloganAtBoot = "REPLACETHISBYSHOWBOOTSLOGAN_REPLACETHISBYSHOWBOOTSLOGAN_REPLACETHISBYSHOWBOOTSLOGAN";
+
+// Value to add to the balance (can also be negative)
+// This can be used to account for the sats that have been moved to cold storage etc.
+const char* balanceBias = "REPLACETHISBYBALANCEBIAS_REPLACETHISBYBALANCEBIAS_REPLACETHISBYBALANCEBIAS";

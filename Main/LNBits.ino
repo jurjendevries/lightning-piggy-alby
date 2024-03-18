@@ -5,8 +5,17 @@ int getWalletBalance() {
   Serial.println("Getting wallet details...");
   const String url = "/api/v1/wallet";
 
+  int balanceBiasInt = 0;
+  if (isConfigured(balanceBias)) {
+    if (str2int(&balanceBiasInt, (char*)balanceBias, 10) != STR2INT_SUCCESS) {
+      Serial.println("WARNING: failed to convert balanceBias ('" + String(balanceBias) + "') to integer, ignoring...");
+    } else {
+      Serial.println("Adding balanceBias value of " + String(balanceBiasInt) + " to balance.");
+    }
+  }
+
   #ifdef DEBUG
-  return 12345678;
+  return 12345678 + balanceBiasInt;
   #endif
 
   const String line = getEndpointData(lnbitsHost, url, true);
@@ -33,7 +42,7 @@ int getWalletBalance() {
   walletBalance = walletBalance / 1000;
 
   Serial.println(" contains " + String(walletBalance) + " sats");
-  return walletBalance;
+  return walletBalance+balanceBiasInt;
 }
 
 /**
