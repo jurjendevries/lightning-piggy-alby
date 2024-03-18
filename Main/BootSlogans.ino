@@ -1,6 +1,7 @@
 // Array of Bitcoin slogans
-// This one was removed because it's a bit confusing for kids without context:
+// These were removed because they're a bit confusing for kids without context:
 // "'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks' -- Satoshi Nakamoto",
+// "'I am not Dorian Nakamoto.' - Satoshi Nakamoto",
 String bitcoinSlogans[] = {
   "Bitcoin is nerds gold.",
   "In Bitcoin we trust.",
@@ -32,17 +33,16 @@ String bitcoinSlogans[] = {
   "Your life is yours and yours alone.",
   "Only you can live your life.",
   "Cypherpunks write code.",
-  "'If you don't believe me or don't get it, I don't have time to try to convince you, sorry.' -- Satoshi Nakamoto",
-  "'The heat from your computer is not wasted if you need to heat your home.' -- Satoshi Nakamoto",
+  "'If you don't believe me or don't get it, I don't have time to try to convince you, sorry.' - Satoshi Nakamoto",
+  "'The heat from your computer is not wasted if you need to heat your home.' - Satoshi Nakamoto",
   "'How does everyone feel about the B symbol with the two lines through the outside?' - Satoshi Nakamoto",
   "'The credential that establishes someone as real is the ability to supply CPU power.' - Satoshi Nakamoto",
   "'For greater privacy, it's best to use bitcoin addresses only once.' - Satoshi Nakamoto",
-  "'I am not Dorian Nakamoto.' - Satoshi Nakamoto",
   "'I'm sure that in 20 years there will either be very large transaction volume or no volume.' - Satoshi Nakamoto",
   "'Lost coins only make everyone else's coins worth slightly more. Think of it as a donation to everyone.' - Satoshi Nakamoto",
   "'Stay humble, stack sats.' - Matt Odell",
-  "'Bitcoin is a strange game where the only winning move is to play.' -- Bitstein",
-  "'If privacy is outlawed, only outlaws will have privacy.' -- Phil Zimmermann"
+  "'Bitcoin is a strange game where the only winning move is to play.' - Bitstein",
+  "'If privacy is outlawed, only outlaws will have privacy.' - Phil Zimmermann"
 };
 
 String bitcoinSlogans_nl[] = {
@@ -76,17 +76,16 @@ String bitcoinSlogans_nl[] = {
   "Je leven is van alleen van jou.",
   "Enkel jij kan je leven leiden.",
   "Cypherpunks schrijven code.",
-  "'Als je me niet gelooft of het niet begrijpt, heb ik geen tijd om je te proberen te overtuigen, sorry.' -- Satoshi Nakamoto",
-  "'De warmte van je computer wordt niet verspild als je je huis moet verwarmen.' -- Satoshi Nakamoto",
+  "'Als je me niet gelooft of het niet begrijpt, heb ik geen tijd om je te proberen te overtuigen, sorry.' - Satoshi Nakamoto",
+  "'De warmte van je computer wordt niet verspild als je je huis moet verwarmen.' - Satoshi Nakamoto",
   "'Wat vinden jullie van het B symbool met 2 lijnen door de buitenkant?' - Satoshi Nakamoto",
   "'Wat bewijst dat iemand echt is, is dat hij rekenkracht kan leveren.' - Satoshi Nakamoto",
   "'Voor meer privacy is het best om Bitcoin adressen slechts 1 keer te gebruiken.' - Satoshi Nakamoto",
-  "'Ik ben niet Dorian Nakamoto.' - Satoshi Nakamoto",
   "'Ik ben zeker dat er binnen 20 jaar ofwel heel veel transacties zullen zijn, ofwel geen enkele.' - Satoshi Nakamoto",
   "'Verloren munten maken gewoon de munten van de anderen iets meer waard. Je kan het beschouwen als een gift aan iedereen.' - Satoshi Nakamoto",
   "'Blijf bescheiden, stapel sats.' - Matt Odell",
-  "'Bitcoin is een vreemd spel waarbij het enige wat je kan doen om te winnen, is te spelen.' -- Bitstein",
-  "'Als privacy illegaal wordt, zullen alleen illegalen privacy hebben.' -- Phil Zimmermann"
+  "'Bitcoin is een vreemd spel waarbij het enige wat je kan doen om te winnen, is te spelen.' - Bitstein",
+  "'Als privacy illegaal wordt, zullen alleen illegalen privacy hebben.' - Phil Zimmermann"
 };
 
 // Function to get a random Bitcoin slogan from the array
