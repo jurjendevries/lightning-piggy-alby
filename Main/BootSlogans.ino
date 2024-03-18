@@ -29,6 +29,7 @@ String bitcoinSlogans[] = {
   "You are the only one in charge of you.",
   "Your life is yours and yours alone.",
   "Only you can live your life.",
+  "Cypherpunks write code.",
   "'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks' -- Satoshi Nakamoto",
   "'If you don't believe me or don't get it, I don't have time to try to convince you, sorry.' -- Satoshi Nakamoto",
   "'The heat from your computer is not wasted if you need to heat your home.' -- Satoshi Nakamoto",
