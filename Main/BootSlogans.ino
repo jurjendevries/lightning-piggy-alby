@@ -72,7 +72,7 @@ String bitcoinSlogans_nl[] = {
   "Wat je doet bepaalt wie je bent.",
   "Je hebt recht op eigendom.",
   "Je lichaam is jouw eigendom.",
-  "Enkel jij bent de baas van jou.",
+  "Enkel jij bent baas over jezelf.",
   "Je leven is van alleen van jou.",
   "Enkel jij kan je leven leiden.",
   "Cypherpunks schrijven code.",
