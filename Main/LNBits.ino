@@ -145,6 +145,11 @@ String getLNURLp() {
   Serial.println("Mocking getLNURLp:"); return "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7DTRWE2NVKQ72L5D3";
   #endif
 
+  // Only fetch the first one using the API if no fixed lnurlPayments was configured
+  if (isConfigured(staticLNURLp)) {
+    return staticLNURLp;
+  }
+
   // Get the first lnurlp
   String lnurlpData = getEndpointData(lnbitsHost, "/lnurlp/api/v1/links", true);
   DynamicJsonDocument doc(8192); // the size of the list of links is unknown so don't skimp here
