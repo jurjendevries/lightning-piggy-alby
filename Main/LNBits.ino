@@ -5,20 +5,14 @@ int getWalletBalance() {
   Serial.println("Getting wallet details...");
   const String url = "/api/v1/wallet";
 
-  int balanceBiasInt = 0;
-  if (isConfigured(balanceBias)) {
-    if (str2int(&balanceBiasInt, (char*)balanceBias, 10) != STR2INT_SUCCESS) {
-      Serial.println("WARNING: failed to convert balanceBias ('" + String(balanceBias) + "') to integer, ignoring...");
-    } else {
-      Serial.println("Adding balanceBias value of " + String(balanceBiasInt) + " to balance.");
-    }
-  }
+  int balanceBiasInt = getBalanceBiasAsInt();
 
   #ifdef DEBUG
   return 12345678 + balanceBiasInt;
   #endif
 
   const String line = getEndpointData(lnbitsHost, url, true);
+  Serial.println("Got wallet balance line: " + line);
   DynamicJsonDocument doc(4096); // 4096 bytes is plenty for just the wallet details (id, name and balance info)
 
   DeserializationError error = deserializeJson(doc, line);
@@ -174,4 +168,16 @@ String getLNURLp() {
 
   Serial.println(lnurlp);
   return lnurlp;
+}
+
+int getBalanceBiasAsInt() {
+  int balanceBiasInt = 0;
+  if (isConfigured(balanceBias)) {
+    if (str2int(&balanceBiasInt, (char*)balanceBias, 10) != STR2INT_SUCCESS) {
+      Serial.println("WARNING: failed to convert balanceBias ('" + String(balanceBias) + "') to integer, ignoring...");
+    } else {
+      Serial.println("Adding balanceBias value of " + String(balanceBiasInt) + " to balance.");
+    }
+  }
+  return balanceBiasInt;
 }
