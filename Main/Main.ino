@@ -74,11 +74,9 @@ void setup() {
     connectWifi();
     short_watchdog_timeout(); // after the long wifi connection stage, the next operations shouldn't take long
     #endif
-
+   
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-    displayFit("Fetching " + String(lnbitsHost), 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
     String lnurlp = getLNURLp();
-
     display.fillScreen(GxEPD_WHITE);  // erase the setup screen
     updateWindow(0, 0, displayWidth(), displayHeight());
     if (lnurlp == "null") {

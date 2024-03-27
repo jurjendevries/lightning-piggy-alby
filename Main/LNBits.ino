@@ -152,6 +152,7 @@ String getLNURLp() {
   if (isConfigured(staticLNURLp)) {
     return staticLNURLp;
   }
+  displayFit("Fetching " + String(lnbitsHost), 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
 
   // Get the first lnurlp
   String lnurlpData = getEndpointData(lnbitsHost, "/lnurlp/api/v1/links", true);
