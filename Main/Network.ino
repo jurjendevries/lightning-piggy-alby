@@ -43,7 +43,7 @@ void wifiEventCallback(int workaround) {
     // - AUTH_EXPIRE : wrong password but not an end state
     //
     // - 4WAY_HANDSHAKE_TIMEOUT? some kind of end state, happens with wrong password
-    // - ASSOC_EXPIRE? some kind of end sate
+    // - ASSOC_EXPIRE? some kind of end state, after 7 AUTH_EXPIREs
     // - AUTH_LEAVE? end state, happened when adding and changing password during connection
     // - WIFI_REASON_MIC_FAILURE? with wrong password, endstate
 
