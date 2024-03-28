@@ -1,6 +1,6 @@
 #include <WiFiClientSecure.h>
 
-#define BUFFSIZE 256
+#define BUFFSIZE 1024
 
 WebSocketsClient webSocket;
 
@@ -133,12 +133,16 @@ int strengthPercent(float strength) {
  */
 String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
   Serial.println("Fetching URL: " + endpointUrl);
+  int timeout = 15;
   WiFiClientSecure client;
   client.setInsecure(); // see https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/README.md
+  client.setHandshakeTimeout(timeout);
 
   if (!client.connect(host, 443)) {
     Serial.println("Could not connect to " + String(host) + " on port 443");
     return "";
+  } else {
+    client.setTimeout(timeout);
   }
 
   String request = "GET " + endpointUrl + " HTTP/1.1\r\n" +
@@ -151,9 +155,11 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
 
   client.print(request);
 
+  long maxTime = millis() + timeout * 1000;
+
   int chunked = 0;
   String line = "";
-  while (client.connected())
+  while (client.connected() && (millis() < maxTime))
   {
     line = client.readStringUntil('\n');
     line.toLowerCase();
@@ -176,20 +182,26 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
     String lengthline = client.readStringUntil('\n');
     Serial.println("chunked reader got length line: '" + lengthline + "'");
 
-    while (lengthline != "0\r") {
+    while (lengthline != "0\r" && (millis() < maxTime)) {
       const char *lengthLineChar = lengthline.c_str();
       int bytesToRead = strtol(lengthLineChar, NULL, 16);
       Serial.println("bytesToRead = " + String(bytesToRead));
 
       int bytesRead = 0;
-      while (bytesRead < bytesToRead) { // stop if less than max bytes are read
+      while (bytesRead < bytesToRead && (millis() < maxTime)) { // stop if less than max bytes are read
         uint8_t buff[BUFFSIZE] = {0}; // zero initialize buffer to have 0x00 at the end
         int readNow = min(bytesToRead - bytesRead,BUFFSIZE-1); // leave one byte for the 0x00 at the end
-        //Serial.println("Reading bytes: " + String(readNow));
-        bytesRead += client.read(buff, readNow);;
-        //Serial.print("Got char: "); Serial.write(c);
-        String stringBuff = (char*)buff;
-        reply += stringBuff;
+        Serial.println("Reading bytes: " + String(readNow));
+        int thisBytesRead = client.read(buff, readNow);
+        Serial.println("thisBytesRead = " + String(thisBytesRead));
+        if (thisBytesRead > 0) {
+          bytesRead += thisBytesRead;
+          String stringBuff = (char*)buff;
+          reply += stringBuff;
+        } else {
+          Serial.println("Not including negative bytesread.");
+          delay(42); // wait a bit until more data is available
+        }
         //Serial.println("chunked total reply = '" + reply + "'");
       }
 
