@@ -70,9 +70,7 @@ void showFiatValues(int balance, int maxX) {
   // Add the Bitcoin price
   String currentBtcPriceToShow = formatFloatWithSeparator(btcPrice);
   // Only add currency code if the price is not too long, to save screen space
-  if (strlen(currentBtcPriceToShow.c_str()) <= 6) {
-     currentBtcPriceToShow += getCurrentCurrencyCode();
-  }
+  if (currentBtcPriceToShow.length() <= 6) currentBtcPriceToShow += getCurrentCurrencyCode();
   toDisplay += "(" + currentBtcPriceToShow + ")";
 
   //displayBoldMessage(toDisplay, displayHeight() - 4); // bold text adds 1 pixel before + 2 pixels after + 1 pixel because displayHeight() starts counting at 0
