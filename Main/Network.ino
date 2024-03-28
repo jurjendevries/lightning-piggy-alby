@@ -191,16 +191,16 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
       while (bytesRead < bytesToRead && (millis() < maxTime)) { // stop if less than max bytes are read
         uint8_t buff[BUFFSIZE] = {0}; // zero initialize buffer to have 0x00 at the end
         int readNow = min(bytesToRead - bytesRead,BUFFSIZE-1); // leave one byte for the 0x00 at the end
-        Serial.println("Reading bytes: " + String(readNow));
+        //Serial.println("Reading bytes: " + String(readNow));
         int thisBytesRead = client.read(buff, readNow);
-        Serial.println("thisBytesRead = " + String(thisBytesRead));
+        //Serial.println("thisBytesRead = " + String(thisBytesRead));
         if (thisBytesRead > 0) {
           bytesRead += thisBytesRead;
           String stringBuff = (char*)buff;
           reply += stringBuff;
         } else {
-          Serial.println("Not including negative bytesread.");
-          delay(42); // wait a bit until more data is available
+          Serial.println("No bytes available from HTTPS, waiting a bit...");
+          delay(42);
         }
         //Serial.println("chunked total reply = '" + reply + "'");
       }
