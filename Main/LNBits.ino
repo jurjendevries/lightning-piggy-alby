@@ -1,6 +1,8 @@
 #include <ArduinoJson.h>
 #include "Constants.h"
 
+String walletIDfromLNURLp = "";
+
 int getWalletBalance() {
   Serial.println("Getting wallet details...");
   const String url = "/api/v1/wallet";
@@ -135,27 +137,33 @@ void showLNURLPayments(int limit, int maxX, int startY, int maxY) {
   }
 }
 
+String getLNURLp() {
+  return getLNURLp(false); // mustFetchWalletID = false
+}
+
 /**
  * @brief Get the first available LNURLp from the wallet
+ *
+ * if mustFetch is true then the return value (String LNURLp) isn't used
+ * but rather, the walletIDfromLNURLp is what will be used later.
  *
  * @return lnurlp for accepting payments
  *
  */
-String getLNURLp() {
-  Serial.println("Getting LNURLp link list...");
-
+String getLNURLp(bool mustFetchWalletID) {
   #ifdef DEBUG
   Serial.println("Mocking getLNURLp:"); return "LNURL1DP68GURN8GHJ7MR9VAJKUEPWD3HXY6T5WVHXXMMD9AKXUATJD3CZ7DTRWE2NVKQ72L5D3";
   #endif
 
-  // Only fetch the first one using the API if no fixed lnurlPayments was configured
-  if (isConfigured(staticLNURLp)) {
+  // Only fetch the first one using the API if no fixed lnurlPayments was configured (unless mustFetchWalletID)
+  if (isConfigured(staticLNURLp) && !mustFetchWalletID) {
     return staticLNURLp;
   }
-  displayFit("Fetching " + String(lnbitsHost), 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
+
+  Serial.println("Getting LNURLp link list...");
 
   // Get the first lnurlp
-  String lnurlpData = getEndpointData(lnbitsHost, "/lnurlp/api/v1/links", true);
+  String lnurlpData = getEndpointData(lnbitsHost, "/lnurlp/api/v1/links?all_wallets=false", true);
   DynamicJsonDocument doc(8192); // the size of the list of links is unknown so don't skimp here
 
   DeserializationError error = deserializeJson(doc, lnurlpData);
@@ -166,8 +174,10 @@ String getLNURLp() {
   }
   String lnurlpId = doc[0]["id"];
   String lnurlp = doc[0]["lnurl"];
+  String localWalletIDfromLNURLp = doc[0]["wallet"];
+  walletIDfromLNURLp = localWalletIDfromLNURLp; // weird casting error otherwise
 
-  Serial.println(lnurlp);
+  Serial.println("Fetched LNURLp: " + lnurlp + " and wallet ID:" + walletIDfromLNURLp);
   return lnurlp;
 }
 
@@ -181,4 +191,8 @@ int getBalanceBiasAsInt() {
     }
   }
   return balanceBiasInt;
+}
+
+String getWalletIDfromLNURLp() {
+  return walletIDfromLNURLp;
 }

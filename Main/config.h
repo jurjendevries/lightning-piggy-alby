@@ -4,14 +4,31 @@
 //#define DEBUG
 #include "Constants.h"
 
-// These values get replaced with the user provided values by the Web Serial Installer for Lightning Piggy.
+// The REPLACETHISBY... values get replaced with the user provided values by the Web Serial Installer for Lightning Piggy.
 // But you can also replace them manually yourself here if you don't plan on using the Web Installer.
 
+// MANDATORY:
+// ==========
+
+// The logic with invoiceKey, saticLNURLp and walletID is as follows:
+// - invoiceKey is mandatory (otherwise we can't check balance or payments)
+// - staticLNURLp is recommended because then no need to fetch it so it's faster
+// - walletID is recommended because it's need for the websocket, which then allows for instant incoming payments
+// How this is handled in code:
+// if the user hasn't provided a staticLNURLp then lnurlp and walletID are fetched using lnurlp/api/v1/links
+// if the user has provided a staticLNURLp then that one is used and:
+//    - if the user also provided a wallet ID then that one is used (no need to fetch it)
+//    - if the user hasn't provided a wallet ID and the device needs to stay awake and listen for incoming payments, then the wallet id is fetched using lnurlp/api/v1/links
 const char* ssid     = "REPLACETHISBYWIFISSID_REPLACETHISBYWIFISSID_REPLACETHISBYWIFISSID"; // wifi SSID here
 const char* password = "REPLACETHISBYWIFIKEY_REPLACETHISBYWIFIKEY_REPLACETHISBYWIFIKEY"; // wifi password here
 const char* lnbitsHost = "REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST"; // HOST NAME HERE E.G. legend.lnbits.com
 const char* invoiceKey = "REPLACETHISBYLNBITSKEY_REPLACETHISBYLNBITSKEY_REPLACETHISBYLNBITSKEY"; // lnbits wallet invoice hey here
+
+// OPTIONAL:
+// =========
+
 const char* staticLNURLp = "REPLACETHISBYSTATICLNURLPAYMENTSVALUESTRING_REPLACETHISBYSTATICLNURLPAYMENTSVALUESTRING_REPLACETHISBYSTATICLNURLPAYMENTSVALUESTRING"; // optional, avoids an API call and resolves ambiguity in case multiple lnurlp's are available
+const char* walletID = "REPLACETHISBYWALLETID_REPLACETHISBYWALLETID_REPLACETHISBYWALLETID";
 
 // Regular configuration values
 const char* checkUpdateHost = "m.lightningpiggy.com";

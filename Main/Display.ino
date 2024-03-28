@@ -1,3 +1,5 @@
+long lastUpdatedBalance = -UPDATE_BALANCE_PERIOD_MILLIS;
+int lastBalance = -NOT_SPECIFIED;
 
 void setup_display() {
     SPI.begin(EPD_SCLK, EPD_MISO, EPD_MOSI);
@@ -30,7 +32,7 @@ int displayWidth() {
 
 void updateWindow(int x, int y, int w, int h) {
   #ifdef LILYGO_T5_V266
-    Serial.println("Workaround for Lilygo 2.66 inch: update entire window without rotation!");
+    //Serial.println("Workaround for Lilygo 2.66 inch: update entire window without rotation!");
     display.updateWindow(0, 0, displayHeight(), displayWidth(), false); // on the 2.66 there's an issue with partial updates and rotation=true
   #elif defined _GxGDEM0213B74_H_
     Serial.println("Workaround for GDEM0213B74 display: full refresh instead of partial!");
@@ -208,4 +210,44 @@ void displayTime(bool useLast) {
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {
   display.drawBitmap(logo, posX, posY, sizeX, sizeY, GxEPD_WHITE);
   updateWindow(posX, posY, sizeX, sizeY);
+}
+
+bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp) {
+  return displayBalanceAndPaymentsPeriodically(xBeforeLNURLp, false);
+}
+
+// returns whether it updated the display
+bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp, bool forceFetch) {
+  long nowUpdatedBalanceMillis = millis();
+  // if there is a lastBalance and it was recently refreshed, then don't update balance
+  if (!forceFetch && (lastBalance != -NOT_SPECIFIED && (nowUpdatedBalanceMillis - lastUpdatedBalance) < UPDATE_BALANCE_PERIOD_MILLIS)) {
+    return false;
+  } else {
+    lastUpdatedBalance = nowUpdatedBalanceMillis; // even if the below operations fail, this still counts as an update, because we don't want to retry immediately if something fails
+  }
+
+  int currentBalance = getWalletBalance();
+  if (currentBalance == NOT_SPECIFIED) {
+    displayFit("Get wallet error", 0, 0, xBeforeLNURLp, 22, 2, true);
+    return false;
+  } else if (currentBalance == lastBalance) {
+    return false; // no change (unless someone deposited and withdrew the same amount) so no need to fetch payments and fiat values
+  } else {
+    lastBalance = currentBalance;
+  }
+
+  // Display balance
+  // height on 122px display should be 20px so (height - 2) / 6
+  // width on 250px display should be 192px so width * 3 / 4
+  int yAfterBalance = displayFit(String(currentBalance) + " sats",0,0,xBeforeLNURLp,(displayHeight()/7)+1,5);
+
+  // Display payment amounts and comments
+  int maxYforLNURLPayments = displayHeight()-1;
+  if (isConfigured(btcPriceCurrencyChar)) maxYforLNURLPayments -= 20; // leave room for fiat values at the bottom (fontsize 2 = 18 + 2 extra for the black background)
+  feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+  showLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance, maxYforLNURLPayments);
+
+  // Display fiat values
+  feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+  showFiatValues(currentBalance, xBeforeLNURLp);
 }

@@ -56,6 +56,8 @@
 // if the device wakes up from something else, like a watchdog trigger, the wakeup_count is reset
 RTC_DATA_ATTR int wakeup_count;
 
+long lastHibernateCheck = -HIBERNATE_CHECK_PERIOD_MILLIS;
+
 String print_reset_reasons() {
     Serial.println("CPU0 reset reason:");
     print_reset_reason(rtc_get_reset_reason(0));
@@ -174,7 +176,15 @@ int batteryVoltageToSleepSeconds(double voltage) {
   }
 }
 
-void hibernateDependingOnBattery() {
+// returns: true if hibernate was checked, false if it was rate limited
+bool hibernateDependingOnBattery() {
+  // rate limit these hibernate checks because it seems to become buggy 
+  long nowCheckedHibernate = millis();
+  if ((nowCheckedHibernate - lastHibernateCheck) < HIBERNATE_CHECK_PERIOD_MILLIS) {
+    return false;
+  } else {
+    lastHibernateCheck = nowCheckedHibernate;
+  }
   Serial.println("FREE HEAP MEMORY: " + String(ESP.getFreeHeap()));
 
   int resetReason = rtc_get_reset_reason(0);
@@ -182,25 +192,31 @@ void hibernateDependingOnBattery() {
   if ((resetReason == POWERON_RESET || wakeup_reason == ESP_SLEEP_WAKEUP_EXT0 || wakeup_reason == ESP_SLEEP_WAKEUP_EXT1)
     && millis() < (AWAKE_SECONDS_AFTER_MANUAL_WAKEUP*1000)) {
     Serial.println("Device was woken up manually less than " + String(AWAKE_SECONDS_AFTER_MANUAL_WAKEUP) + "s ago, not sleeping yet because a payment might come in..");
-    return;
+    return true;
   }
 
-  double voltage = getBatteryVoltage();
+  double voltage = getBatteryVoltage(); // takes around 450ms (due to 4 battery voltage samples with 100ms delay between)
+  // voltage < 0 means it's battery powered, but sometimes it can glitch and show NOT battery powered
+  // to avoid going to sleep on just a glitch, don't go to sleep as long as the average battery voltage is not also negative.
   if (voltage < 0) {
     Serial.println("Device is not battery powered so not sleeping.");
-    return;
+    return true;
+  } else if (getAverageBatteryVoltage()<0) {
+    Serial.println("Saved from an unwanted sleep by the average battery voltage check!");
+    return true;
   }
 
   int sleepTimeSeconds = batteryVoltageToSleepSeconds(voltage);
   if (sleepTimeSeconds == 0) {
     Serial.println("Device has extremely full battery so not sleeping.");
-    return;
+    return true;
   } else {
     Serial.println("Battery voltage is " + String(voltage) + " so sleeping for " + String(sleepTimeSeconds) + "seconds.");
+    displayTime(false); // update time before going to sleep so the user sees the last update time
     hibernate(sleepTimeSeconds);
   }
+  return true;
 }
-
 
 void hibernate(int sleepTimeSeconds) {
   Serial.println("Going to sleep for " + String(sleepTimeSeconds) + " seconds...");

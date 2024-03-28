@@ -22,6 +22,10 @@ extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 6;
 
 #define CHECK_UPDATE_PERIOD_SECONDS 24*60*60
 
+#define UPDATE_BALANCE_PERIOD_MILLIS 1000 * 60 * 10 // fallback to updating balance every 10 minutes if the instant websocket method is unavailable
+
+#define HIBERNATE_CHECK_PERIOD_MILLIS 1000 * 30 // hibernate check every 30 seconds
+
 // In alphabetical order
 const char * deWeekdays[] = { "S", "M", "D", "M", "D", "F", "S"};
 const char * dkWeekdays[] = { "S", "M", "T", "O", "T", "F", "L"};
@@ -29,7 +33,7 @@ const char * esWeekdays[] = { "D", "L", "M", "M", "J", "V", "S"};
 const char * enWeekdays[] = { "S", "M", "T", "W", "T", "F", "S"};
 const char * nlWeekdays[] = { "Z", "M", "D", "W", "D", "V", "Z"};
 
-String currentVersion = "2.1.2";
+String currentVersion = "2.2.0";
 
 typedef enum {
     STR2INT_SUCCESS,
@@ -37,5 +41,7 @@ typedef enum {
     STR2INT_UNDERFLOW,
     STR2INT_INCONVERTIBLE
 } str2int_errno;
+
+String websocketApiUrl = "/api/v1/ws/";
 
 #endif

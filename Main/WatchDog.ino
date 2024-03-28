@@ -114,7 +114,7 @@ void long_watchdog_timeout() {
 
 // Meant to be called from the loop function
 void feed_watchdog() {
-    Serial.println("Feeding watchdog...");
+    //Serial.println("Feeding watchdog...");
     rtc_wdt_feed(); // for rtc watchdog
     //esp_task_wdt_reset(); // for task watchdog
     lastFeed = millis();

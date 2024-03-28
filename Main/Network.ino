@@ -2,6 +2,7 @@
 
 #define BUFFSIZE 256
 
+WebSocketsClient webSocket;
 
 const char * system_event_names[] = { "WIFI_READY", "SCAN_DONE", "STA_START", "STA_STOP", "STA_CONNECTED", "STA_DISCONNECTED", "STA_AUTHMODE_CHANGE", "STA_GOT_IP", "STA_LOST_IP", "STA_WPS_ER_SUCCESS", "STA_WPS_ER_FAILED", "STA_WPS_ER_TIMEOUT", "STA_WPS_ER_PIN", "STA_WPS_ER_PBC_OVERLAP", "AP_START", "AP_STOP", "AP_STACONNECTED", "AP_STADISCONNECTED", "AP_STAIPASSIGNED", "AP_PROBEREQRECVED", "GOT_IP6", "ETH_START", "ETH_STOP", "ETH_CONNECTED", "ETH_DISCONNECTED", "ETH_GOT_IP", "MAX"};
 const char * system_event_reasons2[] = { "UNSPECIFIED", "AUTH_EXPIRE", "AUTH_LEAVE", "ASSOC_EXPIRE", "ASSOC_TOOMANY", "NOT_AUTHED", "NOT_ASSOCED", "ASSOC_LEAVE", "ASSOC_NOT_AUTHED", "DISASSOC_PWRCAP_BAD", "DISASSOC_SUPCHAN_BAD", "UNSPECIFIED", "IE_INVALID", "MIC_FAILURE", "4WAY_HANDSHAKE_TIMEOUT", "GROUP_KEY_UPDATE_TIMEOUT", "IE_IN_4WAY_DIFFERS", "GROUP_CIPHER_INVALID", "PAIRWISE_CIPHER_INVALID", "AKMP_INVALID", "UNSUPP_RSN_IE_VERSION", "INVALID_RSN_IE_CAP", "802_1X_AUTH_FAILED", "CIPHER_SUITE_REJECTED", "BEACON_TIMEOUT", "NO_AP_FOUND", "AUTH_FAIL", "ASSOC_FAIL", "HANDSHAKE_TIMEOUT", "CONNECTION_FAIL" };
@@ -204,4 +205,82 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
     //Serial.println("returning total chunked reply = '" + reply + "'");
     return reply;
   }
+}
+
+
+void connectWebsocket() {
+  // wss://legend.lnbits.com/api/v1/ws/<walletid>
+  String url = websocketApiUrl;
+  if (isConfigured(walletID)) {
+    url += String(walletID);
+  } else if (getWalletIDfromLNURLp().length() > 0) {
+    url += getWalletIDfromLNURLp();
+  } else {
+    Serial.println("Can't connect to websocket because no wallet ID is configured nor found in the LNURLp list. Aborting.");
+    return;
+  }
+  Serial.println("Trying to connect websocket: " + String(lnbitsHost) + url);
+  webSocket.beginSSL(lnbitsHost, 443, url);
+  webSocket.onEvent(webSocketEvent);
+  webSocket.setReconnectInterval(5000);
+}
+
+int parseWebsocketText(String text) {
+  DynamicJsonDocument doc(4096); // 4096 bytes is plenty for just the wallet details (id, name and balance info)
+
+  DeserializationError error = deserializeJson(doc, text);
+  if (error) {
+    Serial.print("deserializeJson() failed: ");
+    Serial.println(error.f_str());
+    return NOT_SPECIFIED;
+  }
+
+  int walletBalance = doc["wallet_balance"];
+  Serial.println("Wallet now contains " + String(walletBalance) + " sats");
+
+  int amount = doc["payment"]["amount"];
+  Serial.println("Got payment amount: " + String(amount));
+
+  // if it was a direct payment to an invoice instead of a lnurlp, the comment will be in: const char* comment = doc["payment"]["memo"];
+  const char* comment = doc["payment"]["extra"]["comment"];
+  if (!comment && doc["payment"]["extra"]["comment"][0]) { // comments can also be a list
+    Serial.println("Getting comment from list...");
+    comment = doc["payment"]["extra"]["comment"][0];
+  }
+  String paymentComment(comment);
+  Serial.println("Got payment comment: " + String(comment));
+}
+
+void webSocketEvent(WStype_t type, uint8_t * payload, size_t wslength) {
+    String payloadStr = "";
+    switch(type) {
+        case WStype_DISCONNECTED:
+            Serial.printf("[WSc] Disconnected!\n");
+            Serial.println(" and length: " + String(wslength));
+            Serial.println("payload : " + String((int)payload));
+            break;
+        case WStype_CONNECTED:
+            Serial.printf("[WSc] Connected to url: %s, waiting for incoming payments...\n",  payload);
+            webSocket.sendTXT("Connected"); // send message to server when Connected
+            break;
+        case WStype_TEXT:
+            payloadStr = String((char*)payload);
+            Serial.println("Received data from socket: " + payloadStr);
+            parseWebsocketText(payloadStr);
+            displayBalanceAndPaymentsPeriodically(xBeforeLNURLp, true); // Force refresh (TODO: add the parsed amount,comment to the list and just refresh the list)
+            break;
+        case WStype_ERROR:
+            Serial.printf("[WSc] error!\n");
+            break;
+        case WStype_FRAGMENT_TEXT_START:
+        case WStype_FRAGMENT_BIN_START:
+        case WStype_FRAGMENT:
+        case WStype_FRAGMENT_FIN:
+            Serial.printf("[WSc] other fragment!\n");
+            break;
+    }
+}
+
+void websocket_loop() {
+    webSocket.loop();
 }

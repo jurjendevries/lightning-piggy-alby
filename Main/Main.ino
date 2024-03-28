@@ -31,6 +31,8 @@
 #include "Fonts/LatoMedium20pt.h"
 #include "Fonts/LatoMedium26pt.h"
 
+#include <WebSocketsClient.h> // Needs to be here, otherwise compilation error...
+
 #include "Constants.h"
 
 // Global variables for display
@@ -73,12 +75,15 @@ void setup() {
     #ifndef DEBUG
     connectWifi();
     short_watchdog_timeout(); // after the long wifi connection stage, the next operations shouldn't take long
+    displayFit("Fetching " + String(lnbitsHost), 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
     #endif
-   
+  
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     String lnurlp = getLNURLp();
     display.fillScreen(GxEPD_WHITE);  // erase the setup screen
     updateWindow(0, 0, displayWidth(), displayHeight());
+    displayTime(false);
+    delay(10000);
     if (lnurlp == "null") {
       xBeforeLNURLp = displayWidth();
       Serial.println("Warning, could not find lnurlp link for this wallet, did you create one?");
@@ -88,43 +93,30 @@ void setup() {
         xBeforeLNURLp = showLNURLpQR(lnurlp); // xBeforeLNURLp = 192 on 250px wide display
     }
 
-    // showLogo(epd_bitmap_Bitcoin, 40, 40, displayWidth()-1 - ((displayWidth()-xBeforeLNURLp+40)/2), (displayWidth()-xBeforeLNURLp)+1);
-}
-
-void loop() {
     displayHealthAndStatus(false);
-
-    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-    int balance = getWalletBalance();
-
-    // build the new screen:
-    int yAfterBalance  = 0;
-
-    if (balance != NOT_SPECIFIED) {
-      String walletBalanceText = String(balance) + " sats";
-      // height on 122px display should be 20px so (height - 2) / 6
-      // width on 250px display should be 192px so width * 3 / 4
-      yAfterBalance = displayFit(walletBalanceText,0,0,xBeforeLNURLp,(displayHeight()/7)+1,5);
-    }
-    else {
-       displayFit("Get wallet error", 0, 0, xBeforeLNURLp, 22, 2, true);
-    }
-
-    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-    int maxYforLNURLPayments = displayHeight()-1;
-    if (isConfigured(btcPriceCurrencyChar)) maxYforLNURLPayments -= 20; // leave room for fiat values at the bottom (fontsize 2 = 18 + 2 extra for the black background)
-    showLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance, maxYforLNURLPayments);
-
-    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-    showFiatValues(balance, xBeforeLNURLp);
-
-    displayTime(false);
-
-    displayVoltageWarning();
+    displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
 
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     if (wifiConnected()) checkShowUpdateAvailable();
 
     watchdogWasntTriggered();
     hibernateDependingOnBattery();
+
+    // try to fetch walletID from lnurlp/list if we don't have it yet:
+    if (!isConfigured(walletID) && getWalletIDfromLNURLp().length() == 0) getLNURLp(true);
+
+    // connect the websocket if we have a walletID
+    if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) connectWebsocket();
+}
+
+void loop() {
+  feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+  if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) {
+    websocket_loop();
+  } else {
+    displayHealthAndStatus(false); // takes ~2000ms, which is too much to do with the websocket
+    displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
+    // if some time has passed, then check balance and if it changed, then update payments
+  }
+  if (!hibernateDependingOnBattery()) delay(200);
 }
