@@ -1,6 +1,6 @@
 // DEBUG causes no wifi connection and only dummy data to be used,
 // for faster startup and testing of display code etc.
-//
+
 //#define DEBUG
 #include "Constants.h"
 
