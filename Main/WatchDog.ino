@@ -2,7 +2,7 @@
 #include "soc/rtc_wdt.h"
 
 // When to restart (s)
-#define WDT_TIMEOUT 20
+#define WDT_TIMEOUT 30
 #define WDT_TIMEOUT_LONG 60
 
 // "noinit" DRAM is not initialized during software restarts so it's the perfect place to keep this counter
@@ -78,16 +78,6 @@ void longsleepAfterMaxWatchdogReboots() {
     hibernate(sleepHours*60*60);
 }
 
-void set_watchdog_time(int seconds) {
-  Serial.println("Setting Watch Dog Timer to " + String(seconds) + " seconds");
-
-  // For Task watchdog:
-  // esp_task_wdt_init(seconds*1000, true);
-
-  // for RTC watchdog:
-  rtc_wdt_set_time(RTC_WDT_STAGE0, seconds*1000);
-}
-
 void enable_watchdog(int seconds) {
   // For Task watchdog:
   // esp_task_wdt_init(seconds*1000, true);
@@ -95,9 +85,9 @@ void enable_watchdog(int seconds) {
   // for RTC watchdog:
   rtc_wdt_protect_off();      //Disable RTC WDT write protection
   rtc_wdt_set_stage(RTC_WDT_STAGE0, RTC_WDT_STAGE_ACTION_RESET_SYSTEM);
-  set_watchdog_time(seconds);
+  rtc_wdt_set_time(RTC_WDT_STAGE0, seconds*1000);
   rtc_wdt_enable();           //Start the RTC WDT timer
-  // rtc_wdt_protect_on();       // Not really needed
+  rtc_wdt_protect_on();       // Not really needed?
 }
 
 bool nextWatchdogRebootWillReachMax() {
@@ -105,11 +95,11 @@ bool nextWatchdogRebootWillReachMax() {
 }
 
 void short_watchdog_timeout() {
-  set_watchdog_time(WDT_TIMEOUT);
+  enable_watchdog(WDT_TIMEOUT);
 }
 
 void long_watchdog_timeout() {
-  set_watchdog_time(WDT_TIMEOUT_LONG);
+  enable_watchdog(WDT_TIMEOUT_LONG);
 }
 
 // Meant to be called from the loop function
