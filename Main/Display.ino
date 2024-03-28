@@ -232,9 +232,13 @@ bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp, bool forceFetch) {
     return false;
   } else if (currentBalance == lastBalance) {
     return false; // no change (unless someone deposited and withdrew the same amount) so no need to fetch payments and fiat values
-  } else {
-    lastBalance = currentBalance;
   }
+
+  updateBalanceAndPayments(xBeforeLNURLp, currentBalance, true);
+}
+
+void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchPayments) {
+  lastBalance = currentBalance;
 
   // Display balance
   // height on 122px display should be 20px so (height - 2) / 6
@@ -244,10 +248,34 @@ bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp, bool forceFetch) {
   // Display payment amounts and comments
   int maxYforLNURLPayments = displayHeight()-1;
   if (isConfigured(btcPriceCurrencyChar)) maxYforLNURLPayments -= 20; // leave room for fiat values at the bottom (fontsize 2 = 18 + 2 extra for the black background)
-  feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-  showLNURLPayments(2, xBeforeLNURLp - 10, yAfterBalance, maxYforLNURLPayments);
+  if (fetchPayments) {
+    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+    fetchLNURLPayments(MAX_PAYMENTS);
+  }
+  feed_watchdog();
+  displayLNURLPayments(MAX_PAYMENTS, xBeforeLNURLp - 10, yAfterBalance, maxYforLNURLPayments);
 
   // Display fiat values
   feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
   showFiatValues(currentBalance, xBeforeLNURLp);
+}
+
+/**
+ * @brief Get recent LNURL Payments
+ *
+ * @param limit
+ */
+void displayLNURLPayments(int limit, int maxX, int startY, int maxY) {
+  int smallestFontHeight = 8;
+  // Draw a line under the total sats amount
+  // Draws at 0,22 with size 179,1 on 250x122px display
+  display.fillRect(0, startY+3, maxX-3, 1, GxEPD_BLACK);
+  updateWindow(0, startY+3, maxX-3, 1);
+  startY+=4;
+  uint16_t yPos = startY;
+  for (int i=0;i<min(getNroflnurlPayments(),limit) && yPos+smallestFontHeight < maxY;i++) {
+    Serial.println("Displaying payment: " + getLnurlPayment(i));
+    yPos = displayFit(getLnurlPayment(i), 0, yPos, maxX, maxY, 3);
+    yPos += 2; // leave some margin between the comments
+  }
 }

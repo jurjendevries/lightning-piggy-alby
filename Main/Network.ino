@@ -237,30 +237,29 @@ void connectWebsocket() {
   webSocket.setReconnectInterval(5000);
 }
 
-int parseWebsocketText(String text) {
+void parseWebsocketText(String text) {
+  String returnValue = "";
   DynamicJsonDocument doc(4096); // 4096 bytes is plenty for just the wallet details (id, name and balance info)
 
   DeserializationError error = deserializeJson(doc, text);
   if (error) {
     Serial.print("deserializeJson() failed: ");
     Serial.println(error.f_str());
-    return NOT_SPECIFIED;
+    return;
   }
 
   int walletBalance = doc["wallet_balance"];
-  Serial.println("Wallet now contains " + String(walletBalance) + " sats");
+  int balanceBiasInt = getBalanceBiasAsInt();
+  Serial.println("Wallet now contains " + String(walletBalance) + " sats and balance bias of " + String(balanceBiasInt) + " sats.");
 
-  int amount = doc["payment"]["amount"];
-  Serial.println("Got payment amount: " + String(amount));
-
-  // if it was a direct payment to an invoice instead of a lnurlp, the comment will be in: const char* comment = doc["payment"]["memo"];
-  const char* comment = doc["payment"]["extra"]["comment"];
-  if (!comment && doc["payment"]["extra"]["comment"][0]) { // comments can also be a list
-    Serial.println("Getting comment from list...");
-    comment = doc["payment"]["extra"]["comment"][0];
+  if (doc["payment"]) {
+    String paymentDetail = paymentJsonToString(doc["payment"].as<JsonObject>());
+    Serial.println("Websocket update with paymentDetail: " + paymentDetail);
+    addLNURLpayment(paymentDetail);
+    updateBalanceAndPayments(xBeforeLNURLp, walletBalance+balanceBiasInt, false);
+  } else {
+    Serial.println("Websocket update did not contain payment, ignoring...");
   }
-  String paymentComment(comment);
-  Serial.println("Got payment comment: " + String(comment));
 }
 
 void webSocketEvent(WStype_t type, uint8_t * payload, size_t wslength) {
@@ -279,7 +278,6 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t wslength) {
             payloadStr = String((char*)payload);
             Serial.println("Received data from socket: " + payloadStr);
             parseWebsocketText(payloadStr);
-            displayBalanceAndPaymentsPeriodically(xBeforeLNURLp, true); // Force refresh (TODO: add the parsed amount,comment to the list and just refresh the list)
             break;
         case WStype_ERROR:
             Serial.printf("[WSc] error!\n");

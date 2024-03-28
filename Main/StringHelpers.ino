@@ -112,3 +112,53 @@ str2int_errno str2int(int *out, char *s, int base) {
     *out = l;
     return STR2INT_SUCCESS;
 }
+
+
+String stringArrayToString(String stringArray[], int nrOfItems) {
+  String returnValue = "String Array with " + String(nrOfItems) + " items:\n";
+  for (int i=0;i<nrOfItems;i++) {
+    returnValue += "item " + String(i) + ":" + stringArray[i] + "\n";
+  }
+  return returnValue;
+}
+
+String paymentJsonToString(JsonObject areaElems) {
+  String paymentDetail = "";
+  //Serial.println("paymentJsonToString");
+  if(areaElems["extra"] && !areaElems["pending"] && areaElems["extra"]["tag"]) {
+    // Only do lnurlp payments
+    const char* tag = areaElems["extra"]["tag"];
+    //Serial.println("tag = " + String(tag));
+    if(strncmp(tag,"lnurlp",6) == 0) {
+
+      // Payment always has an amount
+      long long amount = areaElems["amount"]; // long long to support amounts above 999999000 millisats
+      long amountSmaller = amount / 1000; // millisats to sats
+
+      String paymentAmount(amountSmaller);
+      String units = "sats";
+      if (amountSmaller < 2) units = "sat";
+      paymentDetail = paymentAmount + " " + units;
+
+      // Payment has an optional comment
+      if (areaElems["extra"]["comment"]) {
+        //Serial.println("Getting comment...");
+        const char* comment = areaElems["extra"]["comment"];
+        if (!comment && areaElems["extra"]["comment"][0]) { // comments can also be a list
+          //Serial.println("Getting comment from list...");
+          comment = areaElems["extra"]["comment"][0];
+        }
+        String paymentComment(comment);
+        paymentDetail += ": " + paymentComment;
+      } else {
+        Serial.println("Payment has no comment.");
+        paymentDetail += "!"; // no comment so "99999999 sats!" (= almost 1 BTC) will fit on one line in big font
+      }
+    } else {
+      Serial.println("Ignoring non lnurlp payment.");
+    }
+  } else {
+    Serial.println("Ignoring regular payment without extra info for lnurlp.");
+  }
+  return paymentDetail;
+}

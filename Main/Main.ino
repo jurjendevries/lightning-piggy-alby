@@ -31,6 +31,7 @@
 #include "Fonts/LatoMedium20pt.h"
 #include "Fonts/LatoMedium26pt.h"
 
+#include <ArduinoJson.h>
 #include <WebSocketsClient.h> // Needs to be here, otherwise compilation error...
 
 #include "Constants.h"

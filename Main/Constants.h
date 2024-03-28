@@ -15,6 +15,8 @@ const unsigned int NOTCONFIGURED_LENGTH = 13;
 // Maximum time to show the bootslogan
 extern const int MAX_BOOTSLOGAN_SECONDS = 15;
 
+#define MAX_PAYMENTS 6 // even the 2.66 inch display can only fit 6
+
 extern const int MAX_WATCHDOG_REBOOTS = 3;
 extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 6;
 
@@ -33,7 +35,7 @@ const char * esWeekdays[] = { "D", "L", "M", "M", "J", "V", "S"};
 const char * enWeekdays[] = { "S", "M", "T", "W", "T", "F", "S"};
 const char * nlWeekdays[] = { "Z", "M", "D", "W", "D", "V", "Z"};
 
-String currentVersion = "2.2.0";
+String currentVersion = "2.2.1";
 
 typedef enum {
     STR2INT_SUCCESS,

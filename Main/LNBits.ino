@@ -1,7 +1,9 @@
-#include <ArduinoJson.h>
 #include "Constants.h"
 
 String walletIDfromLNURLp = "";
+
+String lnurlPayments[MAX_PAYMENTS];
+int nroflnurlPayments = 0;
 
 int getWalletBalance() {
   Serial.println("Getting wallet details...");
@@ -41,22 +43,9 @@ int getWalletBalance() {
   return walletBalance+balanceBiasInt;
 }
 
-/**
- * @brief Get recent LNURL Payments
- * 
- * @param limit 
- */
-void showLNURLPayments(int limit, int maxX, int startY, int maxY) {
-
-  // Draw a line under the total sats amount
-  // Draws at 0,22 with size 179,1 on 250x122px display
-  display.fillRect(0, startY+3, maxX-3, 1, GxEPD_BLACK);
-  updateWindow(0, startY+3, maxX-3, 1);
-  startY+=4;
-
-  Serial.println("Getting " + String(limit) + " LNURL payments...");
-
+void fetchLNURLPayments(int limit) {
   const String url = "/api/v1/payments?limit=" + String(limit);
+  Serial.println("Getting payments from " + String(url));
 
   #ifdef DEBUG
   // To escape quotes and newlines, use:
@@ -87,55 +76,19 @@ void showLNURLPayments(int limit, int maxX, int startY, int maxY) {
   }
 
   Serial.println("Displaying payment amounts and comments...");
-  uint16_t yPos = startY;
   for (JsonObject areaElems : doc.as<JsonArray>()) {
-    Serial.println("Parsing payment...");
-    if(areaElems["extra"] && !areaElems["pending"] && areaElems["extra"]["tag"]) {
-
-      // Only do lnurlp payments
-      const char* tag = areaElems["extra"]["tag"];
-      if(strncmp(tag,"lnurlp",6) == 0) {
-
-        // Payment always has an amount
-        long long amount = areaElems["amount"]; // long long to support amounts above 999999000 millisats
-        long amountSmaller = amount / 1000; // millisats to sats
-        String paymentAmount(amountSmaller);
-        String units = "sats";
-        if (amountSmaller < 2) units = "sat";
-        String paymentDetail = paymentAmount + " " + units;
-
-        // Payment has an optional comment
-        if (areaElems["extra"]["comment"]) {
-          Serial.println("Getting comment...");
-          const char* comment = areaElems["extra"]["comment"];
-          if (!comment && areaElems["extra"]["comment"][0]) { // comments can also be a list
-            //Serial.println("Getting comment from list...");
-            comment = areaElems["extra"]["comment"][0];
-          }
-          String paymentComment(comment);
-          paymentDetail += ": " + paymentComment;
-        } else {
-          paymentDetail += "!"; // no comment so "99999999 sats!" (= almost 1 BTC) will fit on one line in big font
-        }
-
-        // Display the message
-        // If not enough space is available (because the first message took it all) then claw it back
-        if (yPos > maxY * 0.8) {
-          Serial.println("Not enough vertical space is provided, taking it...");
-          yPos = maxY * 0.8;
-          Serial.println("yPos = " + String(yPos));
-        }
-
-        yPos = displayFit(paymentDetail, 0, yPos, maxX, maxY, 3);
-        yPos += 2; // leave some margin between the comments
-      } else {
-        Serial.println("Skipping because extra tag is not lnurlp...");
-      }
+    String paymentDetail = paymentJsonToString(areaElems);
+    if (paymentDetail.length() > 0) {
+      lnurlPayments[nroflnurlPayments] = paymentDetail;
+      nroflnurlPayments++;
     } else {
-      Serial.println("Skipping because no extra or no extra tag or still pending...");
+      Serial.println("paymentJsonToString returned empty String.");
     }
   }
+
+  Serial.println("After parsing LNURL payments, the list contains:" + stringArrayToString(lnurlPayments, nroflnurlPayments));
 }
+
 
 String getLNURLp() {
   return getLNURLp(false); // mustFetchWalletID = false
@@ -195,4 +148,21 @@ int getBalanceBiasAsInt() {
 
 String getWalletIDfromLNURLp() {
   return walletIDfromLNURLp;
+}
+
+void addLNURLpayment(String toadd) {
+  // first move them all down one spot
+  for (int i=min(nroflnurlPayments,MAX_PAYMENTS-1);i>0;i--) {
+    lnurlPayments[i] = lnurlPayments[i-1];
+  }
+  lnurlPayments[0] = toadd;
+  Serial.println("After parsing LNURL payments, the list contains:" + stringArrayToString(lnurlPayments, nroflnurlPayments));
+}
+
+int getNroflnurlPayments() {
+  return nroflnurlPayments;
+}
+
+String getLnurlPayment(int item) {
+  return lnurlPayments[item];
 }
