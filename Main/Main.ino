@@ -82,8 +82,6 @@ void setup() {
     String lnurlp = getLNURLp();
     display.fillScreen(GxEPD_WHITE);  // erase the setup screen
     updateWindow(0, 0, displayWidth(), displayHeight());
-    displayTime(false);
-    delay(10000);
     if (lnurlp == "null") {
       xBeforeLNURLp = displayWidth();
       Serial.println("Warning, could not find lnurlp link for this wallet, did you create one?");
