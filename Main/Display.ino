@@ -245,6 +245,7 @@ bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp) {
   }
 
   updateBalanceAndPayments(xBeforeLNURLp, currentBalance, true);
+  return true;
 }
 
 // fetchPayments forcing option is there to populate the walletID for the websocket (in case it's not configured)
