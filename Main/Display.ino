@@ -1,7 +1,10 @@
-long lastUpdatedBalance = -UPDATE_BALANCE_PERIOD_MILLIS;
+long lastRefreshedVoltage = -UPDATE_VOLTAGE_PERIOD_MILLIS;  // this makes it update when first run
+long lastUpdatedBalance = -UPDATE_BALANCE_PERIOD_MILLIS;  // this makes it update when first run
 int lastBalance = -NOT_SPECIFIED;
 
 int smallestFontHeight = 14;
+
+int statusAreaVoltageHeight = -1; // this value is cached after it's calculated so it can be reused later to updated only the voltage
 
 void setup_display() {
     SPI.begin(EPD_SCLK, EPD_MISO, EPD_MOSI);
@@ -221,15 +224,11 @@ void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int p
   updateWindow(posX, posY, sizeX, sizeY);
 }
 
-bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp) {
-  return displayBalanceAndPaymentsPeriodically(xBeforeLNURLp, false);
-}
-
 // returns whether it updated the display
-bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp, bool forceFetch) {
+bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp) {
   long nowUpdatedBalanceMillis = millis();
   // if there is a lastBalance and it was recently refreshed, then don't update balance
-  if (!forceFetch && (lastBalance != -NOT_SPECIFIED && (nowUpdatedBalanceMillis - lastUpdatedBalance) < UPDATE_BALANCE_PERIOD_MILLIS)) {
+  if (lastBalance != -NOT_SPECIFIED && (nowUpdatedBalanceMillis - lastUpdatedBalance) < UPDATE_BALANCE_PERIOD_MILLIS) {
     return false;
   } else {
     lastUpdatedBalance = nowUpdatedBalanceMillis; // even if the below operations fail, this still counts as an update, because we don't want to retry immediately if something fails
@@ -246,6 +245,7 @@ bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp, bool forceFetch) {
   updateBalanceAndPayments(xBeforeLNURLp, currentBalance, true);
 }
 
+// fetchPayments forcing option is there to populate the walletID for the websocket (in case it's not configured)
 void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchPayments) {
   lastBalance = currentBalance;
 
@@ -308,7 +308,7 @@ void displayFetching() {
 }
 
 // returns the y value after showing all the status info
-int displayStatus(int xBeforeLNURLp, bool showsleep) {
+void displayStatus(int xBeforeLNURLp, bool showsleep) {
   int vMargin = 2;
   int startY = displayWidth() - xBeforeLNURLp + vMargin; // x == y because the QR code is square
 
@@ -334,14 +334,27 @@ int displayStatus(int xBeforeLNURLp, bool showsleep) {
   String displayString = getShortDisplayInfo();
   startY = vMargin + displayFit(displayString, xBeforeLNURLp, startY, displayWidth(), startY+smallestFontHeight-vMargin, 1, false, true);
 
+  statusAreaVoltageHeight = startY;
+  displayRefreshedVoltagePeriodically();
+}
+
+// Uses the cached displayRefreshedVoltage
+// This can be called without doing the entire refresh, which is too slow for reliable websocket handling.
+void displayRefreshedVoltagePeriodically() {
+  long nowRefreshedVoltageMillis = millis();
+  // if there is a lastBalance and it was recently refreshed, then don't update balance
+  if ((nowRefreshedVoltageMillis - lastRefreshedVoltage) < UPDATE_VOLTAGE_PERIOD_MILLIS) {
+    return;
+  } else {
+    lastRefreshedVoltage = nowRefreshedVoltageMillis; // even if the below operations fail, this still counts as an update, because we don't want to retry immediately if something fails
+  }
+
   double voltage = getBatteryVoltage();
   String voltageString = "NOBAT";
   if (voltage > 0) {
     voltageString = String(voltage, 2) + "V";
   }
-  startY = displayFit(voltageString, xBeforeLNURLp, startY, displayWidth(), startY+smallestFontHeight-vMargin, 1, false, true);
-
-  return startY;
+  displayFit(voltageString, xBeforeLNURLp, statusAreaVoltageHeight, displayWidth(), statusAreaVoltageHeight+smallestFontHeight, 1, false, true);
 }
 
 // returns true if voltage is low, false otherwise

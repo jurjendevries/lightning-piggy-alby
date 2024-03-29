@@ -26,6 +26,8 @@ extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 6;
 
 #define UPDATE_BALANCE_PERIOD_MILLIS 1000 * 60 * 10 // fallback to updating balance every 10 minutes if the instant websocket method is unavailable
 
+#define UPDATE_VOLTAGE_PERIOD_MILLIS 1000 * 60 * 5 // update voltage display every 5 minutes
+
 #define HIBERNATE_CHECK_PERIOD_MILLIS 1000 * 30 // hibernate check every 30 seconds
 
 // In alphabetical order

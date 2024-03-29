@@ -124,6 +124,7 @@ void loop() {
   }
   if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) {
     websocket_loop();
+    displayRefreshedVoltagePeriodically(); // only refresh voltage so the user can see it going down with time. the rest can stay.
   } else {
     displayStatus(xBeforeLNURLp, false);  // takes ~2000ms, which is too much to do with the websocket
     displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
