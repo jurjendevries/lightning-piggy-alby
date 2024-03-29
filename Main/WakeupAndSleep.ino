@@ -214,7 +214,6 @@ bool hibernateDependingOnBattery() {
     return true;
   } else {
     Serial.println("Battery voltage is " + String(voltage) + " so sleeping for " + String(sleepTimeSeconds) + "seconds.");
-    displayTime(false); // update time before going to sleep so the user sees the last update time
     hibernate(sleepTimeSeconds);
   }
   return true;
@@ -223,10 +222,12 @@ bool hibernateDependingOnBattery() {
 void hibernate(int sleepTimeSeconds) {
   Serial.println("Going to sleep for " + String(sleepTimeSeconds) + " seconds...");
 
+  displayHealthAndStatus(true); // update health and status one last time, with sleep indication
+  displayTime(false); // update time before going to sleep so the user sees the last update time
+
+  disconnectWebsocket();
   // Disconnect wifi cleanly because some access points will refuse reconnections if this is forgotten...
   disconnectWifi();
-
-  displayHealthAndStatus(true); // update health and status one last time, with sleep indication
 
   uint64_t deepSleepTime = (uint64_t)sleepTimeSeconds * (uint64_t)1000 * (uint64_t)1000;
   esp_sleep_pd_config(ESP_PD_DOMAIN_RTC_PERIPH, ESP_PD_OPTION_ON); // RTC peripherals needs to stay on for GPIO32's pulldown to work

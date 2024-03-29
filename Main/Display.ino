@@ -111,14 +111,17 @@ int fitMaxText(String text, int maxWidth) {
 }
 
 int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize) {
-    return displayFit(text, startX, startY, endX, endY, fontSize, false);
+    return displayFit(text, startX, startY, endX, endY, fontSize, false, false);
 }
 
+int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize, bool invert) {
+    return displayFit(text, startX, startY, endX, endY, fontSize, invert, false);
+}
 
 // Try to fit a String into a rectangle, including the borders.
 // bool bold == true means black background, white text
 // returns: the y position after fitting the text
-int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert) {
+int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight) {
   Serial.println("displayFit " + text + " length: " + String(text.length()));
 
   if (text.length() == 0) {
@@ -169,7 +172,11 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
       uint16_t w, h;
       display.getTextBounds(textLine, 0, 0, &x1, &y1, &w, &h);
       //Serial.println("getTextBounds of textLine: " + String(x1) + "," + String(y1) + ","+ String(w) + ","+ String(h));
-      display.setCursor(startX, yPos + h); // bottom of the line
+      if (!alignRight) {
+        display.setCursor(startX, yPos + h); // bottom of the line
+      } else {
+        display.setCursor(endX-w, yPos + h); // bottom of the line
+      }
       if (!invert) {
         display.setTextColor(GxEPD_BLACK);
       } else {
@@ -204,7 +211,7 @@ void displayTime(bool useLast) {
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     currentTime = getTimeFromNTP();
   }
-  displayFit(currentTime, (displayWidth()*79)/100, displayHeight()-13, displayWidth(), displayHeight(), 1);
+  displayFit(currentTime, displayWidth()-6*8, displayHeight()-14, displayWidth(), displayHeight(), 1);    // 6 characters, width of 8
 }
 
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {
@@ -278,4 +285,24 @@ void displayLNURLPayments(int limit, int maxX, int startY, int maxY) {
     yPos = displayFit(getLnurlPayment(i), 0, yPos, maxX, maxY, 3);
     yPos += 2; // leave some margin between the comments
   }
+}
+
+
+void displayWifiConnecting() {
+  displayFit("Wifi: " + String(ssid), 0, displayHeight()-14, displayWidth(), displayHeight(), 1);
+}
+
+
+void displayWifiStrengthBottom() {
+  displayWifiStrength(displayHeight()-14);
+}
+
+void displayWifiStrength(int y) {
+  int wifiStrengthPercent = strengthPercent(getStrength(5));
+  String wifiString = "Wifi:" + String(wifiStrengthPercent) + "%";
+  displayFit(wifiString, displayWidth()-8*7, y, displayWidth(), y+14, 1, false, true); // 14px vertical is enough for fontsize 1
+}
+
+void displayFetching() {
+  displayFit("Fetching " + String(lnbitsHost), 0, displayHeight()-14, displayWidth()-8*7, displayHeight(), 1); // leave room for 8 characters of wifi strength bottom right
 }

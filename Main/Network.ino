@@ -295,3 +295,13 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t wslength) {
 void websocket_loop() {
     webSocket.loop();
 }
+
+void disconnectWebsocket() {
+    if (webSocket.isConnected()) {
+      Serial.println("Websocket is connected, disconnecting...");
+      webSocket.disconnect();
+      delay(100);
+    } else {
+      Serial.println("Websocket is not connected, not disconnecting.");
+    }
+}

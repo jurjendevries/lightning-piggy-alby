@@ -72,13 +72,13 @@ void setup() {
 
     setup_watchdog();
 
-    displayFit("Wifi: " + String(ssid), 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
     #ifndef DEBUG
     connectWifi();
     short_watchdog_timeout(); // after the long wifi connection stage, the next operations shouldn't take long
-    displayFit("Fetching " + String(lnbitsHost), 0, displayHeight()-15, displayWidth(), displayHeight(), 1);
+    displayWifiStrengthBottom();
     #endif
-  
+    displayFetching();
+
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     String lnurlp = getLNURLp();
     display.fillScreen(GxEPD_WHITE);  // erase the setup screen
@@ -106,9 +106,19 @@ void setup() {
 
     // connect the websocket if we have a walletID
     if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) connectWebsocket();
+
+    Serial.println("Send s on the serial to hibernate for 10 seconds.");
 }
 
 void loop() {
+  while (Serial.available() > 0) {
+    char aChar = Serial.read();
+    if (aChar == 's') {
+      hibernate(10);
+    } else if (aChar == 'w') {
+      displayWifiStrengthBottom();
+    }
+  }
   feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
   if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) {
     websocket_loop();
