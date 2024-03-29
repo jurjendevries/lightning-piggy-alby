@@ -37,7 +37,7 @@ const char * esWeekdays[] = { "D", "L", "M", "M", "J", "V", "S"};
 const char * enWeekdays[] = { "S", "M", "T", "W", "T", "F", "S"};
 const char * nlWeekdays[] = { "Z", "M", "D", "W", "D", "V", "Z"};
 
-String currentVersion = "2.2.2";
+String currentVersion = "2.2.3";
 
 typedef enum {
     STR2INT_SUCCESS,
