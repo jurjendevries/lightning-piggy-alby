@@ -79,7 +79,6 @@ void setup() {
     #endif
     displayFetching();
 
-    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     String lnurlp = getLNURLp();
     display.fillScreen(GxEPD_WHITE);  // erase the setup screen
     updateWindow(0, 0, displayWidth(), displayHeight());
@@ -95,7 +94,6 @@ void setup() {
     displayStatus(xBeforeLNURLp, false);
     displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
 
-    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     if (wifiConnected()) checkShowUpdateAvailable();
 
     watchdogWasntTriggered();

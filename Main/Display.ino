@@ -127,6 +127,8 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 // bool bold == true means black background, white text
 // returns: the y position after fitting the text
 int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight) {
+  feed_watchdog(); // before this long-running and potentially hanging operation, it's a good time to feed the watchdog
+
   Serial.println("displayFit " + text + " length: " + String(text.length()));
 
   if (text.length() == 0) {
@@ -207,13 +209,13 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   }
 
   updateWindow(startX, startY, endX-startX+1, endY-startY+1);
+  feed_watchdog(); // after this long-running and potentially hanging operation, it's a good time to feed the watchdog
   return yPos;
 }
 
 void displayTime(bool useLast) {
   String currentTime = getLastTime();
   if (!useLast) {
-    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
     currentTime = getTimeFromNTP();
   }
   displayFit(currentTime, displayWidth()-6*8, displayHeight()-14, displayWidth(), displayHeight(), 1);    // 6 characters, width of 8
@@ -257,15 +259,10 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
   // Display payment amounts and comments
   int maxYforLNURLPayments = displayHeight()-1;
   if (isConfigured(btcPriceCurrencyChar)) maxYforLNURLPayments -= 20; // leave room for fiat values at the bottom (fontsize 2 = 18 + 2 extra for the black background)
-  if (fetchPayments) {
-    feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-    fetchLNURLPayments(MAX_PAYMENTS);
-  }
-  feed_watchdog();
+  if (fetchPayments) fetchLNURLPayments(MAX_PAYMENTS);
   displayLNURLPayments(MAX_PAYMENTS, xBeforeLNURLp - 10, yAfterBalance, maxYforLNURLPayments);
 
   // Display fiat values
-  feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
   showFiatValues(currentBalance, xBeforeLNURLp);
 }
 

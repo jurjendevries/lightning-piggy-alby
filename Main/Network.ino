@@ -139,6 +139,7 @@ int strengthPercent(float strength) {
 String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
   Serial.println("Fetching URL: " + endpointUrl);
   int timeout = 15;
+  feed_watchdog(); // feed before this long running and potentially hanging operation
   WiFiClientSecure client;
   client.setInsecure(); // see https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/README.md
   client.setHandshakeTimeout(timeout);
@@ -179,14 +180,12 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
 
   if (chunked == 0) {
     line = client.readString();
-    return line;
   } else {
     // chunked means first length, then content, then length, then content, until length == "0"
-    String reply = "";
-
     String lengthline = client.readStringUntil('\n');
     Serial.println("chunked reader got length line: '" + lengthline + "'");
 
+    line = "";
     while (lengthline != "0\r" && (millis() < maxTime)) {
       const char *lengthLineChar = lengthline.c_str();
       int bytesToRead = strtol(lengthLineChar, NULL, 16);
@@ -202,7 +201,7 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
         if (thisBytesRead > 0) {
           bytesRead += thisBytesRead;
           String stringBuff = (char*)buff;
-          reply += stringBuff;
+          line += stringBuff;
         } else {
           Serial.println("No bytes available from HTTPS, waiting a bit...");
           delay(42);
@@ -219,9 +218,10 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
       Serial.println("chunked reader got length line: '" + lengthline + "'");
     }
 
-    //Serial.println("returning total chunked reply = '" + reply + "'");
-    return reply;
   }
+  //Serial.println("returning total chunked reply = '" + reply + "'");
+  feed_watchdog(); // after successfully completing this long-running and potentially hanging operation, it's a good time to feed the watchdog
+  return line;
 }
 
 
