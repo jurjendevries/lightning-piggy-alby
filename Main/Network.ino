@@ -253,6 +253,7 @@ void parseWebsocketText(String text) {
   Serial.println("Wallet now contains " + String(walletBalance) + " sats and balance bias of " + String(balanceBiasInt) + " sats.");
 
   if (doc["payment"]) {
+    resetLastPaymentReceivedMillis();
     String paymentDetail = paymentJsonToString(doc["payment"].as<JsonObject>());
     Serial.println("Websocket update with paymentDetail: " + paymentDetail);
     addLNURLpayment(paymentDetail);

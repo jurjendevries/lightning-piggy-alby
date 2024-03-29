@@ -58,6 +58,8 @@ RTC_DATA_ATTR int wakeup_count;
 
 long lastHibernateCheck = -HIBERNATE_CHECK_PERIOD_MILLIS;
 
+long lastPaymentReceivedMillis = 0;
+
 String print_reset_reasons() {
     Serial.println("CPU0 reset reason:");
     print_reset_reason(rtc_get_reset_reason(0));
@@ -190,8 +192,8 @@ bool hibernateDependingOnBattery() {
   int resetReason = rtc_get_reset_reason(0);
   esp_sleep_wakeup_cause_t wakeup_reason = esp_sleep_get_wakeup_cause();
   if ((resetReason == POWERON_RESET || wakeup_reason == ESP_SLEEP_WAKEUP_EXT0 || wakeup_reason == ESP_SLEEP_WAKEUP_EXT1)
-    && millis() < (AWAKE_SECONDS_AFTER_MANUAL_WAKEUP*1000)) {
-    Serial.println("Device was woken up manually less than " + String(AWAKE_SECONDS_AFTER_MANUAL_WAKEUP) + "s ago, not sleeping yet because a payment might come in..");
+    && (millis()-lastPaymentReceivedMillis) < (AWAKE_SECONDS_AFTER_MANUAL_WAKEUP*1000)) {
+    Serial.println("Device was woken up or received payment less than " + String(AWAKE_SECONDS_AFTER_MANUAL_WAKEUP) + "s ago, not sleeping yet because another payment might come in..");
     return true;
   }
 
@@ -201,8 +203,8 @@ bool hibernateDependingOnBattery() {
   if (voltage < 0) {
     Serial.println("Device is not battery powered so not sleeping.");
     return true;
-  } else if (getAverageBatteryVoltage()<0) {
-    Serial.println("Saved from an unwanted sleep by the average battery voltage check!");
+  } else if (getAverageBatteryVoltage()<2.5) {
+    Serial.println("Saved from an unwanted sleep by the average battery voltage (" + String(getAverageBatteryVoltage()) + ") check!");
     return true;
   }
 
@@ -244,4 +246,8 @@ void hibernate(int sleepTimeSeconds) {
   esp_sleep_enable_ext1_wakeup(BUTTON_PIN_BITMASK,ESP_EXT1_WAKEUP_ANY_HIGH);
 
   esp_deep_sleep_start();
+}
+
+void resetLastPaymentReceivedMillis() {
+  lastPaymentReceivedMillis = millis();
 }
