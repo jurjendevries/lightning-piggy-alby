@@ -222,7 +222,7 @@ bool hibernateDependingOnBattery() {
 void hibernate(int sleepTimeSeconds) {
   Serial.println("Going to sleep for " + String(sleepTimeSeconds) + " seconds...");
 
-  displayStatus(xBeforeLNURLp, false);
+  displayStatus(xBeforeLNURLp, true);
   displayTime(false); // update time before going to sleep so the user sees the last update time
 
   disconnectWebsocket();
