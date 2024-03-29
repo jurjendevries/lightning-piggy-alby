@@ -64,7 +64,7 @@ void displayHealthAndStatus(bool showsleep) {
 
     if (xPosOfHealthAndStatus != NOT_SPECIFIED || yPosOfHealthAndStatus != NOT_SPECIFIED) {
       Serial.println("Clearing health and status by drawing white rectangle: " + String(xPosOfHealthAndStatus) + "," + String(yPosOfHealthAndStatus) + " to " + String(displayWidth()-1) + "," + String(yStart));
-      display.fillRect(xPosOfHealthAndStatus, yPosOfHealthAndStatus, displayWidth()-1, yStart, GxEPD_WHITE);
+      display.fillRect(xPosOfHealthAndStatus, yPosOfHealthAndStatus, displayWidth()-1-xPosOfHealthAndStatus, yStart-yPosOfHealthAndStatus, GxEPD_WHITE);
     } else{
       Serial.println("Not clearing health and status because it has never been drawn before.");
     }
