@@ -92,7 +92,7 @@ void setup() {
         xBeforeLNURLp = showLNURLpQR(lnurlp); // xBeforeLNURLp = 192 on 250px wide display
     }
 
-    displayHealthAndStatus(false);
+    displayStatus(xBeforeLNURLp, false);
     displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
 
     feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
@@ -111,19 +111,21 @@ void setup() {
 }
 
 void loop() {
+  feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
   while (Serial.available() > 0) {
     char aChar = Serial.read();
     if (aChar == 's') {
       hibernate(10);
     } else if (aChar == 'w') {
       displayWifiStrengthBottom();
+    } else if (aChar == 'd') {
+      displayStatus(xBeforeLNURLp, false);
     }
   }
-  feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
   if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) {
     websocket_loop();
   } else {
-    displayHealthAndStatus(false); // takes ~2000ms, which is too much to do with the websocket
+    displayStatus(xBeforeLNURLp, false);  // takes ~2000ms, which is too much to do with the websocket
     displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
     // if some time has passed, then check balance and if it changed, then update payments
   }

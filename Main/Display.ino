@@ -1,6 +1,8 @@
 long lastUpdatedBalance = -UPDATE_BALANCE_PERIOD_MILLIS;
 int lastBalance = -NOT_SPECIFIED;
 
+int smallestFontHeight = 14;
+
 void setup_display() {
     SPI.begin(EPD_SCLK, EPD_MISO, EPD_MOSI);
     display.init();
@@ -287,11 +289,9 @@ void displayLNURLPayments(int limit, int maxX, int startY, int maxY) {
   }
 }
 
-
 void displayWifiConnecting() {
-  displayFit("Wifi: " + String(ssid), 0, displayHeight()-14, displayWidth(), displayHeight(), 1);
+  displayFit("Wifi: " + String(ssid), 0, displayHeight()-smallestFontHeight, displayWidth(), displayHeight(), 1);
 }
-
 
 void displayWifiStrengthBottom() {
   displayWifiStrength(displayHeight()-14);
@@ -300,9 +300,59 @@ void displayWifiStrengthBottom() {
 void displayWifiStrength(int y) {
   int wifiStrengthPercent = strengthPercent(getStrength(5));
   String wifiString = "Wifi:" + String(wifiStrengthPercent) + "%";
-  displayFit(wifiString, displayWidth()-8*7, y, displayWidth(), y+14, 1, false, true); // 14px vertical is enough for fontsize 1
+  displayFit(wifiString, displayWidth()-8*7, y, displayWidth(), y+smallestFontHeight, 1, false, true);
 }
 
 void displayFetching() {
-  displayFit("Fetching " + String(lnbitsHost), 0, displayHeight()-14, displayWidth()-8*7, displayHeight(), 1); // leave room for 8 characters of wifi strength bottom right
+  displayFit("Fetching " + String(lnbitsHost), 0, displayHeight()-smallestFontHeight, displayWidth()-8*7, displayHeight(), 1); // leave room for 8 characters of wifi strength bottom right
+}
+
+// returns the y value after showing all the status info
+int displayStatus(int xBeforeLNURLp, bool showsleep) {
+  int vMargin = 2;
+  int startY = displayWidth() - xBeforeLNURLp + vMargin; // x == y because the QR code is square
+
+  // wifi strength or zzzz
+  String wifiString = "..zzzZZZZ";
+  if (!showsleep) {
+    wifiString = "Wifi:";
+    if (wifiConnected()) {
+      int wifiStrengthPercent = strengthPercent(getStrength(5));
+      wifiString += String(wifiStrengthPercent) + "%";
+    } else {
+      wifiString += "off";
+    }
+  }
+  Serial.println("Displaying wifi string: " + wifiString);
+  startY = vMargin + displayFit(wifiString, xBeforeLNURLp, startY, displayWidth(), startY+smallestFontHeight-vMargin, 1, false, true);
+
+  String versionString = "v";
+  if (isUpdateAvailable()) versionString = "UP!";
+  versionString += getShortVersion();
+  startY = vMargin + displayFit(versionString, xBeforeLNURLp, startY, displayWidth(), startY+smallestFontHeight-vMargin, 1, false, true);
+
+  String displayString = getShortDisplayInfo();
+  startY = vMargin + displayFit(displayString, xBeforeLNURLp, startY, displayWidth(), startY+smallestFontHeight-vMargin, 1, false, true);
+
+  double voltage = getBatteryVoltage();
+  String voltageString = "NOBAT";
+  if (voltage > 0) {
+    voltageString = String(voltage, 2) + "V";
+  }
+  startY = displayFit(voltageString, xBeforeLNURLp, startY, displayWidth(), startY+smallestFontHeight-vMargin, 1, false, true);
+
+  return startY;
+}
+
+// returns true if voltage is low, false otherwise
+bool displayVoltageWarning() {
+    double voltage = getBatteryVoltage();
+    // Print big fat warning on top of everything if low battery
+    if (voltage > 0 && voltage < 3.8) {
+      String lowBatString = " ! LOW BATTERY (" + String(voltage) + "V) ! ";
+      displayFit(lowBatString, 0, displayHeight()-12-18, displayWidth(), displayHeight()-12,2, true);
+      return true;
+    } else {
+      return false;
+    }
 }

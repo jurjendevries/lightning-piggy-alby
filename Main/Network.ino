@@ -95,6 +95,11 @@ bool wifiConnected() {
 // Take measurements of the Wi-Fi strength and return the average result.
 // 100 measurements takes 2 seconds so 20ms per measurement
 int getStrength(int points){
+    #ifdef DEBUG
+      delay(points*20);
+      return 42;
+    #endif
+
     long rssi = 0;
     long averageRSSI = 0;
 
@@ -221,6 +226,10 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
 
 
 void connectWebsocket() {
+  if (!wifiConnected()) {
+    Serial.println("Not connecting websocket because wifi is not connected.");
+    return;
+  }
   // wss://legend.lnbits.com/api/v1/ws/<walletid>
   String url = websocketApiUrl;
   if (isConfigured(walletID)) {

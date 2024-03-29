@@ -6,8 +6,8 @@ String getTimeFromNTP() {
   if (!isConfigured(timezone)) return "";
 
   #ifdef DEBUG
-  lastTime = "W 23:39";
-  return "W 23:39";
+  lastTime = "W23:39";
+  return "W23:39";
   #endif
   String timeData = getEndpointData(timeServer, String(timeServerPath) + String(timezone), false);
 
