@@ -200,7 +200,7 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
 
     // Check if the entire text fit:
     if (yPos <= endY) {
-      Serial.println("yPos (" + String(yPos) + ") <= endY (" + String(endY) + ") so fontSize " + String(fontSize) + " fits!");
+      //Serial.println("yPos (" + String(yPos) + ") <= endY (" + String(endY) + ") so fontSize " + String(fontSize) + " fits!");
       break; // exit the fontSize loop because it fits
     } else {
       //Serial.println("fontSize " + String(fontSize) + " did not fit so trying smaller...");
