@@ -88,6 +88,7 @@ void setup() {
 
     setup_watchdog();
 
+    displayWifiConnecting();
     #ifndef DEBUG
     connectWifi();
     short_watchdog_timeout(); // after the long wifi connection stage, the next operations shouldn't take long
