@@ -8,13 +8,7 @@ const char * system_event_names[] = { "WIFI_READY", "SCAN_DONE", "STA_START", "S
 const char * system_event_reasons2[] = { "UNSPECIFIED", "AUTH_EXPIRE", "AUTH_LEAVE", "ASSOC_EXPIRE", "ASSOC_TOOMANY", "NOT_AUTHED", "NOT_ASSOCED", "ASSOC_LEAVE", "ASSOC_NOT_AUTHED", "DISASSOC_PWRCAP_BAD", "DISASSOC_SUPCHAN_BAD", "UNSPECIFIED", "IE_INVALID", "MIC_FAILURE", "4WAY_HANDSHAKE_TIMEOUT", "GROUP_KEY_UPDATE_TIMEOUT", "IE_IN_4WAY_DIFFERS", "GROUP_CIPHER_INVALID", "PAIRWISE_CIPHER_INVALID", "AKMP_INVALID", "UNSUPP_RSN_IE_VERSION", "INVALID_RSN_IE_CAP", "802_1X_AUTH_FAILED", "CIPHER_SUITE_REJECTED", "BEACON_TIMEOUT", "NO_AP_FOUND", "AUTH_FAIL", "ASSOC_FAIL", "HANDSHAKE_TIMEOUT", "CONNECTION_FAIL" };
 #define reason2str(r) ((r>176)?system_event_reasons2[r-176]:system_event_reasons2[r-1])
 
-// Somehow this doesn't work, as 'system_event_id_t' is not declared in this scope?!
-// void WiFiEvent(WiFiEvent_t event) == void WiFiEvent(system_event_id_t event)
-void wifiEventCallback(int workaround) {
-  system_event_t * event = (system_event_t*) workaround;
-
-  int eventid = event->event_id;
-
+void wifiEventCallback(WiFiEvent_t eventid, WiFiEventInfo_t info) {
   // Regular flow of events is: 0, 2, 7 (and then 3 when the device goes to sleep)
   String wifiStatus = "WiFi Event ID " + String(eventid) + " which means: " + String(system_event_names[eventid]);
   Serial.print(wifiStatus);
@@ -22,8 +16,8 @@ void wifiEventCallback(int workaround) {
   String details = "";
 
   // Full list at ~/.arduino15/packages/esp32/hardware/esp32/1.0.6/tools/sdk/include/esp32/esp_event_legacy.h
-  if(eventid == SYSTEM_EVENT_STA_DISCONNECTED) {
-    uint8_t reason = event->event_info.disconnected.reason;
+  if(eventid == ARDUINO_EVENT_WIFI_STA_DISCONNECTED) {
+    uint8_t reason = info.wifi_sta_disconnected.reason;
     details = "Wifi error " + String(reason) + ": " + String(reason2str(reason));
 
     if (reason == WIFI_REASON_MIC_FAILURE || reason == WIFI_REASON_AUTH_FAIL || reason == WIFI_REASON_AUTH_EXPIRE || reason == WIFI_REASON_ASSOC_EXPIRE || reason == WIFI_REASON_4WAY_HANDSHAKE_TIMEOUT) {
@@ -61,7 +55,7 @@ void wifiEventCallback(int workaround) {
         short_watchdog_timeout();
       }
     } // else it's a non-final error and still early after boot so do nothing
-  } else if(eventid == SYSTEM_EVENT_STA_GOT_IP) {
+  } else if(eventid == ARDUINO_EVENT_WIFI_STA_GOT_IP) {
       details = "Obtained IP address: " + ipToString(WiFi.localIP());
   }
 
@@ -71,7 +65,7 @@ void wifiEventCallback(int workaround) {
 
 void connectWifi() {
   Serial.println("Connecting to " + String(ssid));
-  WiFi.onEvent((void (*)(system_event_t*))wifiEventCallback);
+  WiFi.onEvent(wifiEventCallback);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
       delay(1000);
