@@ -115,15 +115,24 @@ void setup() {
     watchdogWasntTriggered();
     hibernateDependingOnBattery();
 
-    // try to fetch walletID from lnurlp/list if we don't have it yet:
-    if (!isConfigured(walletID) && getWalletIDfromLNURLp().length() == 0) getLNURLp(true);
+    // The wallet ID is configured statically or is found in the incoming payments.
+    // But if not, because there were no incoming payments, then fetch it from lnurlp/list.
+    if (getWalletID().length() == 0) {
+      Serial.println("No wallet ID was configured or found in incoming payments, fetching it from the LNURLp list...");
+      getLNURLp(true);
+    }
 
-    // connect the websocket if we have a walletID
-    if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) connectWebsocket();
+    // Connect the websocket if we have a walletID
+    if (getWalletID().length() == 0) {
+      Serial.println("No wallet ID was configured or found in incoming payments or found in the LNURLp list, this should not happen.");
+    } else {
+      connectWebsocket();
+    }
 }
 
 void loop() {
   feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+
   /* This receives random data while using a USB cable without the USB-to-serial in between:
   while (Serial.available() > 0) {
     char aChar = Serial.read();
@@ -135,10 +144,12 @@ void loop() {
       displayStatus(xBeforeLNURLp, false);
     }
   }*/
-  if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) {
+
+  if (getWalletID().length() > 0) {
     websocket_loop();
     displayRefreshedVoltagePeriodically(); // only refresh voltage so the user can see it going down with time. the rest can stay.
   } else {
+    // This fallback behavior should never happen because wallet ID will always be found in the LNURLp list.
     displayStatus(xBeforeLNURLp, false);  // takes ~2000ms, which is too much to do with the websocket
     displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
     // if some time has passed, then check balance and if it changed, then update payments
