@@ -127,7 +127,7 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 // bool bold == true means black background, white text
 // returns: the y position after fitting the text
 int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight) {
-  bool debugDisplayFit = true;
+  bool debugDisplayFit = false;
   feed_watchdog(); // before this long-running and potentially hanging operation, it's a good time to feed the watchdog
 
   text.replace("~","-");
