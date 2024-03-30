@@ -13,7 +13,7 @@ The source code in Main/Main.ino works on both the TTGO LilyGo T5 ePaper 2.13 in
 **Tested with:**
 
 - Arduino IDE version 1.8.13
-- ESP32 Board Support version 2.0.6
+- ESP32 Board Support version 2.0.14
 - Preferences -> Compiler warnings: Default
 - Tools -> Board -> ESP32 Arduino -> ESP32 Dev Module
 - Tools -> Upload Speed: 921600

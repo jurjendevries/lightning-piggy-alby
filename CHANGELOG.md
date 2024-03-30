@@ -1,3 +1,17 @@
+**3.0.0**
+- Add websocket for instant payment notifications while awake
+- Improve stability and reduce backend load by avoiding frequent polls
+- Reset awake timer after payment received in case another one comes in
+- Improve timeout behavior in HTTPS fetcher
+- Improve display code
+- Remove unused libraries for smaller filesize and faster flashing
+- Upgrade ESP32 Board Support version to 2.0.14
+- Fix tilda character causing big blank space on display
+- Fix partially blank timestamp on display
+- Fix rare hang in chunked HTTPS fetcher
+- Fix battery voltage glitch causing unnecessary sleeps
+- Fix watchdog timeout configuration logic
+
 **2.1.2**
 - Translate English boot slogans to Dutch
 - New feature: optional configurable "balance bias" to account for sats that are in cold storage
