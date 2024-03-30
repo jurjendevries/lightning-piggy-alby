@@ -104,12 +104,11 @@ void setup() {
 
     // connect the websocket if we have a walletID
     if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) connectWebsocket();
-
-    Serial.println("Send s on the serial to hibernate for 10 seconds.");
 }
 
 void loop() {
   feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
+  /* This receives random data while using a USB cable without the USB-to-serial in between:
   while (Serial.available() > 0) {
     char aChar = Serial.read();
     if (aChar == 's') {
@@ -119,7 +118,7 @@ void loop() {
     } else if (aChar == 'd') {
       displayStatus(xBeforeLNURLp, false);
     }
-  }
+  }*/
   if (isConfigured(walletID) || getWalletIDfromLNURLp().length() > 0) {
     websocket_loop();
     displayRefreshedVoltagePeriodically(); // only refresh voltage so the user can see it going down with time. the rest can stay.

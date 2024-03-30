@@ -129,6 +129,7 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight) {
   feed_watchdog(); // before this long-running and potentially hanging operation, it's a good time to feed the watchdog
 
+  text.replace("~","-");
   Serial.println("displayFit " + text + " length: " + String(text.length()));
 
   if (text.length() == 0) {
