@@ -1,7 +1,5 @@
 **3.0.3**
-- Add lost "connecting to wifi" on display at boot
-
-**3.0.2**
+- Re-add lost "Wifi: <ssid>" on display to indicate ongoing wifi connection at boot
 - Fix "ASSOC_LEAVE" leftover on display when disconnecting from wifi before sleep
 
 **3.0.1**
