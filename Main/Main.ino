@@ -1,5 +1,21 @@
 // Code for the Lightning Piggy running on the TTGO LilyGo 2.13 and 2.66 inch ePaper hardware.
-// See README.md for tips and tricks.
+//
+// Tested with:
+// - Arduino IDE version 1.8.13
+// - ESP32 Board Support version 2.0.14
+// - Preferences -> Compiler warnings: Default
+// - Tools -> Board -> ESP32 Arduino -> ESP32 Dev Module
+// - Tools -> Upload Speed: 921600
+// - Tools -> CPU Frequency: 240Mhz
+// - Tools -> Flash Frequency: 80Mhz
+// - Tools -> Flash Mode: QIO
+// - Tools -> Flash Size: 4MB (32Mb)
+// - Tools -> Partition Scheme: Default 4MB with spiffs (1.2MB APP, 1.5MB SPIFFS)
+// - Tools -> Core Debug Level: Warn
+// - Tools -> PSRAM: Disabled
+// - Tools -> Port: /dev/ttyACM0
+//
+// See README.md for more tips and tricks.
 
 // For 2.13 inch LilyGo ePaper:
 #define LILYGO_T5_V213
