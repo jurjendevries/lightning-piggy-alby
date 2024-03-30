@@ -1,3 +1,9 @@
+**3.0.3**
+- Add lost "connecting to wifi" on display at boot
+
+**3.0.2**
+- Fix "ASSOC_LEAVE" leftover on display when disconnecting from wifi before sleep
+
 **3.0.1**
 
 - Add websocket for instant payment notifications while awake
