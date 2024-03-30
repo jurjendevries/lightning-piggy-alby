@@ -1,4 +1,4 @@
-**3.0.0**
+**3.0.1**
 
 - Add websocket for instant payment notifications while awake
 - Improve stability and reduce backend load by avoiding frequent polls
