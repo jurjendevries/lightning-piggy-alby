@@ -1,6 +1,6 @@
 #include "Constants.h"
 
-String walletIDfromLNURLp = "";
+String foundWalletID = "";
 
 String lnurlPayments[MAX_PAYMENTS];
 int nroflnurlPayments = 0;
@@ -128,9 +128,9 @@ String getLNURLp(bool mustFetchWalletID) {
   String lnurlpId = doc[0]["id"];
   String lnurlp = doc[0]["lnurl"];
   String localWalletIDfromLNURLp = doc[0]["wallet"];
-  walletIDfromLNURLp = localWalletIDfromLNURLp; // weird casting error otherwise
+  setFoundWalletID(localWalletIDfromLNURLp);
 
-  Serial.println("Fetched LNURLp: " + lnurlp + " and wallet ID:" + walletIDfromLNURLp);
+  Serial.println("Fetched LNURLp: " + lnurlp + " and found LNURLp wallet ID:" + localWalletIDfromLNURLp);
   return lnurlp;
 }
 
@@ -146,8 +146,21 @@ int getBalanceBiasAsInt() {
   return balanceBiasInt;
 }
 
-String getWalletIDfromLNURLp() {
-  return walletIDfromLNURLp;
+void setFoundWalletID(String walletID) {
+  if (foundWalletID.length() == 0) {
+    foundWalletID = walletID;
+  }
+}
+
+// Returns the wallet ID from configuration,
+// or the wallet ID that was found
+// either in the LNURLp list or in an incoming payment.
+String getWalletID() {
+  if (isConfigured(walletID)) {
+    return walletID;
+  } else {
+    return foundWalletID;
+  }
 }
 
 void addLNURLpayment(String toadd) {

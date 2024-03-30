@@ -226,10 +226,8 @@ void connectWebsocket() {
   }
   // wss://legend.lnbits.com/api/v1/ws/<walletid>
   String url = websocketApiUrl;
-  if (isConfigured(walletID)) {
-    url += String(walletID);
-  } else if (getWalletIDfromLNURLp().length() > 0) {
-    url += getWalletIDfromLNURLp();
+  if (getWalletID().length() > 0) {
+    url += getWalletID();
   } else {
     Serial.println("Can't connect to websocket because no wallet ID is configured nor found in the LNURLp list. Aborting.");
     return;
