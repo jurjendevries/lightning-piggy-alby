@@ -16,7 +16,9 @@
 // if the user hasn't provided a staticLNURLp then lnurlp and walletID are fetched using lnurlp/api/v1/links
 // if the user has provided a staticLNURLp then that one is used and:
 //    - if the user also provided a wallet ID then that one is used (no need to fetch it)
-//    - if the user hasn't provided a wallet ID and the device needs to stay awake and listen for incoming payments, then the wallet id is fetched using lnurlp/api/v1/links
+//    - if the user hasn't provided a wallet ID:
+//        - the wallet ID is taken from incoming payments, if any are found
+//        - if there are no incoming payments, then the wallet ID is fetched using lnurlp/api/v1/links
 const char* ssid     = "REPLACETHISBYWIFISSID_REPLACETHISBYWIFISSID_REPLACETHISBYWIFISSID"; // wifi SSID here
 const char* password = "REPLACETHISBYWIFIKEY_REPLACETHISBYWIFIKEY_REPLACETHISBYWIFIKEY"; // wifi password here
 const char* lnbitsHost = "REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST"; // HOST NAME HERE E.G. legend.lnbits.com
