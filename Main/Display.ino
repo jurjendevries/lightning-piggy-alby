@@ -127,6 +127,7 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 // bool bold == true means black background, white text
 // returns: the y position after fitting the text
 int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight) {
+  bool debugDisplayFit = true;
   feed_watchdog(); // before this long-running and potentially hanging operation, it's a good time to feed the watchdog
 
   text.replace("~","-");
@@ -174,12 +175,12 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
 
       // Print the text that fits:
       String textLine = text.substring(textPos, textPos+chars);
-      //Serial.println("first line that fits: " + textLine);
+      if (debugDisplayFit) Serial.println("first line that fits: " + textLine);
 
       int16_t x1, y1;
       uint16_t w, h;
       display.getTextBounds(textLine, 0, 0, &x1, &y1, &w, &h);
-      //Serial.println("getTextBounds of textLine: " + String(x1) + "," + String(y1) + ","+ String(w) + ","+ String(h));
+      if (debugDisplayFit) Serial.println("getTextBounds of textLine: " + String(x1) + "," + String(y1) + ","+ String(w) + ","+ String(h));
       if (!alignRight) {
         display.setCursor(startX, yPos + h); // bottom of the line
       } else {
@@ -197,20 +198,21 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
       yPos += h + spaceBetweenLines;
     }
     yPos -= spaceBetweenLines; // remove the last space between lines
-    //Serial.println("After writing the text, yPos = " + String(yPos) + " while endY = " + String(endY));
+    if (debugDisplayFit) Serial.println("After writing the text, yPos = " + String(yPos) + " while endY = " + String(endY));
 
     // Check if the entire text fit:
     if (yPos <= endY) {
-      //Serial.println("yPos (" + String(yPos) + ") <= endY (" + String(endY) + ") so fontSize " + String(fontSize) + " fits!");
+      if (debugDisplayFit) Serial.println("yPos (" + String(yPos) + ") <= endY (" + String(endY) + ") so fontSize " + String(fontSize) + " fits!");
       break; // exit the fontSize loop because it fits
     } else {
-      //Serial.println("fontSize " + String(fontSize) + " did not fit so trying smaller...");
+      if (debugDisplayFit) Serial.println("fontSize " + String(fontSize) + " did not fit so trying smaller...");
       fontSize--;
     }
   }
 
   updateWindow(startX, startY, endX-startX+1, endY-startY+1);
   feed_watchdog(); // after this long-running and potentially hanging operation, it's a good time to feed the watchdog
+  if (debugDisplayFit) Serial.println("displayFit returning yPos = " + yPos);
   return yPos;
 }
 
