@@ -370,3 +370,73 @@ bool displayVoltageWarning() {
       return false;
     }
 }
+
+
+// This shows something like:
+// 123.23$ (51234.1$)
+// 123.23KR (512021)
+// 123.23E (51234.1E)
+void showFiatValues(int balance, int maxX) {
+  if (!isConfigured(btcPriceCurrencyChar)) {
+    Serial.println("Not showing fiat values because no fiat currency is configured.");
+    return;
+  }
+
+  #ifdef DEBUG
+  float btcPrice = 60456;
+  #else
+  float btcPrice = getBitcoinPrice();
+  #endif
+
+  if (btcPrice == NOT_SPECIFIED) {
+    Serial.println("Not showing fiat values because couldn't find Bitcoin price.");
+    return;
+  }
+
+  String toDisplay = "";
+
+  // Try to add the fiat balance
+  if (balance == NOT_SPECIFIED) {
+    Serial.println("Not showing fiat balance because couldn't find Bitcoin balance.");
+  } else {
+    float balanceValue = btcPrice / 100000000 * balance;
+    toDisplay += floatToString(balanceValue, 2) + getCurrentCurrencyCode() + " ";
+    Serial.println("balanceValue: " + toDisplay + " ");
+  }
+
+  // Add the Bitcoin price
+  String currentBtcPriceToShow = formatFloatWithSeparator(btcPrice);
+  // Only add currency code if the price is not too long, to save screen space
+  if (currentBtcPriceToShow.length() <= 6) currentBtcPriceToShow += getCurrentCurrencyCode();
+  toDisplay += "(" + currentBtcPriceToShow + ")";
+
+  //displayBoldMessage(toDisplay, displayHeight() - 4); // bold text adds 1 pixel before + 2 pixels after + 1 pixel because displayHeight() starts counting at 0
+  displayFit(toDisplay, 0, displayHeight() - 20, maxX, displayHeight(), 2, true);
+}
+
+
+void showBootSlogan() {
+  if (strncmp(showSloganAtBoot,"YES", 3) != 0) {
+    Serial.println("Not showing slogan at boot because showSloganAtBoot is not 'YES'.");
+    return;
+  }
+
+  int displayY = 2;
+  int timeToWait = 0;
+
+  if (isConfigured(bootSloganPrelude)) {
+    displayY = displayFit(String(bootSloganPrelude), 0, displayY, displayWidth(), displayHeight()/5, 3);
+    timeToWait = 1000; // since the prelude is always the same, there's no need to wait a long time to allow reading it
+  }
+
+  String slogan = getRandomBootSlogan();
+  Serial.println("Showing boot slogan: " + slogan);
+  displayFit(slogan, 0, displayY+5, displayWidth(), displayHeight(), 4);
+
+  // Assuming a 7 year old averages one 4-letter word per second, that's 5 characters per second.
+  timeToWait += strlen(slogan.c_str()) * 1000 / 5;
+  // Limit to a maximum
+  timeToWait = min(timeToWait, MAX_BOOTSLOGAN_SECONDS*1000);
+  Serial.println("Waiting " + String(timeToWait) + "ms (of max. " + String(MAX_BOOTSLOGAN_SECONDS) + "s) to allow the bootslogan to be read...");
+  delay(timeToWait);
+}

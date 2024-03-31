@@ -165,3 +165,8 @@ String paymentJsonToString(JsonObject areaElems) {
   }
   return paymentDetail;
 }
+
+String getRandomElementFromArray(String inputArray[], int numOfSlogans) {
+  int randomIndex = random(0, numOfSlogans); // Generate a random index between 0 and numOfSlogans-1
+  return inputArray[randomIndex]; 
+}

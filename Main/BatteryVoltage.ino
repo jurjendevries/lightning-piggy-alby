@@ -2,10 +2,6 @@
 double averageVoltage = 0;
 int averageVoltageN = 0;
 
-// These values are remembered to know what to erase upon the next draw
-int xPosOfHealthAndStatus = NOT_SPECIFIED;
-int yPosOfHealthAndStatus = NOT_SPECIFIED;
-
 double approxRollingAverage(double avg, double input) {
   averageVoltageN++;
   if (averageVoltageN>10) averageVoltageN=10;
