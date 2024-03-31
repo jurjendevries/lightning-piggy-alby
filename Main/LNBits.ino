@@ -149,6 +149,9 @@ int getBalanceBiasAsInt() {
 void setFoundWalletID(String walletID) {
   if (foundWalletID.length() == 0) {
     foundWalletID = walletID;
+    Serial.println("Setting foundWalletID = " + String(walletID));
+  } else {
+    Serial.println("Not setting foundWalletID = " + String(walletID));
   }
 }
 
