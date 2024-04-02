@@ -20,14 +20,18 @@ void setup_display() {
 }
 
 int displayHeight() {
-  // lilygo 2.66 is 152px, lilygo 2.13 is 122px (DEPG?) or 128px (GDEM?)
-  //return 128; // for testing the 2.13's lower resolution on the 2.66's high res display
-  return GxEPD_WIDTH; // width and height are swapped because display is rotated
+  // lilygo 2.66 is 152px, lilygo 2.13 is 122px
+  #ifdef LILYGO_T5_V213
+    return 122; // on the LILYGO_T5_V213, GxEPD_WIDTH is incorrectly set to 128. The visible number of display pixels is 122*250, see GDEH0213B72 V1.1 Specification.pdf
+  #else
+    //return 122; // for testing the 2.13's lower resolution on the 2.66's high resolution display
+    return GxEPD_WIDTH; // width and height are swapped because display is rotated
+  #endif
 }
 
 int displayWidth() {
   // lilygo 2.66 is 296px, lilygo 2.13 is 250px
-  //return 250; // for testing the 2.13's lower resolution on the 2.66's high res display
+  //return 250; // for testing the 2.13's lower resolution on the 2.66's high resolution display
   return GxEPD_HEIGHT; // width and height are swapped because display is rotated
 }
 
