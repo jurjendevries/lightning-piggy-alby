@@ -26,6 +26,9 @@
 #define GxDEPG0213BN_WIDTH GxDEPG0213BN_X_PIXELS
 #define GxDEPG0213BN_HEIGHT GxDEPG0213BN_Y_PIXELS
 
+// note: the visible number of display pixels is 122*250, see GDEH0213B72 V1.1 Specification.pdf
+#define GxDEPG0213BN_VISIBLE_WIDTH 122
+
 #define GxDEPG0213BN_BUFFER_SIZE (uint32_t(GxDEPG0213BN_WIDTH) * uint32_t(GxDEPG0213BN_HEIGHT) / 8)
 
 // divisor for AVR, should be factor of GxDEPG0213BN_HEIGHT

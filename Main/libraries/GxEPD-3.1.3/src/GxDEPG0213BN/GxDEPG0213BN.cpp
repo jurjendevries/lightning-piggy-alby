@@ -27,7 +27,7 @@
 #define GxDEPG0213BN_PU_DELAY 300
 
 GxDEPG0213BN::GxDEPG0213BN(GxIO& io, int8_t rst, int8_t busy) :
-  GxEPD(GxDEPG0213BN_WIDTH, GxDEPG0213BN_HEIGHT), IO(io),
+  GxEPD(GxDEPG0213BN_VISIBLE_WIDTH, GxDEPG0213BN_HEIGHT), IO(io),
   _current_page(-1), _using_partial_mode(false), _diag_enabled(false), _power_is_on(false),
   _rst(rst), _busy(busy)
 {
@@ -42,10 +42,10 @@ void GxDEPG0213BN::drawPixel(int16_t x, int16_t y, uint16_t color)
   {
     case 1:
       swap(x, y);
-      x = GxDEPG0213BN_WIDTH - x - 1;
+      x = GxDEPG0213BN_VISIBLE_WIDTH- x - 1;
       break;
     case 2:
-      x = GxDEPG0213BN_WIDTH - x - 1;
+      x = GxDEPG0213BN_VISIBLE_WIDTH- x - 1;
       y = GxDEPG0213BN_HEIGHT - y - 1;
       break;
     case 3:
