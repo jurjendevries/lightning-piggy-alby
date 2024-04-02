@@ -1,3 +1,7 @@
+**3.1.3**
+- Update GxEPD library from 3.1.0 to 3.1.3
+- Remove workarounds for GxEPD library to make display operations 20% faster on the 2.66 inch ePaper model
+
 **3.0.3**
 - Re-add lost "Wifi: <ssid>" on display to indicate ongoing wifi connection at boot
 - Fix "ASSOC_LEAVE" leftover on display when disconnecting from wifi before sleep

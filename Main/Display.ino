@@ -20,13 +20,9 @@ void setup_display() {
 }
 
 int displayHeight() {
-  // lilygo 2.66 is 152px, lilygo 2.13 is 122px
-  #ifdef LILYGO_T5_V213
-  return 122; // on the LILYGO_T5_V213, GxEPD_WIDTH is incorrectly set to 128
-  #else
-  //return 122; // for testing the 2.13's lower resolution on the 2.66's high res display
+  // lilygo 2.66 is 152px, lilygo 2.13 is 122px (DEPG?) or 128px (GDEM?)
+  //return 128; // for testing the 2.13's lower resolution on the 2.66's high res display
   return GxEPD_WIDTH; // width and height are swapped because display is rotated
-  #endif
 }
 
 int displayWidth() {
@@ -36,15 +32,7 @@ int displayWidth() {
 }
 
 void updateWindow(int x, int y, int w, int h) {
-  #ifdef LILYGO_T5_V266
-    //Serial.println("Workaround for Lilygo 2.66 inch: update entire window without rotation!");
-    display.updateWindow(0, 0, displayHeight(), displayWidth(), false); // on the 2.66 there's an issue with partial updates and rotation=true
-  #elif defined _GxGDEM0213B74_H_
-    Serial.println("Workaround for GDEM0213B74 display: full refresh instead of partial!");
-    display.update();
-  #else
-    display.updateWindow(x, y, w, h, true);
-  #endif
+  display.updateWindow(x, y, w, h, true);
 }
 
 // size 0 = smallest font (8pt)
@@ -93,6 +81,7 @@ void verticalLine() {
 
 // find the max length that fits the width
 int fitMaxText(String text, int maxWidth) {
+  //long startTime = millis();
   int maxLength = 0;
   int16_t x1, y1;
   uint16_t w, h;
@@ -111,7 +100,7 @@ int fitMaxText(String text, int maxWidth) {
     maxLength++;
   }
 
-  //Serial.println("Max text length that fits: " + String(maxLength));
+  //Serial.println("Max text length that fits: " + String(maxLength) + " calculated in " + String(millis()-startTime) + "ms.");
   return maxLength;
 }
 
@@ -127,7 +116,9 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 // bool bold == true means black background, white text
 // returns: the y position after fitting the text
 int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight) {
+  long startTime = millis();
   bool debugDisplayFit = false;
+
   feed_watchdog(); // before this long-running and potentially hanging operation, it's a good time to feed the watchdog
 
   text.replace("~","-");
@@ -210,9 +201,9 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
     }
   }
 
-  updateWindow(startX, startY, endX-startX+1, endY-startY+1);
+  updateWindow(startX, startY, endX-startX+1, endY-startY+1); // takes around 1400ms
   feed_watchdog(); // after this long-running and potentially hanging operation, it's a good time to feed the watchdog
-  if (debugDisplayFit) Serial.println("displayFit returning yPos = " + yPos);
+  if (debugDisplayFit) Serial.println("displayFit returning yPos = " + String(yPos) + " after runtime of " + String(millis() - startTime) + "ms."); // takes around 1700ms
   return yPos;
 }
 
