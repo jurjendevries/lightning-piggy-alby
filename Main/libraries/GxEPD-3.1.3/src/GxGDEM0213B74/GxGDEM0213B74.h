@@ -25,6 +25,9 @@
 #define GxGDEM0213B74_WIDTH GxGDEM0213B74_X_PIXELS
 #define GxGDEM0213B74_HEIGHT GxGDEM0213B74_Y_PIXELS
 
+// note: the visible number of display pixels is 122*250, see GDEH0213B72 V1.1 Specification.pdf
+#define GxGDEM0213B74_VISIBLE_WIDTH 122
+
 #define GxGDEM0213B74_BUFFER_SIZE (uint32_t(GxGDEM0213B74_WIDTH) * uint32_t(GxGDEM0213B74_HEIGHT) / 8)
 
 // divisor for AVR, should be factor of GxGDEM0213B74_HEIGHT

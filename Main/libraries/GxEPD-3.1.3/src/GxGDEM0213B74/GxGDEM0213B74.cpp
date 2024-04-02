@@ -26,7 +26,7 @@
 #define GxGDEM0213B74_PU_DELAY 300
 
 GxGDEM0213B74::GxGDEM0213B74(GxIO& io, int8_t rst, int8_t busy) :
-  GxEPD(GxGDEM0213B74_WIDTH, GxGDEM0213B74_HEIGHT), IO(io),
+  GxEPD(GxGDEM0213B74_VISIBLE_WIDTH, GxGDEM0213B74_HEIGHT), IO(io),
   _current_page(-1), _using_partial_mode(false), _diag_enabled(false), _power_is_on(false),
   _rst(rst), _busy(busy)
 {
@@ -41,10 +41,10 @@ void GxGDEM0213B74::drawPixel(int16_t x, int16_t y, uint16_t color)
   {
     case 1:
       swap(x, y);
-      x = GxGDEM0213B74_WIDTH - x - 1;
+      x = GxGDEM0213B74_VISIBLE_WIDTH- x - 1;
       break;
     case 2:
-      x = GxGDEM0213B74_WIDTH - x - 1;
+      x = GxGDEM0213B74_VISIBLE_WIDTH- x - 1;
       y = GxGDEM0213B74_HEIGHT - y - 1;
       break;
     case 3:
