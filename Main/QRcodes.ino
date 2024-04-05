@@ -4,7 +4,7 @@
  * returns: x value before QR code
  */
 int showLNURLpQR(String qrData) {
-  if (qrData == "null") {
+  if (qrData.length() < 1 || qrData == "null") {
     Serial.println("INFO: not showing LNURLp QR code because no LNURLp code was found.");
     return displayWidth();
   }
@@ -24,19 +24,22 @@ int showLNURLpQR(String qrData) {
   int qrPosX = displayWidth() - qrSideSize;
   int qrPosY = 0;
 
-  for (uint8_t y = 0; y < qrcoded.size; y++)
-  {
-    for (uint8_t x = 0; x < qrcoded.size; x++)
+  display.setPartialWindow(qrPosX, qrPosY, qrSideSize, qrSideSize);
+  display.firstPage();
+  do {
+    for (uint8_t y = 0; y < qrcoded.size; y++)
     {
-      if (qrcode_getModule(&qrcoded, x, y))
+      for (uint8_t x = 0; x < qrcoded.size; x++)
       {
-        display.fillRect(qrPosX + pixSize * x, qrPosY + pixSize * y, pixSize, pixSize, GxEPD_BLACK);
+        if (qrcode_getModule(&qrcoded, x, y))
+        {
+          display.fillRect(qrPosX + pixSize * x, qrPosY + pixSize * y, pixSize, pixSize, GxEPD_BLACK);
+        }
       }
     }
-  }
-  updateWindow(qrPosX,qrPosY,qrSideSize,qrSideSize);
+  } while (display.nextPage());
 
-  return qrPosX;
+  return qrPosX;  // returns 192 on 250px wide display
 }
 
 

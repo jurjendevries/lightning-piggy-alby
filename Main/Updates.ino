@@ -2,19 +2,19 @@ String newVersion = ""; // used by the update checker
 
 int lastChecked = NOT_SPECIFIED;
 
-#ifdef LILYGO_T5_V266
+#if GxEPD2_DRIVER_CLASS == GxEPD2_266_BN
   String hardwareBoard  = "LILYGOT5V266";
-#elif defined LILYGO_T5_V213
+#elif GxEPD2_DRIVER_CLASS == GxEPD2_213_BN || GxEPD2_DRIVER_CLASS == GxEPD2_213_B74
   String hardwareBoard = "LILYGOT5V213";
 #else
   String hardwareBoard = "UNKNOWNBOARD";
 #endif
 
-#ifdef _GxDEPG0266BN_H_
+#if GxEPD2_DRIVER_CLASS == GxEPD2_266_BN
   String hardwareDisplay = "DEPG0266BN";
-#elif defined _GxDEPG0213BN_H_
+#elif GxEPD2_DRIVER_CLASS == GxEPD2_213_BN
   String hardwareDisplay = "DEPG0213BN";
-#elif defined _GxGDEM0213B74_H_
+#elif GxEPD2_DRIVER_CLASS == GxEPD2_213_B74
   String hardwareDisplay = "GDEM0213B74";
 #else
   String hardwareDisplay = "UNKNOWNDISPLAY";

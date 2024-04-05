@@ -1,3 +1,15 @@
+// base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
+// enable or disable GxEPD2_GFX base class
+#define ENABLE_GxEPD2_GFX 0
+
+#include <GxEPD2_BW.h>
+#include <U8g2_for_Adafruit_GFX.h>
+
+// select the display class and display driver class in the following file (new style):
+#include "GxEPD2_display_selection_new_style.h"
+
+U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
+
 long lastRefreshedVoltage = -UPDATE_VOLTAGE_PERIOD_MILLIS;  // this makes it update when first run
 long lastUpdatedBalance = -UPDATE_BALANCE_PERIOD_MILLIS;  // this makes it update when first run
 int lastBalance = -NOT_SPECIFIED;
@@ -6,61 +18,50 @@ int smallestFontHeight = 14;
 
 int statusAreaVoltageHeight = -1; // this value is cached after it's calculated so it can be reused later to updated only the voltage
 
+String lines[10];
+int nroflines = 0;
+
 void setup_display() {
-    SPI.begin(EPD_SCLK, EPD_MISO, EPD_MOSI);
-    display.init();
-
-    // partial update to full screen to preset for partial update of box window (this avoids strange background effects)
-    // this needs to be done before setRotation, otherwise still faint/missing pixels, even with using_rotation = true
-    display.updateWindow(0, 0, GxEPD_WIDTH, GxEPD_HEIGHT, false);
-
-    display.setTextColor(GxEPD_BLACK);
+    display.init(115200, true, 2, false); // USE THIS for Waveshare boards with "clever" reset circuit, 2ms reset pulse
     display.setRotation(1); // display is used in landscape mode
-    display.update(); // clear the screen from any old data that might faintly be there
+    display.setPartialWindow(0, 0, display.width(), display.height());
+
+    u8g2Fonts.begin(display); // connect u8g2 procedures to Adafruit GFX
 }
 
 int displayHeight() {
-  // lilygo 2.66 is 152px, lilygo 2.13 is 122px
-  #ifdef LILYGO_T5_V213
-    return 122; // on the LILYGO_T5_V213, GxEPD_WIDTH is incorrectly set to 128. The visible number of display pixels is 122*250, see GDEH0213B72 V1.1 Specification.pdf
-  #else
-    //return 122; // for testing the 2.13's lower resolution on the 2.66's high resolution display
-    return GxEPD_WIDTH; // width and height are swapped because display is rotated
-  #endif
+  return DISPLAY_HEIGHT;
 }
 
 int displayWidth() {
-  // lilygo 2.66 is 296px, lilygo 2.13 is 250px
-  //return 250; // for testing the 2.13's lower resolution on the 2.66's high resolution display
-  return GxEPD_HEIGHT; // width and height are swapped because display is rotated
-}
-
-void updateWindow(int x, int y, int w, int h) {
-  display.updateWindow(x, y, w, h, true);
+  return DISPLAY_WIDTH;
 }
 
 // size 0 = smallest font (8pt)
-// size 1 = 12pt
-// size 2 = 18pt
-// size 3 = 20pt
-// size 4 = 26pt
+// size 1 = 10pt
+// size 2 = 12pt
+// size 3 = 14pt
+// size 4 = 18pt
+// size 5 = 24pt
 void setFont(int fontSize) {
   if (fontSize < 0) {
     Serial.println("ERROR: font size " + String(fontSize) + " is not supported, setting min size");
-    display.setFont(&Lato_Medium_8);
+    u8g2Fonts.setFont(u8g2_font_helvR08_tf);
   } else if (fontSize == 0) {
-    display.setFont(&Lato_Medium_8);
+    u8g2Fonts.setFont(u8g2_font_helvR08_tf);
   } else if (fontSize == 1) {
-    display.setFont(&Lato_Medium_12);
+    u8g2Fonts.setFont(u8g2_font_helvR10_tf);
   } else if (fontSize == 2) {
-    display.setFont(&Lato_Medium_18);
+    u8g2Fonts.setFont(u8g2_font_helvR12_tf);
   } else if (fontSize == 3) {
-    display.setFont(&Lato_Medium_20);
+    u8g2Fonts.setFont(u8g2_font_helvR14_tf);
   } else if (fontSize == 4) {
-    display.setFont(&Lato_Medium_26);
+    u8g2Fonts.setFont(u8g2_font_helvR18_tf);
+  } else if (fontSize == 5) {
+    u8g2Fonts.setFont(u8g2_font_helvR24_tf);
   } else {
     Serial.println("ERROR: font size " + String(fontSize) + " is not supported, setting max size");
-    display.setFont(&Lato_Medium_26);
+    u8g2Fonts.setFont(u8g2_font_helvR24_tf);
   }
 }
 
@@ -91,16 +92,19 @@ int fitMaxText(String text, int maxWidth) {
   uint16_t w, h;
 
   // first get height of one big character
-  display.getTextBounds("$", 0, 0, &x1, &y1, &w, &h);
-  //Serial.println("Got big character bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h) + " for text: $");
+  //display.getTextBounds("$", 0, 0, &x1, &y1, &w, &h);
+  w = u8g2Fonts.getUTF8Width("$");
+  h = u8g2Fonts.getFontAscent()-u8g2Fonts.getFontDescent();
+  Serial.println("Got big character bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h) + " for text: $");
   uint16_t maxHeight = h * 1.5; // ensure it's really big, but smaller than 2 lines
   //Serial.println("maxHeight = " + String(maxHeight));
   h = 0;
 
   while (maxLength < text.length() && h < maxHeight && w < maxWidth) {
     String textToFit = text.substring(0, maxLength+2); // end is exclusive
-    display.getTextBounds(textToFit, 0, 0, &x1, &y1, &w, &h);
-    //Serial.println("Got text bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h) + " for text: " + textToFit);
+    w = u8g2Fonts.getUTF8Width(textToFit.c_str());
+    h = u8g2Fonts.getFontAscent()-u8g2Fonts.getFontDescent();
+    Serial.println("Got text bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h) + " for text: " + textToFit);
     maxLength++;
   }
 
@@ -116,23 +120,26 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
     return displayFit(text, startX, startY, endX, endY, fontSize, invert, false);
 }
 
+
+
 // Try to fit a String into a rectangle, including the borders.
 // bool bold == true means black background, white text
 // returns: the y position after fitting the text
 int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight) {
   long startTime = millis();
-  bool debugDisplayFit = false;
+  bool debugDisplayFit = true;
 
   feed_watchdog(); // before this long-running and potentially hanging operation, it's a good time to feed the watchdog
 
-  text.replace("~","-");
-  Serial.println("displayFit " + text + " length: " + String(text.length()));
+  Serial.println("displayFit " + text + " of length: " + String(text.length()) + " from (" + String(startXbig) + "," + String(startYbig) + ") to (" + String(endXbig) + "," + String(endYbig) + ") with max fontSize " + String(fontSize));
 
   if (text.length() == 0) {
     Serial.println("Aborting displayFit due to zero length text.");
     return startYbig;
   }
 
+  int16_t x1, y1;
+  uint16_t w, h;
   int startX = startXbig;
   int startY = startYbig;
   int endX = endXbig;
@@ -153,13 +160,14 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   endX = min(displayWidth()-1,endX);
   endY = min(displayHeight()-1,endY);
 
-  int spaceBetweenLines = 1;
+  int spaceBetweenLines = 0;
   int yPos;
 
+  Serial.println("Setting partial window: (" + String(startXbig) + "," + String(startYbig) + " with size " + String(endXbig-startXbig+1) + "x" + String(endYbig-startYbig+1));
+  display.setPartialWindow(startXbig, startYbig, endXbig-startXbig+1, endYbig-startYbig+1);
   while (fontSize > 0) {
+    nroflines = 0;
     setFont(fontSize);
-
-    display.fillRect(startXbig, startYbig, endXbig-startXbig, endYbig-startYbig, GxEPD_WHITE);
 
     yPos = startY;
     int textPos = 0;
@@ -168,32 +176,18 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
       String textWithoutAlreadyPrintedPart = text.substring(textPos);
       int chars = fitMaxText(textWithoutAlreadyPrintedPart, endX);
 
-      // Print the text that fits:
       String textLine = text.substring(textPos, textPos+chars);
       if (debugDisplayFit) Serial.println("first line that fits: " + textLine);
+      lines[nroflines] = textLine;
+      nroflines++;
 
-      int16_t x1, y1;
-      uint16_t w, h;
-      display.getTextBounds(textLine, 0, 0, &x1, &y1, &w, &h);
-      if (debugDisplayFit) Serial.println("getTextBounds of textLine: " + String(x1) + "," + String(y1) + ","+ String(w) + ","+ String(h));
-      if (!alignRight) {
-        display.setCursor(startX, yPos + h); // bottom of the line
-      } else {
-        display.setCursor(endX-w, yPos + h); // bottom of the line
-      }
-      if (!invert) {
-        display.setTextColor(GxEPD_BLACK);
-      } else {
-        display.fillRect(startX-invertOffsetXbefore, yPos-invertOffsetYbefore,w+invertOffsetXbefore+invertOffsetXafter, h+invertOffsetYbefore+invertOffsetYafter, GxEPD_BLACK);
-        display.setTextColor(GxEPD_WHITE);
-      }
-      display.print(textLine);
+      h = u8g2Fonts.getFontAscent()-u8g2Fonts.getFontDescent();
 
       textPos += chars;
       yPos += h + spaceBetweenLines;
     }
     yPos -= spaceBetweenLines; // remove the last space between lines
-    if (debugDisplayFit) Serial.println("After writing the text, yPos = " + String(yPos) + " while endY = " + String(endY));
+    if (debugDisplayFit) Serial.println("After simulating the text, yPos = " + String(yPos) + " while endY = " + String(endY));
 
     // Check if the entire text fit:
     if (yPos <= endY) {
@@ -205,7 +199,41 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
     }
   }
 
-  updateWindow(startX, startY, endX-startX+1, endY-startY+1); // takes around 1400ms
+  // finally print the array
+  display.firstPage();
+  do {
+    yPos = startY;
+    for (int linenr=0;linenr<nroflines;linenr++) {
+      w = u8g2Fonts.getUTF8Width(lines[linenr].c_str());
+      h = u8g2Fonts.getFontAscent()-u8g2Fonts.getFontDescent();
+      Serial.println("getFontAscent = " + u8g2Fonts.getFontAscent());
+      Serial.println("getFontDescent = " + u8g2Fonts.getFontDescent());
+      if (debugDisplayFit) Serial.println("getTextBounds of textLine: " + String(x1) + "," + String(y1) + ","+ String(w) + ","+ String(h));
+      if (!alignRight) {
+        Serial.println("u8g2Fonts.setCursor(" + String(startX) + "," + String(yPos + h) + ")");
+        u8g2Fonts.setCursor(startX, yPos + h); // bottom of the line
+      } else {
+        Serial.println("u8g2Fonts.setCursor(" + String(endX-w) + "," + String(yPos + h) + ")");
+        u8g2Fonts.setCursor(endX-w, yPos + h); // bottom of the line
+      }
+      if (!invert) {
+        u8g2Fonts.setForegroundColor(GxEPD_BLACK);
+        u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
+      } else {
+        display.fillRect(startX-invertOffsetXbefore, yPos-invertOffsetYbefore,w+invertOffsetXbefore+invertOffsetXafter, h+invertOffsetYbefore+invertOffsetYafter, GxEPD_BLACK);
+        //u8g2Fonts.setFontMode(0);
+        u8g2Fonts.setForegroundColor(GxEPD_WHITE);
+        u8g2Fonts.setBackgroundColor(GxEPD_BLACK);
+      }
+      Serial.println("Displaying line: " + lines[linenr]);
+      u8g2Fonts.println(lines[linenr]);
+
+      yPos += h + spaceBetweenLines;
+    }
+  } while (display.nextPage());
+  yPos -= spaceBetweenLines; // remove the last space between lines
+  if (debugDisplayFit) Serial.println("After writing the text, yPos = " + String(yPos) + " while endY = " + String(endY));
+
   feed_watchdog(); // after this long-running and potentially hanging operation, it's a good time to feed the watchdog
   if (debugDisplayFit) Serial.println("displayFit returning yPos = " + String(yPos) + " after runtime of " + String(millis() - startTime) + "ms."); // takes around 1700ms
   return yPos;
@@ -220,8 +248,7 @@ void displayTime(bool useLast) {
 }
 
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {
-  display.drawBitmap(logo, posX, posY, sizeX, sizeY, GxEPD_WHITE);
-  updateWindow(posX, posY, sizeX, sizeY);
+  display.drawImage(logo, posX, posY, sizeX, sizeY, false);
 }
 
 // returns whether it updated the display
@@ -274,10 +301,13 @@ void displayLNURLPayments(int limit, int maxX, int startY, int maxY) {
   int smallestFontHeight = 8;
   // Draw a line under the total sats amount
   // Draws at 0,22 with size 179,1 on 250x122px display
-  display.fillRect(0, startY+3, maxX-3, 1, GxEPD_BLACK);
-  updateWindow(0, startY+3, maxX-3, 1);
-  startY+=4;
-  uint16_t yPos = startY;
+  display.setPartialWindow(0, startY+3, maxX-3, 1);
+  display.firstPage();
+  do {
+    display.fillRect(0, startY+3, maxX-3, 1, GxEPD_BLACK);
+  } while (display.nextPage());
+
+  int yPos = startY+4;
   for (int i=0;i<min(getNroflnurlPayments(),limit) && yPos+smallestFontHeight < maxY;i++) {
     Serial.println("Displaying payment: " + getLnurlPayment(i));
     yPos = displayFit(getLnurlPayment(i), 0, yPos, maxX, maxY, 3);
@@ -305,7 +335,7 @@ void displayFetching() {
 
 // returns the y value after showing all the status info
 void displayStatus(int xBeforeLNURLp, bool showsleep) {
-  int vMargin = 2;
+  int vMargin = 0;
   int startY = displayWidth() - xBeforeLNURLp + vMargin; // x == y because the QR code is square
 
   // wifi strength or zzzz
@@ -364,6 +394,7 @@ bool displayVoltageWarning() {
     } else {
       return false;
     }
+    delay(5000);
 }
 
 

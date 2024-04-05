@@ -42,4 +42,16 @@ typedef enum {
 
 String websocketApiUrl = "/api/v1/ws/";
 
+#if GxEPD2_DRIVER_CLASS == GxEPD2_213_BN || GxEPD2_DRIVER_CLASS == GxEPD2_213_B74
+  // lilygo 2.13 inch 250x122px
+  #define DISPLAY_WIDTH 250
+  #define DISPLAY_HEIGHT 122
+#elif GxEPD2_DRIVER_CLASS == GxEPD2_266_BN
+  // lilygo 2.66 inch 296x152px
+  #define DISPLAY_WIDTH 296
+  #define DISPLAY_HEIGHT 152
+#else
+  #error "Unsupported display."
+#endif
+
 #endif
