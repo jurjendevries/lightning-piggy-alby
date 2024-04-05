@@ -22,7 +22,6 @@
 
 #include "logos.h"
 #include "config.h"
-//#include "GxEPD2_display_selection_new_style.h"
 #include "Constants.h"
 
 int xBeforeLNURLp = DISPLAY_WIDTH;
