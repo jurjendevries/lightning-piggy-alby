@@ -7,9 +7,10 @@
 // <amount> sat(s): comment3
 // <fiatbalance> <currency> (<fiatprice> <currency)
 //
-// balanceHeight is around DISPLAY_HEIGHT/7 rounded up to a multiple of 8
-// so 122/7 = 17 => 24
-#define balanceHeight 3*8 // includes line underneath
+
+#define roundEight(x) (((x) + 8 - 1) & -8) // round up to multiple of 8
+
+#define balanceHeight roundEight(DISPLAY_HEIGHT/7)  // includes line underneath
 
 // base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
 // enable or disable GxEPD2_GFX base class
