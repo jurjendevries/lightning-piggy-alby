@@ -1,3 +1,16 @@
+// The display is layed out as follows:
+// <wallet balance> sat(s)                            QRCODE
+// -------------------------------------------------- QRCODE
+// <amount> sat(s): comment1                          QRCODE
+// <amount> sat(s): comment2 comment2 comment2
+// comment2
+// <amount> sat(s): comment3
+// <fiatbalance> <currency> (<fiatprice> <currency)
+//
+// balanceHeight is around DISPLAY_HEIGHT/7 rounded up to a multiple of 8
+// so 122/7 = 17 => 24
+#define balanceHeight 3*8 // includes line underneath
+
 // base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
 // enable or disable GxEPD2_GFX base class
 #define ENABLE_GxEPD2_GFX 0
@@ -27,6 +40,8 @@ void setup_display() {
     display.setPartialWindow(0, 0, display.width(), display.height());
 
     u8g2Fonts.begin(display); // connect u8g2 procedures to Adafruit GFX
+    u8g2Fonts.setForegroundColor(GxEPD_BLACK);
+    u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
 }
 
 int displayHeight() {
@@ -277,16 +292,21 @@ bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp) {
 void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchPayments) {
   lastBalance = currentBalance;
 
-  // Display balance
-  // height on 122px display should be 20px so (height - 2) / 6
-  // width on 250px display should be 192px so width * 3 / 4
-  int yAfterBalance = displayFit(String(currentBalance) + " sats",0,0,xBeforeLNURLp,(displayHeight()/7)+1,5);
+  // Display balance from 0 to balanceHeight
+  display.setPartialWindow(0, 0, xBeforeLNURLp, balanceHeight);
+  display.firstPage();
+  do {
+    u8g2Fonts.setCursor(0, balanceHeight-3); // bottom of the line
+    setFont(4);
+    u8g2Fonts.print(String(currentBalance) + " sats");
+    display.fillRect(0, balanceHeight-1, xBeforeLNURLp-5, 1, GxEPD_BLACK);
+  } while (display.nextPage());
 
   // Display payment amounts and comments
   int maxYforLNURLPayments = displayHeight()-1;
   if (isConfigured(btcPriceCurrencyChar)) maxYforLNURLPayments -= 20; // leave room for fiat values at the bottom (fontsize 2 = 18 + 2 extra for the black background)
   if (fetchPayments) fetchLNURLPayments(MAX_PAYMENTS);
-  displayLNURLPayments(MAX_PAYMENTS, xBeforeLNURLp - 10, yAfterBalance, maxYforLNURLPayments);
+  displayLNURLPayments(MAX_PAYMENTS, xBeforeLNURLp - 5, balanceHeight+1, maxYforLNURLPayments);
 
   // Display fiat values
   showFiatValues(currentBalance, xBeforeLNURLp);
@@ -299,14 +319,6 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
  */
 void displayLNURLPayments(int limit, int maxX, int startY, int maxY) {
   int smallestFontHeight = 8;
-  // Draw a line under the total sats amount
-  // Draws at 0,22 with size 179,1 on 250x122px display
-  display.setPartialWindow(0, startY+3, maxX-3, 1);
-  display.firstPage();
-  do {
-    display.fillRect(0, startY+3, maxX-3, 1, GxEPD_BLACK);
-  } while (display.nextPage());
-
   int yPos = startY+4;
   for (int i=0;i<min(getNroflnurlPayments(),limit) && yPos+smallestFontHeight < maxY;i++) {
     Serial.println("Displaying payment: " + getLnurlPayment(i));
@@ -451,13 +463,13 @@ void showBootSlogan() {
   int timeToWait = 0;
 
   if (isConfigured(bootSloganPrelude)) {
-    displayY = displayFit(String(bootSloganPrelude), 0, displayY, displayWidth(), displayHeight()/5, 3);
+    displayY = displayFit(String(bootSloganPrelude), 0, 0, displayWidth(), balanceHeight, 3);
     timeToWait = 1000; // since the prelude is always the same, there's no need to wait a long time to allow reading it
   }
 
   String slogan = getRandomBootSlogan();
   Serial.println("Showing boot slogan: " + slogan);
-  displayFit(slogan, 0, displayY+5, displayWidth(), displayHeight(), 4);
+  displayFit(slogan, 0, balanceHeight+8, displayWidth(), displayHeight(), 4); // leave multiple of 8px margin for font descent
 
   // Assuming a 7 year old averages one 4-letter word per second, that's 5 characters per second.
   timeToWait += strlen(slogan.c_str()) * 1000 / 5;
