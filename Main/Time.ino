@@ -18,7 +18,7 @@ String getTimeFromNTP() {
   {
     Serial.print("deserializeJson() failed: ");
     Serial.println(error.f_str());
-    return "na";
+    return "time error";
   }
 
   Serial.println("Extracting weekday and time from received data");
