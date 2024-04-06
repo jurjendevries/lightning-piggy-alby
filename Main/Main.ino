@@ -42,9 +42,6 @@ void setup() {
 
     setup_display();
 
-    displayFit("TESTING", 50,50, 150,150,2,true);
-    delay(5000);
-
     displayVoltageWarning();
     showBootSlogan();
     showLogo(epd_bitmap_Lightning_Piggy, 250, 100, (displayWidth() - 250) / 2, 0);
@@ -90,7 +87,6 @@ void loop() {
 
   if (getWalletID().length() > 0) {
     websocket_loop();
-    displayRefreshedVoltagePeriodically(); // only refresh voltage so the user can see it going down with time. the rest can stay.
   } else {
     // This fallback behavior should never happen because wallet ID will always be found in the LNURLp list.
     displayStatus(xBeforeLNURLp, false);  // takes ~2000ms, which is too much to do with the websocket
