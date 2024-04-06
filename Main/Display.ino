@@ -9,6 +9,7 @@
 //
 
 #define balanceHeight roundEight(DISPLAY_HEIGHT/7)  // includes line underneath
+#define fiatHeight    roundEight((DISPLAY_HEIGHT*5)/7)
 
 // base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
 // enable or disable GxEPD2_GFX base class
@@ -302,8 +303,8 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
   } while (display.nextPage());
 
   // Display payment amounts and comments
-  int maxYforLNURLPayments = displayHeight()-1;
-  if (isConfigured(btcPriceCurrencyChar)) maxYforLNURLPayments -= 20; // leave room for fiat values at the bottom (fontsize 2 = 18 + 2 extra for the black background)
+  int maxYforLNURLPayments = displayHeight();
+  if (isConfigured(btcPriceCurrencyChar)) maxYforLNURLPayments = fiatHeight; // leave room for fiat values at the bottom (fontsize 2 = 18 + 2 extra for the black background)
   if (fetchPayments) fetchLNURLPayments(MAX_PAYMENTS);
   displayLNURLPayments(MAX_PAYMENTS, xBeforeLNURLp - 5, balanceHeight+1, maxYforLNURLPayments);
 
@@ -444,7 +445,7 @@ void showFiatValues(int balance, int maxX) {
   if (currentBtcPriceToShow.length() <= 6) currentBtcPriceToShow += getCurrentCurrencyCode();
   toDisplay += "(" + currentBtcPriceToShow + ")";
 
-  displayFit(toDisplay, 0, displayHeight()-1 - 14 - blackBackgroundVerticalMargin*2, maxX, displayHeight(), 2, true);
+  displayFit(toDisplay, 0, fiatHeight, maxX, displayHeight(), 2, true);
 }
 
 
