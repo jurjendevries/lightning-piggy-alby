@@ -1,3 +1,4 @@
+
 // Returns true if the value is configured, otherwise false.
 bool isConfigured(const char * configName) {
   if ((strncmp(configName, NOTCONFIGURED, NOTCONFIGURED_LENGTH) == 0) || (strlen(configName) == 0)) {

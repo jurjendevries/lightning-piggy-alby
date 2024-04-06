@@ -8,8 +8,6 @@
 // <fiatbalance> <currency> (<fiatprice> <currency)
 //
 
-#define roundEight(x) (((x) + 8 - 1) & -8) // round up to multiple of 8
-
 #define balanceHeight roundEight(DISPLAY_HEIGHT/7)  // includes line underneath
 
 // base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
@@ -31,6 +29,9 @@ int lastBalance = -NOT_SPECIFIED;
 int smallestFontHeight = 14;
 
 int statusAreaVoltageHeight = -1; // this value is cached after it's calculated so it can be reused later to updated only the voltage
+
+int blackBackgroundVerticalMargin=2;
+int blackBackgroundHorizontalMargin=2;
 
 String lines[10];
 int nroflines = 0;
@@ -136,7 +137,32 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
     return displayFit(text, startX, startY, endX, endY, fontSize, invert, false);
 }
 
-
+// xPos,yPos is the top left of the line (in case no alignRight) or top right of the line (in case of alignRight)
+// returns line height
+int drawLine(String line, int xPos, int yPos, bool invert, bool alignRight) {
+  int w = u8g2Fonts.getUTF8Width(line.c_str());
+  int h = u8g2Fonts.getFontAscent()-u8g2Fonts.getFontDescent();
+  Serial.println("Drawing text " + String(line) + " at (" + String(xPos) + "," + String(yPos) + ") with size "+ String(w) + "x"+ String(h));
+  if (!alignRight) {
+    Serial.println("u8g2Fonts.setCursor(" + String(xPos) + "," + String(yPos + h) + ")");
+    u8g2Fonts.setCursor(xPos, yPos + h); // bottom of the line
+  } else {
+    Serial.println("u8g2Fonts.setCursor(" + String(xPos-w) + "," + String(yPos + h) + ")");
+    u8g2Fonts.setCursor(xPos-w, yPos + h); // bottom of the line
+  }
+  if (!invert) {
+    u8g2Fonts.setForegroundColor(GxEPD_BLACK);
+    u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
+  } else {
+    Serial.println("Filling rectangle for inverted text from (" + String(xPos) + "," + String(yPos) + ") of size " + String(w) + "x" + String(h));
+    display.fillRect(xPos-blackBackgroundHorizontalMargin, yPos, w+blackBackgroundHorizontalMargin*2, h+blackBackgroundVerticalMargin*2, GxEPD_BLACK);
+    u8g2Fonts.setForegroundColor(GxEPD_WHITE);
+    u8g2Fonts.setBackgroundColor(GxEPD_BLACK);
+  }
+  Serial.println("Displaying line: " + line);
+  u8g2Fonts.println(line);
+  return h;
+}
 
 // Try to fit a String into a rectangle, including the borders.
 // bool bold == true means black background, white text
@@ -160,10 +186,10 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   int startY = startYbig;
   int endX = endXbig;
   int endY = endYbig;
-  int invertOffsetXbefore = 2;
+  int invertOffsetXbefore = blackBackgroundHorizontalMargin;
   int invertOffsetYbefore = 0;
-  int invertOffsetXafter = 2;
-  int invertOffsetYafter = 2;
+  int invertOffsetXafter = blackBackgroundHorizontalMargin;
+  int invertOffsetYafter = blackBackgroundVerticalMargin;
   if (invert) {
     // black rectangle is slightly bigger than the text; from (-2,-1) inclusive until (+2,+2) inclusive
     startX = startXbig + invertOffsetXbefore;
@@ -220,31 +246,11 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   do {
     yPos = startY;
     for (int linenr=0;linenr<nroflines;linenr++) {
-      w = u8g2Fonts.getUTF8Width(lines[linenr].c_str());
-      h = u8g2Fonts.getFontAscent()-u8g2Fonts.getFontDescent();
-      Serial.println("getFontAscent = " + u8g2Fonts.getFontAscent());
-      Serial.println("getFontDescent = " + u8g2Fonts.getFontDescent());
-      if (debugDisplayFit) Serial.println("getTextBounds of textLine: " + String(x1) + "," + String(y1) + ","+ String(w) + ","+ String(h));
       if (!alignRight) {
-        Serial.println("u8g2Fonts.setCursor(" + String(startX) + "," + String(yPos + h) + ")");
-        u8g2Fonts.setCursor(startX, yPos + h); // bottom of the line
+        yPos += drawLine(lines[linenr],startX,yPos,invert,alignRight) + spaceBetweenLines;
       } else {
-        Serial.println("u8g2Fonts.setCursor(" + String(endX-w) + "," + String(yPos + h) + ")");
-        u8g2Fonts.setCursor(endX-w, yPos + h); // bottom of the line
+        yPos += drawLine(lines[linenr],endX,yPos,invert,alignRight) + spaceBetweenLines;
       }
-      if (!invert) {
-        u8g2Fonts.setForegroundColor(GxEPD_BLACK);
-        u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
-      } else {
-        display.fillRect(startX-invertOffsetXbefore, yPos-invertOffsetYbefore,w+invertOffsetXbefore+invertOffsetXafter, h+invertOffsetYbefore+invertOffsetYafter, GxEPD_BLACK);
-        //u8g2Fonts.setFontMode(0);
-        u8g2Fonts.setForegroundColor(GxEPD_WHITE);
-        u8g2Fonts.setBackgroundColor(GxEPD_BLACK);
-      }
-      Serial.println("Displaying line: " + lines[linenr]);
-      u8g2Fonts.println(lines[linenr]);
-
-      yPos += h + spaceBetweenLines;
     }
   } while (display.nextPage());
   yPos -= spaceBetweenLines; // remove the last space between lines
@@ -348,37 +354,46 @@ void displayFetching() {
 
 // returns the y value after showing all the status info
 void displayStatus(int xBeforeLNURLp, bool showsleep) {
-  int vMargin = 0;
-  int startY = displayWidth() - xBeforeLNURLp + vMargin; // x == y because the QR code is square
+  setFont(0);
+  int lineHeight = u8g2Fonts.getFontAscent()-u8g2Fonts.getFontDescent(); // there's no fontDescent in these status lines 
+  int qrPixels = displayWidth() - xBeforeLNURLp; // square
+  Serial.println("qrPixels = " + String(qrPixels));
 
-  // wifi strength or zzzz
-  String wifiString = "..zzzZZZZ";
-  if (!showsleep) {
-    wifiString = "Wifi:";
-    if (wifiConnected()) {
-      int wifiStrengthPercent = strengthPercent(getStrength(5));
-      wifiString += String(wifiStrengthPercent) + "%";
-    } else {
-      wifiString += "off";
+  display.setPartialWindow(xBeforeLNURLp, qrPixels, displayWidth()-xBeforeLNURLp, displayHeight()-qrPixels);
+  display.firstPage();
+  do {
+    int startY = qrPixels;
+
+    // wifi strength or zzzz
+    String wifiString = "..zzzZZZZ";
+    if (!showsleep) {
+      wifiString = "Wifi:";
+      if (wifiConnected()) {
+        int wifiStrengthPercent = strengthPercent(getStrength(5));
+        wifiString += String(wifiStrengthPercent) + "%";
+      } else {
+        wifiString += "off";
+      }
     }
-  }
-  Serial.println("Displaying wifi string: " + wifiString);
-  startY = vMargin + displayFit(wifiString, xBeforeLNURLp, startY, displayWidth(), startY+smallestFontHeight-vMargin, 1, false, true);
-
-  String versionString = "v";
-  if (isUpdateAvailable()) versionString = "UP!";
-  versionString += getShortVersion();
-  startY = vMargin + displayFit(versionString, xBeforeLNURLp, startY, displayWidth(), startY+smallestFontHeight-vMargin, 1, false, true);
-
-  String displayString = getShortDisplayInfo();
-  startY = vMargin + displayFit(displayString, xBeforeLNURLp, startY, displayWidth(), startY+smallestFontHeight-vMargin, 1, false, true);
-
-  statusAreaVoltageHeight = startY;
-  displayRefreshedVoltagePeriodically();
+    Serial.println("Displaying wifi string: " + wifiString);
+    startY += drawLine(wifiString, displayWidth(), startY, false, true);
+  
+    String versionString = "v";
+    if (isUpdateAvailable()) versionString = "UP!";
+    versionString += getShortVersion();
+    startY += drawLine(versionString, displayWidth(), startY, false, true);
+  
+    String displayString = getShortDisplayInfo();
+    startY += drawLine(displayString, displayWidth(), startY, false, true);
+  
+    statusAreaVoltageHeight = startY;
+    displayRefreshedVoltagePeriodically();
+  } while (display.nextPage());
 }
 
 // Uses the cached displayRefreshedVoltage
 // This can be called without doing the entire refresh, which is too slow for reliable websocket handling.
+// TODO: in addition to showing this at boot, only show it before going to sleep
 void displayRefreshedVoltagePeriodically() {
   long nowRefreshedVoltageMillis = millis();
   // if there is a lastBalance and it was recently refreshed, then don't update balance
@@ -393,7 +408,8 @@ void displayRefreshedVoltagePeriodically() {
   if (voltage > 0) {
     voltageString = String(voltage, 2) + "V";
   }
-  displayFit(voltageString, xBeforeLNURLp, statusAreaVoltageHeight, displayWidth(), statusAreaVoltageHeight+smallestFontHeight, 1, false, true);
+
+  drawLine(voltageString, displayWidth(), statusAreaVoltageHeight, false, true);
 }
 
 // returns true if voltage is low, false otherwise
@@ -449,8 +465,7 @@ void showFiatValues(int balance, int maxX) {
   if (currentBtcPriceToShow.length() <= 6) currentBtcPriceToShow += getCurrentCurrencyCode();
   toDisplay += "(" + currentBtcPriceToShow + ")";
 
-  //displayBoldMessage(toDisplay, displayHeight() - 4); // bold text adds 1 pixel before + 2 pixels after + 1 pixel because displayHeight() starts counting at 0
-  displayFit(toDisplay, 0, displayHeight() - 20, maxX, displayHeight(), 2, true);
+  displayFit(toDisplay, 0, displayHeight()-1 - 14 - blackBackgroundVerticalMargin*2, maxX, displayHeight(), 2, true);
 }
 
 

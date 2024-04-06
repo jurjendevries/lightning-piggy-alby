@@ -24,6 +24,8 @@
 #include "config.h"
 #include "Constants.h"
 
+#define roundEight(x) (((x) + 8 - 1) & -8) // round up to multiple of 8
+
 int xBeforeLNURLp = DISPLAY_WIDTH;
 
 void setup() {
@@ -40,6 +42,9 @@ void setup() {
 
     setup_display();
 
+    displayFit("TESTING", 50,50, 150,150,2,true);
+    delay(5000);
+
     displayVoltageWarning();
     showBootSlogan();
     showLogo(epd_bitmap_Lightning_Piggy, 250, 100, (displayWidth() - 250) / 2, 0);
@@ -55,6 +60,7 @@ void setup() {
     displayFetching();
 
     xBeforeLNURLp = showLNURLpQR(getLNURLp());
+    xBeforeLNURLp = displayWidth()-roundEight(displayWidth()-xBeforeLNURLp);
 
     displayStatus(xBeforeLNURLp, false);
     displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
