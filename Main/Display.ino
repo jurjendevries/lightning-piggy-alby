@@ -130,14 +130,6 @@ int fitMaxText(String text, int maxWidth) {
   return maxLength;
 }
 
-int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize) {
-    return displayFit(text, startX, startY, endX, endY, fontSize, false, false);
-}
-
-int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize, bool invert) {
-    return displayFit(text, startX, startY, endX, endY, fontSize, invert, false);
-}
-
 // xPos,yPos is the top left of the line (in case no alignRight) or top right of the line (in case of alignRight)
 // returns line height
 int drawLine(String line, int xPos, int yPos, bool invert, bool alignRight) {
@@ -163,6 +155,15 @@ int drawLine(String line, int xPos, int yPos, bool invert, bool alignRight) {
   Serial.println("Displaying line: " + line);
   u8g2Fonts.println(line);
   return h;
+}
+
+
+int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize) {
+    return displayFit(text, startX, startY, endX, endY, fontSize, false, false);
+}
+
+int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize, bool invert) {
+    return displayFit(text, startX, startY, endX, endY, fontSize, invert, false);
 }
 
 // Try to fit a String into a rectangle, including the borders.
@@ -203,7 +204,6 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   endX = min(displayWidth()-1,endX);
   endY = min(displayHeight()-1,endY);
 
-  int spaceBetweenLines = 0;
   int yPos;
 
   Serial.println("Setting partial window: (" + String(startXbig) + "," + String(startYbig) + " with size " + String(endXbig-startXbig+1) + "x" + String(endYbig-startYbig+1));
@@ -227,9 +227,8 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
       h = u8g2Fonts.getFontAscent()-u8g2Fonts.getFontDescent();
 
       textPos += chars;
-      yPos += h + spaceBetweenLines;
+      yPos += h;
     }
-    yPos -= spaceBetweenLines; // remove the last space between lines
     if (debugDisplayFit) Serial.println("After simulating the text, yPos = " + String(yPos) + " while endY = " + String(endY));
 
     // Check if the entire text fit:
@@ -248,13 +247,12 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
     yPos = startY;
     for (int linenr=0;linenr<nroflines;linenr++) {
       if (!alignRight) {
-        yPos += drawLine(lines[linenr],startX,yPos,invert,alignRight) + spaceBetweenLines;
+        yPos += drawLine(lines[linenr],startX,yPos,invert,alignRight);
       } else {
-        yPos += drawLine(lines[linenr],endX,yPos,invert,alignRight) + spaceBetweenLines;
+        yPos += drawLine(lines[linenr],endX,yPos,invert,alignRight);
       }
     }
   } while (display.nextPage());
-  yPos -= spaceBetweenLines; // remove the last space between lines
   if (debugDisplayFit) Serial.println("After writing the text, yPos = " + String(yPos) + " while endY = " + String(endY));
 
   feed_watchdog(); // after this long-running and potentially hanging operation, it's a good time to feed the watchdog
