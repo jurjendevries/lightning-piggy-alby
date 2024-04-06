@@ -321,7 +321,7 @@ void displayLNURLPayments(int limit, int maxX, int startY, int maxY) {
   for (int i=0;i<min(getNroflnurlPayments(),limit) && yPos+smallestFontHeight < maxY;i++) {
     Serial.println("Displaying payment: " + getLnurlPayment(i));
     yPos = displayFit(getLnurlPayment(i), 0, yPos, maxX, maxY, 3);
-    yPos = roundEight(yPos);
+    yPos = roundEight(yPos); // make sure it's a multiple of 8 because that's what setPartialWindow needs
   }
 }
 
