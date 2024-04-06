@@ -44,7 +44,7 @@ void setup() {
 
     displayVoltageWarning();
     showBootSlogan();
-    showLogo(epd_bitmap_Lightning_Piggy, 250, 100, (displayWidth() - 250) / 2, 0);
+    showLogo(epd_bitmap_Lightning_Piggy, 104, 250, displayHeight() - 104, (displayWidth() - 250) / 2); // width and height are swapped because display rotation
 
     setup_watchdog();
 
