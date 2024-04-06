@@ -116,7 +116,6 @@ void verbose_print_reset_reason(int reason) {
   }
 }
 
-
 /*
 Method to print the reason by which ESP32
 has been awaken from sleep
@@ -223,7 +222,6 @@ void hibernate(int sleepTimeSeconds) {
   Serial.println("Going to sleep for " + String(sleepTimeSeconds) + " seconds...");
 
   displayStatus(xBeforeLNURLp, true);
-  displayTime(false); // update time before going to sleep so the user sees the last update time
 
   disconnectWebsocket();
   // Disconnect wifi cleanly because some access points will refuse reconnections if this is forgotten...

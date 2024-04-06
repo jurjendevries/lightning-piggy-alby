@@ -2,6 +2,8 @@
 double averageVoltage = 0;
 int averageVoltageN = 0;
 
+double lastVoltage = NOT_SPECIFIED;
+
 double approxRollingAverage(double avg, double input) {
   averageVoltageN++;
   if (averageVoltageN>10) averageVoltageN=10;
@@ -13,6 +15,10 @@ double approxRollingAverage(double avg, double input) {
 
 double getAverageBatteryVoltage() {
   return averageVoltage;
+}
+
+double getLastVoltage() {
+  return lastVoltage;
 }
 
 // Returns the VBAT value.
@@ -38,10 +44,9 @@ double getBatteryVoltage() {
     //Serial.println("Average battery level diff: " + String(totalDiff));
 
     double voltage = (totalLevel * 1.72) / 1000;
-    if (totalDiff > 32) {
-      // The battery has a smoothing effect so lots of variance between levels means we're not on battery.
-      voltage *= -1;
-    }
+    if (totalDiff > 32) voltage *= -1;  // The battery has a smoothing effect so lots of variance between levels means we're not on battery.
+
+    lastVoltage = voltage;
     averageVoltage = approxRollingAverage(averageVoltage, voltage);
     //return 3.7; // for testing low battery situation
     return voltage;

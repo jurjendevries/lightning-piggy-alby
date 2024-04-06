@@ -261,14 +261,6 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   return yPos;
 }
 
-void displayTime(bool useLast) {
-  String currentTime = getLastTime();
-  if (!useLast) {
-    currentTime = getTimeFromNTP();
-  }
-  displayFit(currentTime, displayWidth()-6*8, displayHeight()-14, displayWidth(), displayHeight(), 1);    // 6 characters, width of 8
-}
-
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {
   display.drawImage(logo, posX, posY, sizeX, sizeY, false);
 }
@@ -385,31 +377,19 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
   
     String displayString = getShortDisplayInfo();
     startY += drawLine(displayString, displayWidth(), startY, false, true);
-  
-    statusAreaVoltageHeight = startY;
-    displayRefreshedVoltagePeriodically();
+
+    double voltage = getLastVoltage();
+    if (showsleep) voltage = getBatteryVoltage(); // only refresh voltage before going to sleep
+    String voltageString = "NOBAT";
+    if (voltage > 0) voltageString = String(voltage, 2) + "V";
+    startY += drawLine(voltageString, displayWidth(), startY, false, true);
+
+    // Time is only shown before sleep
+    if (showsleep) {
+      String currentTime = getTimeFromNTP();
+      drawLine(currentTime, displayWidth(), startY, false, true);    // 6 characters, width of 8
+    }
   } while (display.nextPage());
-}
-
-// Uses the cached displayRefreshedVoltage
-// This can be called without doing the entire refresh, which is too slow for reliable websocket handling.
-// TODO: in addition to showing this at boot, only show it before going to sleep
-void displayRefreshedVoltagePeriodically() {
-  long nowRefreshedVoltageMillis = millis();
-  // if there is a lastBalance and it was recently refreshed, then don't update balance
-  if ((nowRefreshedVoltageMillis - lastRefreshedVoltage) < UPDATE_VOLTAGE_PERIOD_MILLIS) {
-    return;
-  } else {
-    lastRefreshedVoltage = nowRefreshedVoltageMillis; // even if the below operations fail, this still counts as an update, because we don't want to retry immediately if something fails
-  }
-
-  double voltage = getBatteryVoltage();
-  String voltageString = "NOBAT";
-  if (voltage > 0) {
-    voltageString = String(voltage, 2) + "V";
-  }
-
-  drawLine(voltageString, displayWidth(), statusAreaVoltageHeight, false, true);
 }
 
 // returns true if voltage is low, false otherwise
@@ -425,7 +405,6 @@ bool displayVoltageWarning() {
     }
     delay(5000);
 }
-
 
 // This shows something like:
 // 123.23$ (51234.1$)
