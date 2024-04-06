@@ -203,7 +203,7 @@ bool hibernateDependingOnBattery() {
     Serial.println("Device is not battery powered so not sleeping.");
     return true;
   } else if (getAverageBatteryVoltage()<2.5) {
-    Serial.println("Saved from an unwanted sleep by the average battery voltage (" + String(getAverageBatteryVoltage()) + ") check!");
+    Serial.println("Saved from an unwanted sleep by the average battery voltage (" + String(getAverageBatteryVoltage()) + "<2.5V) check!");
     return true;
   }
 
