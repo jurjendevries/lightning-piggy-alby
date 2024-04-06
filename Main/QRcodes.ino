@@ -24,7 +24,8 @@ int showLNURLpQR(String qrData) {
   int qrPosX = displayWidth() - qrSideSize;
   int qrPosY = 0;
 
-  display.setPartialWindow(qrPosX, qrPosY, qrSideSize, qrSideSize);
+  //display.setPartialWindow(qrPosX, qrPosY, qrSideSize, qrSideSize);
+  display.setPartialWindow(0, 0, displayWidth(), displayHeight()); // this is the first thing that gets displayed so blank the entire screen
   display.firstPage();
   do {
     for (uint8_t y = 0; y < qrcoded.size; y++)
