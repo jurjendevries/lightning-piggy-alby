@@ -8,8 +8,8 @@
 // <fiatbalance> <currency> (<fiatprice> <currency)
 //
 
-#define balanceHeight roundEight(DISPLAY_HEIGHT/7)  // includes line underneath
-#define fiatHeight    roundEight((DISPLAY_HEIGHT*5)/7)
+#define balanceHeight roundEight(DISPLAY_HEIGHT/5)  // includes line underneath
+#define fiatHeight    roundEight((DISPLAY_HEIGHT*4)/5)
 
 // base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
 // enable or disable GxEPD2_GFX base class
