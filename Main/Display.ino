@@ -40,7 +40,6 @@ int nroflines = 0;
 void setup_display() {
     display.init(115200, true, 2, false); // USE THIS for Waveshare boards with "clever" reset circuit, 2ms reset pulse
     display.setRotation(1); // display is used in landscape mode
-    display.setPartialWindow(0, 0, display.width(), display.height());
 
     u8g2Fonts.begin(display); // connect u8g2 procedures to Adafruit GFX
     u8g2Fonts.setForegroundColor(GxEPD_BLACK);
@@ -130,6 +129,18 @@ int fitMaxText(String text, int maxWidth) {
   return maxLength;
 }
 
+int drawLines(String stringArray[], int nrOfItems, int startX, int endX, int startY, bool invert, bool alignRight) {
+  int yPos = startY;
+  for (int linenr=0;linenr<nroflines;linenr++) {
+    if (!alignRight) {
+      yPos += drawLine(lines[linenr],startX,yPos,invert,alignRight);
+    } else {
+      yPos += drawLine(lines[linenr],endX,yPos,invert,alignRight);
+    }
+  }
+  return yPos;
+}
+
 // xPos,yPos is the top left of the line (in case no alignRight) or top right of the line (in case of alignRight)
 // returns line height
 int drawLine(String line, int xPos, int yPos, bool invert, bool alignRight) {
@@ -159,17 +170,21 @@ int drawLine(String line, int xPos, int yPos, bool invert, bool alignRight) {
 
 
 int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize) {
-    return displayFit(text, startX, startY, endX, endY, fontSize, false, false);
+    return displayFit(text, startX, startY, endX, endY, fontSize, false);
 }
 
 int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize, bool invert) {
     return displayFit(text, startX, startY, endX, endY, fontSize, invert, false);
 }
 
+int displayFit(String text, int startX, int startY, int endX, int endY, int fontSize, bool invert, bool alignRight) {
+    return displayFit(text, startX, startY, endX, endY, fontSize, invert, alignRight, true);
+}
+
 // Try to fit a String into a rectangle, including the borders.
 // bool bold == true means black background, white text
 // returns: the y position after fitting the text
-int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight) {
+int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight, bool drawIt) {
   long startTime = millis();
   bool debugDisplayFit = true;
 
@@ -206,8 +221,10 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
 
   int yPos;
 
-  Serial.println("Setting partial window: (" + String(startXbig) + "," + String(startYbig) + " with size " + String(endXbig-startXbig+1) + "x" + String(endYbig-startYbig+1));
-  display.setPartialWindow(startXbig, startYbig, endXbig-startXbig+1, endYbig-startYbig+1);
+  if (drawIt) {
+    Serial.println("Setting partial window: (" + String(startXbig) + "," + String(startYbig) + " with size " + String(endXbig-startXbig+1) + "x" + String(endYbig-startYbig+1));
+    display.setPartialWindow(startXbig, startYbig, endXbig-startXbig+1, endYbig-startYbig+1);
+  }
   while (fontSize > 0) {
     nroflines = 0;
     setFont(fontSize);
@@ -241,18 +258,15 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
     }
   }
 
-  // finally print the array
-  display.firstPage();
-  do {
-    yPos = startY;
-    for (int linenr=0;linenr<nroflines;linenr++) {
-      if (!alignRight) {
-        yPos += drawLine(lines[linenr],startX,yPos,invert,alignRight);
-      } else {
-        yPos += drawLine(lines[linenr],endX,yPos,invert,alignRight);
-      }
-    }
-  } while (display.nextPage());
+  if (drawIt) {
+    // finally print the array
+    display.firstPage();
+    do {
+      yPos = drawLines(lines, nroflines, startX, endX, startY, invert, alignRight);
+    } while (display.nextPage());
+  } else {
+    yPos = drawLines(lines, nroflines, startX, endX, startY, invert, alignRight);
+  }
   if (debugDisplayFit) Serial.println("After writing the text, yPos = " + String(yPos) + " while endY = " + String(endY));
 
   feed_watchdog(); // after this long-running and potentially hanging operation, it's a good time to feed the watchdog
@@ -260,7 +274,17 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
   return yPos;
 }
 
+void fastClearScreen() {
+  // display.clearScreen(); // slow
+  display.setPartialWindow(0, 0, displayWidth(), displayHeight()); // this clear the display
+  display.firstPage();
+  do {
+    display.fillRect(0, 0, displayWidth(), displayHeight(), GxEPD_WHITE);
+  } while (display.nextPage());
+}
+
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {
+  fastClearScreen();
   display.drawImage(logo, posX, posY, sizeX, sizeY, false);
 }
 
@@ -294,8 +318,7 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
   display.setPartialWindow(0, 0, xBeforeLNURLp, balanceHeight);
   display.firstPage();
   do {
-    setFont(4); // on smaller displays, this is probably too big... if only we had some kind of displayfit but without the setPartialWindow...
-    drawLine(String(currentBalance) + " sats", 0, balanceHeight-3, false, false); // bottom of the line
+    displayFit(String(currentBalance) + " sats", 0, 0, xBeforeLNURLp-5, balanceHeight, 5, false, false, false); // no fontdecent so all the way down to balanceHeight is fine
     display.fillRect(0, balanceHeight-1, xBeforeLNURLp-5, 1, GxEPD_BLACK);
   } while (display.nextPage());
 
