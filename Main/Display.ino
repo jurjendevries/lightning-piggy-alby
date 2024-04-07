@@ -339,12 +339,15 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
  */
 void displayLNURLPayments(int limit, int maxX, int startY, int maxY) {
   int smallestFontHeight = 8;
-  int yPos = startY;
-  for (int i=0;i<min(getNroflnurlPayments(),limit) && yPos+smallestFontHeight < maxY;i++) {
-    Serial.println("Displaying payment: " + getLnurlPayment(i));
-    yPos = displayFit(getLnurlPayment(i), 0, yPos, maxX, maxY, 3);
-    yPos = roundEight(yPos); // make sure it's a multiple of 8 because that's what setPartialWindow needs
-  }
+  display.setPartialWindow(0, startY, maxX, maxY);
+  display.firstPage();
+  do {
+    int yPos = startY;
+    for (int i=0;i<min(getNroflnurlPayments(),limit) && yPos+smallestFontHeight < maxY;i++) {
+      Serial.println("Displaying payment: " + getLnurlPayment(i));
+      yPos = displayFit(getLnurlPayment(i), 0, yPos, maxX, maxY, 3, false, false, false);
+    }
+  } while (display.nextPage());
 }
 
 void displayWifiConnecting() {
