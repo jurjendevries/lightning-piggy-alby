@@ -2,9 +2,9 @@
 // <wallet balance> sat(s)                            QRCODE
 // -------------------------------------------------- QRCODE
 // <amount> sat(s): comment1                          QRCODE
-// <amount> sat(s): comment2 comment2 comment2
-// comment2
-// <amount> sat(s): comment3
+// <amount> sat(s): comment2 comment2 comment2        status
+// comment2                                           status
+// <amount> sat(s): comment3                          status
 // <fiatbalance> <currency> (<fiatprice> <currency)
 //
 
@@ -294,9 +294,8 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
   display.setPartialWindow(0, 0, xBeforeLNURLp, balanceHeight);
   display.firstPage();
   do {
-    u8g2Fonts.setCursor(0, balanceHeight-3); // bottom of the line
-    setFont(4);
-    u8g2Fonts.print(String(currentBalance) + " sats");
+    setFont(4); // on smaller displays, this is probably too big... if only we had some kind of displayfit but without the setPartialWindow...
+    drawLine(String(currentBalance) + " sats", 0, balanceHeight-3, false, false); // bottom of the line
     display.fillRect(0, balanceHeight-1, xBeforeLNURLp-5, 1, GxEPD_BLACK);
   } while (display.nextPage());
 
