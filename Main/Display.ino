@@ -318,7 +318,7 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
   display.setPartialWindow(0, 0, xBeforeLNURLp, balanceHeight);
   display.firstPage();
   do {
-    displayFit(String(currentBalance) + " sats", 0, 0, xBeforeLNURLp-5, balanceHeight, 5, false, false, false); // no fontdecent so all the way down to balanceHeight is fine
+    displayFit(String(currentBalance) + " sats", 0, 0, xBeforeLNURLp-5, balanceHeight-1, 5, false, false, false); // no fontdecent so all the way down to balanceHeight-1
     display.fillRect(0, balanceHeight-1, xBeforeLNURLp-5, 1, GxEPD_BLACK);
   } while (display.nextPage());
 
@@ -339,7 +339,7 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
  */
 void displayLNURLPayments(int limit, int maxX, int startY, int maxY) {
   int smallestFontHeight = 8;
-  int yPos = startY+4;
+  int yPos = startY;
   for (int i=0;i<min(getNroflnurlPayments(),limit) && yPos+smallestFontHeight < maxY;i++) {
     Serial.println("Displaying payment: " + getLnurlPayment(i));
     yPos = displayFit(getLnurlPayment(i), 0, yPos, maxX, maxY, 3);
