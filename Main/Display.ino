@@ -61,12 +61,12 @@ void setup_display() {
   Serial.println("clearScreen operation took " + String(millis() - beforeTime) + "ms");
   if ((millis() - beforeTime) > 1500) {
     Serial.println("clearScreen took a long time so found the right display: 1!");
-    displayToUse = 1;
+    displayToUse = DISPLAY_TYPE_213DEPG;
     display1.setRotation(1); // display is used in landscape mode
     u8g2Fonts.begin(display1); // connect u8g2 procedures to Adafruit GFX
   } else {
     display2.init(115200, true, 2, false);
-    displayToUse = 2;
+    displayToUse = DISPLAY_TYPE_266DEPG;
     display2.setRotation(1); // display is used in landscape mode
     u8g2Fonts.begin(display2); // connect u8g2 procedures to Adafruit GFX
   }
@@ -78,10 +78,14 @@ void setup_display() {
   fiatHeight = roundEight((displayHeight()*4)/5);
 }
 
+int getDisplayToUse() {
+  return displayToUse;
+}
+
 void setPartialWindow(int x, int y, int h, int w) {
-  if (displayToUse == 1) {
+  if (displayToUse == DISPLAY_TYPE_213DEPG) {
     display1.setPartialWindow(x, y, h, w);
-  } else if (displayToUse == 2) {
+  } else if (displayToUse == DISPLAY_TYPE_266DEPG) {
     display2.setPartialWindow(x, y, h, w);
   } else {
     Serial.println("ERROR: there's no display to use detected!");
@@ -89,9 +93,9 @@ void setPartialWindow(int x, int y, int h, int w) {
 }
 
 void displayFirstPage() {
-  if (displayToUse == 1) {
+  if (displayToUse == DISPLAY_TYPE_213DEPG) {
     display1.firstPage();
-  } else if (displayToUse == 2) {
+  } else if (displayToUse == DISPLAY_TYPE_266DEPG) {
     display2.firstPage();
   } else {
     Serial.println("ERROR: there's no display to use detected!");
@@ -99,9 +103,9 @@ void displayFirstPage() {
 }
 
 bool displayNextPage() {
-  if (displayToUse == 1) {
+  if (displayToUse == DISPLAY_TYPE_213DEPG) {
     return display1.nextPage();
-  } else if (displayToUse == 2) {
+  } else if (displayToUse == DISPLAY_TYPE_266DEPG) {
     return display2.nextPage();
   } else {
     Serial.println("ERROR: there's no display to use detected!");
@@ -110,9 +114,9 @@ bool displayNextPage() {
 }
 
 void displayFillRect(int x, int y, int w, int h, int color) {
-  if (displayToUse == 1) {
+  if (displayToUse == DISPLAY_TYPE_213DEPG) {
     display1.fillRect(x,y,w,h,color);
-  } else if (displayToUse == 2) {
+  } else if (displayToUse == DISPLAY_TYPE_266DEPG) {
     display2.fillRect(x,y,w,h,color);
   } else {
     Serial.println("ERROR: there's no display to use detected!");
@@ -120,9 +124,9 @@ void displayFillRect(int x, int y, int w, int h, int color) {
 }
 
 void displayDrawImage(const unsigned char logo [], int posX, int posY, int sizeX, int sizeY, bool toggle) {
-  if (displayToUse == 1) {
+  if (displayToUse == DISPLAY_TYPE_213DEPG) {
     display1.drawImage(logo, posX, posY, sizeX, sizeY, toggle);
-  } else if (displayToUse == 2) {
+  } else if (displayToUse == DISPLAY_TYPE_266DEPG) {
     display2.drawImage(logo, posX, posY, sizeX, sizeY, toggle);
   } else {
     Serial.println("ERROR: there's no display to use detected!");
@@ -130,9 +134,9 @@ void displayDrawImage(const unsigned char logo [], int posX, int posY, int sizeX
 }
 
 int displayHeight() {
-  if (displayToUse == 1) {
+  if (displayToUse == DISPLAY_TYPE_213DEPG) {
     return 122;
-  } else if (displayToUse == 2) {
+  } else if (displayToUse == DISPLAY_TYPE_266DEPG) {
     return 152;
   } else {
     Serial.println("ERROR: there's no display to use detected!");
@@ -141,9 +145,9 @@ int displayHeight() {
 }
 
 int displayWidth() {
-  if (displayToUse == 1) {
+  if (displayToUse == DISPLAY_TYPE_213DEPG) {
     return 250;
-  } else if (displayToUse == 2) {
+  } else if (displayToUse == DISPLAY_TYPE_266DEPG) {
     return 296;
   } else {
     Serial.println("ERROR: there's no display to use detected!");
@@ -479,7 +483,7 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
     versionString += getShortVersion();
     startY += drawLine(versionString, displayWidth(), startY, false, true);
   
-    String displayString = getShortDisplayInfo();
+    String displayString = getShortHardwareInfo();
     startY += drawLine(displayString, displayWidth(), startY, false, true);
 
     double voltage = getLastVoltage();

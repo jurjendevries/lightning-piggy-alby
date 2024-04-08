@@ -1,24 +1,8 @@
+#include "Constants.h"
+
 String newVersion = ""; // used by the update checker
 
 int lastChecked = NOT_SPECIFIED;
-
-#if GxEPD2_DRIVER_CLASS == GxEPD2_266_BN
-  String hardwareBoard  = "LILYGOT5V266";
-#elif GxEPD2_DRIVER_CLASS == GxEPD2_213_BN || GxEPD2_DRIVER_CLASS == GxEPD2_213_B74
-  String hardwareBoard = "LILYGOT5V213";
-#else
-  String hardwareBoard = "UNKNOWNBOARD";
-#endif
-
-#if GxEPD2_DRIVER_CLASS == GxEPD2_266_BN
-  String hardwareDisplay = "DEPG0266BN";
-#elif GxEPD2_DRIVER_CLASS == GxEPD2_213_BN
-  String hardwareDisplay = "DEPG0213BN";
-#elif GxEPD2_DRIVER_CLASS == GxEPD2_213_B74
-  String hardwareDisplay = "GDEM0213B74";
-#else
-  String hardwareDisplay = "UNKNOWNDISPLAY";
-#endif
 
 bool isUpdateAvailable() {
   return (newVersion != "" && newVersion != currentVersion);
@@ -43,23 +27,15 @@ void checkShowUpdateAvailable() {
   }
 }
 
-String getShortDisplayInfo() {
-  String shortDisplayInfo = "";
-  if (hardwareBoard == "LILYGOT5V266") {
-    shortDisplayInfo = "2.66";
-  } else if (hardwareBoard == "LILYGOT5V213") {
-    shortDisplayInfo = "2.13";
+String getShortHardwareInfo() {
+  int displayToUse = getDisplayToUse();
+  if (displayToUse == DISPLAY_TYPE_213DEPG) {
+    return "2.13D";
+  } else if (displayToUse == DISPLAY_TYPE_266DEPG) {
+    return "2.66D";
   } else {
-    shortDisplayInfo = "?.??";
+    return "UNKNOWN";
   }
-  if (hardwareDisplay == "DEPG0266BN" || hardwareDisplay == "DEPG0213BN") {
-    shortDisplayInfo += "D";
-  } else if (hardwareDisplay == "GDEM0213B74") {
-    shortDisplayInfo += "G";
-  } else {
-    shortDisplayInfo += "?";
-  }
-  return shortDisplayInfo;
 }
 
 String getShortVersion() {
@@ -69,7 +45,7 @@ String getShortVersion() {
 String getFullVersion() {
   const char compiletime[] = __DATE__ " " __TIME__;
   String compileTime(compiletime);
-  return currentVersion + "|" + hardwareBoard + "|" + hardwareDisplay + "|" + compileTime;
+  return currentVersion + "|" + getShortHardwareInfo() + "|" + compileTime;
 }
 
 /*
