@@ -36,7 +36,7 @@ const char* checkUpdateHost = "m.lightningpiggy.com";
 const int sleepTimeMinutes = 60;
 
 // If the fiat currency (btcPriceCurrencyChar) is not configured, then no fiat values are shown
-// Example: USD, EUR, DKK,...
+// Example: USD, EUR, DKK, CHF, GBP, JPY, CNY, RMB,...
 const char* btcPriceCurrencyChar = "REPLACETHISBYFIATCURRENCY_REPLACETHISBYFIATCURRENCY_REPLACETHISBYFIATCURRENCY";
 
 // The ESP32 can't keep a time when it's off because it doesn't have a battery, so it needs to be fetched from a server
@@ -49,7 +49,7 @@ const char* timezone = "REPLACETHISBYTIMEZONE_REPLACETHISBYTIMEZONE_REPLACETHISB
 // Use the language codes from https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes
 // Optionally, add the territory string in capitals.
 // Example: en for English, da for Danish, nl for Dutch, de for German
-// Or: en_US for American English, da_DK for Danish (Denmark), nl_BE for Flemish, de_CH for Swiss High German
+// Or: en_US for American English, da_DK for Danish (Denmark), nl_BE for Flemish, de_CH for Swiss High German, de or de_DE for German, es for Spanish etc...
 const char* localeSetting = "REPLACETHISBYLOCALE_REPLACETHISBYLOCALE_REPLACETHISBYLOCALE";
 
 const char* thousandsSeparator = "REPLACETHISBYTHOUSANDSSEPARATOR_REPLACETHISBYTHOUSANDSSEPARATOR_REPLACETHISBYTHOUSANDSSEPARATOR";
