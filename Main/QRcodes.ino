@@ -25,8 +25,8 @@ int showLNURLpQR(String qrData) {
   int qrPosY = 0;
 
   //display.setPartialWindow(qrPosX, qrPosY, qrSideSize, qrSideSize);
-  display.setPartialWindow(0, 0, displayWidth(), displayHeight()); // this is the first thing that gets displayed so blank the entire screen
-  display.firstPage();
+  setPartialWindow(0, 0, displayWidth(), displayHeight()); // this is the first thing that gets displayed so blank the entire screen
+  displayFirstPage();
   do {
     for (uint8_t y = 0; y < qrcoded.size; y++)
     {
@@ -34,11 +34,11 @@ int showLNURLpQR(String qrData) {
       {
         if (qrcode_getModule(&qrcoded, x, y))
         {
-          display.fillRect(qrPosX + pixSize * x, qrPosY + pixSize * y, pixSize, pixSize, GxEPD_BLACK);
+          displayFillRect(qrPosX + pixSize * x, qrPosY + pixSize * y, pixSize, pixSize, GxEPD_BLACK);
         }
       }
     }
-  } while (display.nextPage());
+  } while (displayNextPage());
 
   return qrPosX;  // returns 192 on 250px wide display
 }

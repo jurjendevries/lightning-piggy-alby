@@ -26,7 +26,7 @@
 
 #define roundEight(x) (((x) + 8 - 1) & -8) // round up to multiple of 8
 
-int xBeforeLNURLp = DISPLAY_WIDTH;
+int xBeforeLNURLp;
 
 void setup() {
     Serial.begin(115200);

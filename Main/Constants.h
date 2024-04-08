@@ -31,7 +31,7 @@ const char * esWeekdays[] = { "D", "L", "M", "M", "J", "V", "S"};
 const char * enWeekdays[] = { "S", "M", "T", "W", "T", "F", "S"};
 const char * nlWeekdays[] = { "Z", "M", "D", "W", "D", "V", "Z"};
 
-String currentVersion = "3.1.4";
+String currentVersion = "3.2.0";
 
 typedef enum {
     STR2INT_SUCCESS,
@@ -41,18 +41,5 @@ typedef enum {
 } str2int_errno;
 
 String websocketApiUrl = "/api/v1/ws/";
-
-#if (GxEPD2_DRIVER_CLASS == GxEPD2_266_BN)
-  // lilygo 2.66 inch 296x152px
-  #define DISPLAY_WIDTH 296
-  #define DISPLAY_HEIGHT 152
-#elif (GxEPD2_DRIVER_CLASS == GxEPD2_213_BN) || (GxEPD2_DRIVER_CLASS == GxEPD2_213_B74)
-  // lilygo 2.13 inch 250x122px
-  #define DISPLAY_WIDTH 250
-  #define DISPLAY_HEIGHT 122
-  #error "wrong"
-#else
-  #error "Unsupported display."
-#endif
 
 #endif // #ifndef CONSTANTS_H

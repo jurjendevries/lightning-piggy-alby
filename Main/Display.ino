@@ -8,9 +8,6 @@
 // <fiatbalance> <currency> (<fiatprice> <currency)
 //
 
-#define balanceHeight roundEight(DISPLAY_HEIGHT/5)  // includes line underneath
-#define fiatHeight    roundEight((DISPLAY_HEIGHT*4)/5)
-
 // base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
 // enable or disable GxEPD2_GFX base class
 #define ENABLE_GxEPD2_GFX 0
@@ -18,8 +15,12 @@
 #include <GxEPD2_BW.h>
 #include <U8g2_for_Adafruit_GFX.h>
 
-// select the display class and display driver class in the following file (new style):
-#include "GxEPD2_display_selection_new_style.h"
+#define MAX_DISPLAY_BUFFER_SIZE 65536ul
+#define MAX_HEIGHT(EPD) (EPD::HEIGHT <= MAX_DISPLAY_BUFFER_SIZE / (EPD::WIDTH / 8) ? EPD::HEIGHT : MAX_DISPLAY_BUFFER_SIZE / (EPD::WIDTH / 8))
+// Both display drivers are compiled in, and the right one is detected and used at runtime:
+GxEPD2_BW<GxEPD2_213_B74, MAX_HEIGHT(GxEPD2_213_B74)> display1(GxEPD2_213_B74(/*CS=*/ 5, /*DC=*/ 17, /*RST=*/ 16, /*BUSY=*/ 4));
+//GxEPD2_BW<GxEPD2_213_BN, MAX_HEIGHT(GxEPD2_213_BN)> display1(GxEPD2_213_BN(/*CS=*/ 5, /*DC=*/ 17, /*RST=*/ 16, /*BUSY=*/ 4));
+GxEPD2_BW<GxEPD2_266_BN, MAX_HEIGHT(GxEPD2_266_BN)> display2(GxEPD2_266_BN(/*CS=*/ 5, /*DC=*/ 19, /*RST=*/ 4, /*BUSY=*/ 34));
 
 U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
 
@@ -37,21 +38,117 @@ int blackBackgroundHorizontalMargin=2;
 String lines[10];
 int nroflines = 0;
 
-void setup_display() {
-    display.init(115200, true, 2, false); // USE THIS for Waveshare boards with "clever" reset circuit, 2ms reset pulse
-    display.setRotation(1); // display is used in landscape mode
+int displayToUse = -NOT_SPECIFIED;
+int balanceHeight; // [0,balanceHeight] is the vertical zone of the balance region plus the line underneath it.
+int fiatHeight; // [fiatHeight,displayHeight()] is the vertical zone of the fiat region.
 
-    u8g2Fonts.begin(display); // connect u8g2 procedures to Adafruit GFX
-    u8g2Fonts.setForegroundColor(GxEPD_BLACK);
-    u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
+
+/* Detecting the display works by timing the clearScreen operation.
+09:08:03.074 -> init operation took 23ms
+09:08:06.103 -> rotation operation took 0ms
+09:08:11.426 -> _Update_Full : 2290999
+09:08:11.426 -> clearScreen operation took 2339ms => right display
+09:08:14.452 -> init operation took 23ms
+09:08:17.446 -> rotation operation took 0ms
+09:08:20.507 -> _PowerOn : 3
+09:08:20.507 -> _Update_Full : 1
+09:08:20.507 -> clearScreen operation took 60ms => wrong display
+ */
+void setup_display() {
+  display1.init(115200, true, 2, false);
+  long beforeTime = millis();
+  display1.clearScreen();
+  Serial.println("clearScreen operation took " + String(millis() - beforeTime) + "ms");
+  if ((millis() - beforeTime) > 1500) {
+    Serial.println("clearScreen took a long time so found the right display: 1!");
+    displayToUse = 1;
+    display1.setRotation(1); // display is used in landscape mode
+    u8g2Fonts.begin(display1); // connect u8g2 procedures to Adafruit GFX
+  } else {
+    display2.init(115200, true, 2, false);
+    displayToUse = 2;
+    display2.setRotation(1); // display is used in landscape mode
+    u8g2Fonts.begin(display2); // connect u8g2 procedures to Adafruit GFX
+  }
+
+  u8g2Fonts.setForegroundColor(GxEPD_BLACK);
+  u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
+
+  balanceHeight = roundEight(displayHeight()/5)-1;  // 0,23 inclusive is 24 pixels height.
+  fiatHeight = roundEight((displayHeight()*4)/5);
+}
+
+void setPartialWindow(int x, int y, int h, int w) {
+  if (displayToUse == 1) {
+    display1.setPartialWindow(x, y, h, w);
+  } else if (displayToUse == 2) {
+    display2.setPartialWindow(x, y, h, w);
+  } else {
+    Serial.println("ERROR: there's no display to use detected!");
+  }
+}
+
+void displayFirstPage() {
+  if (displayToUse == 1) {
+    display1.firstPage();
+  } else if (displayToUse == 2) {
+    display2.firstPage();
+  } else {
+    Serial.println("ERROR: there's no display to use detected!");
+  }
+}
+
+bool displayNextPage() {
+  if (displayToUse == 1) {
+    return display1.nextPage();
+  } else if (displayToUse == 2) {
+    return display2.nextPage();
+  } else {
+    Serial.println("ERROR: there's no display to use detected!");
+  }
+  return false;
+}
+
+void displayFillRect(int x, int y, int w, int h, int color) {
+  if (displayToUse == 1) {
+    display1.fillRect(x,y,w,h,color);
+  } else if (displayToUse == 2) {
+    display2.fillRect(x,y,w,h,color);
+  } else {
+    Serial.println("ERROR: there's no display to use detected!");
+  }
+}
+
+void displayDrawImage(const unsigned char logo [], int posX, int posY, int sizeX, int sizeY, bool toggle) {
+  if (displayToUse == 1) {
+    display1.drawImage(logo, posX, posY, sizeX, sizeY, toggle);
+  } else if (displayToUse == 2) {
+    display2.drawImage(logo, posX, posY, sizeX, sizeY, toggle);
+  } else {
+    Serial.println("ERROR: there's no display to use detected!");
+  }
 }
 
 int displayHeight() {
-  return DISPLAY_HEIGHT;
+  if (displayToUse == 1) {
+    return 122;
+  } else if (displayToUse == 2) {
+    return 152;
+  } else {
+    Serial.println("ERROR: there's no display to use detected!");
+  }
+  return 0;
 }
 
 int displayWidth() {
-  return DISPLAY_WIDTH;
+  if (displayToUse == 1) {
+    return 250;
+  } else if (displayToUse == 2) {
+    return 296;
+  } else {
+    Serial.println("ERROR: there's no display to use detected!");
+  }
+  return 0;
 }
 
 // size 0 = smallest font (8pt)
@@ -81,25 +178,6 @@ void setFont(int fontSize) {
     u8g2Fonts.setFont(u8g2_font_helvR24_tf);
   }
 }
-
-void displayBorder() {
-  horizontalLine();
-  verticalLine();
-}
-
-void horizontalLine() {
-    // Line for showing end of display
-    for (int16_t x = 0; x<displayWidth()+1; x++) {
-      display.drawPixel(x,displayHeight()+1,0);
-    }
-}
-void verticalLine() {
-    // Line for showing end of display
-    for (int16_t y = 0; y<displayHeight()+1; y++) {
-      display.drawPixel(displayWidth()+1,y,0);
-    }
-}
-
 
 // find the max length that fits the width
 int fitMaxText(String text, int maxWidth) {
@@ -159,7 +237,7 @@ int drawLine(String line, int xPos, int yPos, bool invert, bool alignRight) {
     u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
   } else {
     Serial.println("Filling rectangle for inverted text from (" + String(xPos) + "," + String(yPos) + ") of size " + String(w) + "x" + String(h));
-    display.fillRect(xPos-blackBackgroundHorizontalMargin, yPos, w+blackBackgroundHorizontalMargin*2, h+blackBackgroundVerticalMargin*2, GxEPD_BLACK);
+    displayFillRect(xPos-blackBackgroundHorizontalMargin, yPos, w+blackBackgroundHorizontalMargin*2, h+blackBackgroundVerticalMargin*2, GxEPD_BLACK);
     u8g2Fonts.setForegroundColor(GxEPD_WHITE);
     u8g2Fonts.setBackgroundColor(GxEPD_BLACK);
   }
@@ -186,7 +264,7 @@ int displayFit(String text, int startX, int startY, int endX, int endY, int font
 // returns: the y position after fitting the text
 int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYbig, int fontSize, bool invert, bool alignRight, bool drawIt) {
   long startTime = millis();
-  bool debugDisplayFit = true;
+  bool debugDisplayFit = false;
 
   feed_watchdog(); // before this long-running and potentially hanging operation, it's a good time to feed the watchdog
 
@@ -223,7 +301,7 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
 
   if (drawIt) {
     Serial.println("Setting partial window: (" + String(startXbig) + "," + String(startYbig) + " with size " + String(endXbig-startXbig+1) + "x" + String(endYbig-startYbig+1));
-    display.setPartialWindow(startXbig, startYbig, endXbig-startXbig+1, endYbig-startYbig+1);
+    setPartialWindow(startXbig, startYbig, endXbig-startXbig+1, endYbig-startYbig+1);
   }
   while (fontSize > 0) {
     nroflines = 0;
@@ -260,10 +338,10 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
 
   if (drawIt) {
     // finally print the array
-    display.firstPage();
+    displayFirstPage();
     do {
       yPos = drawLines(lines, nroflines, startX, endX, startY, invert, alignRight);
-    } while (display.nextPage());
+    } while (displayNextPage());
   } else {
     yPos = drawLines(lines, nroflines, startX, endX, startY, invert, alignRight);
   }
@@ -276,16 +354,16 @@ int displayFit(String text, int startXbig, int startYbig, int endXbig, int endYb
 
 void fastClearScreen() {
   // display.clearScreen(); // slow
-  display.setPartialWindow(0, 0, displayWidth(), displayHeight()); // this clear the display
-  display.firstPage();
+  setPartialWindow(0, 0, displayWidth(), displayHeight()); // this clear the display
+  displayFirstPage();
   do {
-    display.fillRect(0, 0, displayWidth(), displayHeight(), GxEPD_WHITE);
-  } while (display.nextPage());
+    displayFillRect(0, 0, displayWidth(), displayHeight(), GxEPD_WHITE);
+  } while (displayNextPage());
 }
 
 void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int posY) {
   fastClearScreen();
-  display.drawImage(logo, posX, posY, sizeX, sizeY, false);
+  displayDrawImage(logo, posX, posY, sizeX, sizeY, false);
 }
 
 // returns whether it updated the display
@@ -315,12 +393,12 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
   lastBalance = currentBalance;
 
   // Display balance from 0 to balanceHeight
-  display.setPartialWindow(0, 0, xBeforeLNURLp, balanceHeight);
-  display.firstPage();
+  setPartialWindow(0, 0, xBeforeLNURLp, balanceHeight);
+  displayFirstPage();
   do {
     displayFit(String(currentBalance) + " sats", 0, 0, xBeforeLNURLp-5, balanceHeight-1, 5, false, false, false); // no fontdecent so all the way down to balanceHeight-1
-    display.fillRect(0, balanceHeight-1, xBeforeLNURLp-5, 1, GxEPD_BLACK);
-  } while (display.nextPage());
+    displayFillRect(0, balanceHeight-1, xBeforeLNURLp-5, 1, GxEPD_BLACK);
+  } while (displayNextPage());
 
   // Display payment amounts and comments
   int maxYforLNURLPayments = displayHeight();
@@ -339,15 +417,15 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
  */
 void displayLNURLPayments(int limit, int maxX, int startY, int maxY) {
   int smallestFontHeight = 8;
-  display.setPartialWindow(0, startY, maxX, maxY);
-  display.firstPage();
+  setPartialWindow(0, startY, maxX, maxY);
+  displayFirstPage();
   do {
     int yPos = startY;
     for (int i=0;i<min(getNroflnurlPayments(),limit) && yPos+smallestFontHeight < maxY;i++) {
       Serial.println("Displaying payment: " + getLnurlPayment(i));
       yPos = displayFit(getLnurlPayment(i), 0, yPos, maxX, maxY, 3, false, false, false);
     }
-  } while (display.nextPage());
+  } while (displayNextPage());
 }
 
 void displayWifiConnecting() {
@@ -375,8 +453,8 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
   int qrPixels = displayWidth() - xBeforeLNURLp; // square
   Serial.println("qrPixels = " + String(qrPixels));
 
-  display.setPartialWindow(xBeforeLNURLp, qrPixels, displayWidth()-xBeforeLNURLp, displayHeight()-qrPixels);
-  display.firstPage();
+  setPartialWindow(xBeforeLNURLp, qrPixels, displayWidth()-xBeforeLNURLp, displayHeight()-qrPixels);
+  displayFirstPage();
   do {
     int startY = qrPixels;
 
@@ -413,7 +491,7 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
       String currentTime = getTimeFromNTP();
       drawLine(currentTime, displayWidth(), startY, false, true);    // 6 characters, width of 8
     }
-  } while (display.nextPage());
+  } while (displayNextPage());
 }
 
 // returns true if voltage is low, false otherwise
