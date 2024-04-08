@@ -11,6 +11,8 @@
 **3.1.3**
 - Debugging release for a user that had issues with v3.x on one specific board and not the other.
 - Built with ESP32 board support 1.0.6 like v2.x, instead of 2.0.14 like v3.0.x
+- Update GxEPD library from 3.1.0 to 3.1.3
+- Remove workarounds for GxEPD library to make display operations 20% faster on the 2.66 inch ePaper model
 
 **3.0.3**
 - Re-add lost "Wifi: <ssid>" on display to indicate ongoing wifi connection at boot
