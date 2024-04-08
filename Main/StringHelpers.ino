@@ -23,7 +23,12 @@ String formatFloatWithSeparator(float number)
 
 // Should the currency symbol be prepended (= placed before the amount) or not?
 bool prependCurrencySymbol() {
-  if ((strncmp(btcPriceCurrencyChar,"USD",3) == 0) || (strncmp(btcPriceCurrencyChar,"EUR",3) == 0) || (strncmp(btcPriceCurrencyChar,"GBP",3) == 0)) {
+  if ((strncmp(btcPriceCurrencyChar,"USD",3) == 0) ||
+  (strncmp(btcPriceCurrencyChar,"EUR",3) == 0) ||
+  (strncmp(btcPriceCurrencyChar,"GBP",3) == 0) ||
+  (strncmp(btcPriceCurrencyChar, "JPY", 3) == 0) ||
+  (strncmp(btcPriceCurrencyChar, "CNY", 3) == 0) ||
+  (strncmp(btcPriceCurrencyChar, "RMB", 3) == 0)) {
       return true;
   }
   return false;
@@ -40,6 +45,8 @@ String getCurrentCurrencyCode() {
     return "Fr";
   } else if (strncmp(btcPriceCurrencyChar, "GBP", 3) == 0) {
     return "£";
+  } else if ((strncmp(btcPriceCurrencyChar, "JPY", 3) == 0) || (strncmp(btcPriceCurrencyChar, "CNY", 3) == 0) || (strncmp(btcPriceCurrencyChar, "RMB", 3) == 0)) {
+    return "¥";
   } else {
     return "";
   }
