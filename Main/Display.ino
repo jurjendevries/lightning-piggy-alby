@@ -479,7 +479,7 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
     startY += drawLine(wifiString, displayWidth(), startY, false, true);
   
     String versionString = "v";
-    if (isUpdateAvailable()) versionString = "UP!";
+    if (isUpdateAvailable()) versionString = "UPD:";
     versionString += getShortVersion();
     startY += drawLine(versionString, displayWidth(), startY, false, true);
   
