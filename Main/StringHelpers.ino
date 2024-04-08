@@ -37,12 +37,12 @@ bool prependCurrencySymbol() {
 String getCurrentCurrencyCode() {
   if (strncmp(btcPriceCurrencyChar, "USD", 3) == 0) {
       return "$";
-  } else if (strncmp(btcPriceCurrencyChar, "DKK", 3) == 0) {
-      return "kr";
+  } else if ((strncmp(btcPriceCurrencyChar, "DKK", 3) == 0) || (strncmp(btcPriceCurrencyChar, "SEK", 3) == 0)) {
+      return "kr.";
   } else if (strncmp(btcPriceCurrencyChar, "EUR", 3) == 0) {
       return "€";
   } else if (strncmp(btcPriceCurrencyChar, "CHF", 3) == 0) {
-    return "Fr";
+    return "Fr.";
   } else if (strncmp(btcPriceCurrencyChar, "GBP", 3) == 0) {
     return "£";
   } else if ((strncmp(btcPriceCurrencyChar, "JPY", 3) == 0) || (strncmp(btcPriceCurrencyChar, "CNY", 3) == 0) || (strncmp(btcPriceCurrencyChar, "RMB", 3) == 0)) {
