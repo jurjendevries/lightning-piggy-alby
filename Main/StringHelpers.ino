@@ -21,15 +21,25 @@ String formatFloatWithSeparator(float number)
   return String(thousands, 0) + getCurrentCurrencyThousandsSeparator() + String(remainder);
 }
 
+// Should the currency symbol be prepended (= placed before the amount) or not?
+bool prependCurrencySymbol() {
+  if ((strncmp(btcPriceCurrencyChar,"USD",3) == 0) || (strncmp(btcPriceCurrencyChar,"EUR",3) == 0) || (strncmp(btcPriceCurrencyChar,"GBP",3) == 0)) {
+      return true;
+  }
+  return false;
+}
+
 String getCurrentCurrencyCode() {
   if (strncmp(btcPriceCurrencyChar, "USD", 3) == 0) {
       return "$";
   } else if (strncmp(btcPriceCurrencyChar, "DKK", 3) == 0) {
       return "kr";
   } else if (strncmp(btcPriceCurrencyChar, "EUR", 3) == 0) {
-      return "E";
+      return "€";
   } else if (strncmp(btcPriceCurrencyChar, "CHF", 3) == 0) {
     return "Fr";
+  } else if (strncmp(btcPriceCurrencyChar, "GBP", 3) == 0) {
+    return "£";
   } else {
     return "";
   }

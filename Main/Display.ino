@@ -538,15 +538,20 @@ void showFiatValues(int balance, int maxX) {
     Serial.println("Not showing fiat balance because couldn't find Bitcoin balance.");
   } else {
     float balanceValue = btcPrice / 100000000 * balance;
-    toDisplay += floatToString(balanceValue, 2) + getCurrentCurrencyCode() + " ";
+    if (prependCurrencySymbol()) {
+      toDisplay += getCurrentCurrencyCode() + " " + floatToString(balanceValue, 2);
+    } else {
+      toDisplay += floatToString(balanceValue, 2) + " " + getCurrentCurrencyCode();
+    }
     Serial.println("balanceValue: " + toDisplay + " ");
   }
 
   // Add the Bitcoin price
-  String currentBtcPriceToShow = formatFloatWithSeparator(btcPrice);
-  // Only add currency code if the price is not too long, to save screen space
-  if (currentBtcPriceToShow.length() <= 6) currentBtcPriceToShow += getCurrentCurrencyCode();
-  toDisplay += "(" + currentBtcPriceToShow + ")";
+  if (prependCurrencySymbol()) {
+    toDisplay += " (" + getCurrentCurrencyCode() + " " + formatFloatWithSeparator(btcPrice) + ")";
+  } else {
+    toDisplay += " (" + formatFloatWithSeparator(btcPrice) + " " + getCurrentCurrencyCode() + ")";
+  }
 
   displayFit(toDisplay, 0, fiatHeight, maxX, displayHeight(), 2, true);
 }
