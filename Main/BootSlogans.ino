@@ -1,8 +1,12 @@
 // Array of Bitcoin slogans
-// These were removed because they're a bit confusing for kids without context:
-// "'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks' -- Satoshi Nakamoto",
-// "'I am not Dorian Nakamoto.' - Satoshi Nakamoto",
-String bitcoinSlogans[] = {
+
+// These were removed because it seems they're confusing for kids, at least without context:
+// en: "'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks' -- Satoshi Nakamoto",
+// en: "'I am not Dorian Nakamoto.' - Satoshi Nakamoto",
+// de_DE: "'In der Times vom 03. Januar 2009 stand geschrieben: Der Finanzminister steht kurz vor einer zweiten Bankenrettung' - Satoshi Nakamoto",
+// de_CH: "'I dr Times vom 03. Januar 2009 isch gstange: Dr Schatzmeischter isch churz drvor ä zwöiti Bankerettig ufdsgleise' - Satoshi Nakamoto",
+
+String bitcoinSlogans_en[] = {
   "Bitcoin is nerds gold.",
   "In Bitcoin we trust.",
   "Be your own bank.",
@@ -88,14 +92,105 @@ String bitcoinSlogans_nl[] = {
   "'Als privacy illegaal wordt, zullen alleen illegalen privacy hebben.' - Phil Zimmermann"
 };
 
+String bitcoinSlogans_de_DE[] = {
+  "Bitcoin ist Computerfreak Gold.",
+  "In Bitcoin vertrauen wir.",
+  "Sei deine eigene Bank.",
+  "HODL",
+  "Nicht deine Schlüssel, nicht deine Münzen.",
+  "Es sind 100,000,000 sats in einem Bitcoin.",
+  "Bitcoin wurde von Henry Ford, Friedrich Hayek und Milton Friedman vorhergesagt",
+  "Recherchiere selbst.",
+  "Denke selbst.",
+  "Delegiere das Denken nicht an jemand anderes.",
+  "Verfolge die Wahrheit hartnäckig.",
+  "Liebe dich selbst und liebe andere.",
+  "Bitcoin ist Recht.",
+  "Sei gerecht, sei fair und sei freundlich.",
+  "Wenn du dich vor etwas fürchtest, erforsche es.",
+  "Jeder hat ein hungriges Herz.",
+  "Alle Menschen wollen die gleichen grundlegenden Dinge aus den gleichen Gründen.",
+  "Egal, wie viel du hast, du wirst gleich glücklich sein.",
+  "Mehr zu haben wird dich nicht glücklich machen.",
+  "Übe dich in Mitgefühl; versetze dich in die Lage eines anderen.",
+  "Übe dich in Aufmerksamkeit; fühle ohne zu urteilen. Erfahre mit Neugierde.",
+  "Übe dich in Dankbarkeit; finde immer Dinge, für die du dankbar sein kannst.",
+  "Taten sprechen lauter als Worte.",
+  "Was du tust, bestimmt, wer du bist.",
+  "Du hast ein Recht auf Eigentum.",
+  "Dein Körper ist dein Eigentum.",
+  "Du bist der Einzige, der für dich zuständig ist.",
+  "Dein Leben gehört dir und nur dir allein.",
+  "Nur du kannst dein Leben leben.",
+  "Cypherpunks schreiben Code.",
+  "'Wenn du mir nicht glaubst oder es nicht verstehst, habe ich keine Zeit, dich zu überzeugen, sorry.' - Satoshi Nakamoto",
+  "'Die Wärme deines Computers ist nicht verschwendet, wenn du dein Haus damit heizen kannst.' - Satoshi Nakamoto",
+  "'Was halten Sie von dem B-Symbol mit den zwei Strichen an der Außenseite?' - Satoshi Nakamoto",
+  "'Der Nachweis, der jemanden als echt ausweist, ist die Fähigkeit, CPU-Leistung zu liefern.' - Satoshi Nakamoto",  
+  "'Für mehr Privatsphäre ist es am besten, Bitcoin-Adressen nur einmal zu verwenden.' - Satoshi Nakamoto",
+  "'Ich bin sicher, dass es in 20 Jahren entweder ein sehr großes Transaktionsvolumen oder gar kein Volumen geben wird.' - Satoshi Nakamoto",
+  "'Verlorene Coins machen die Coins aller anderen nur etwas mehr wert. Betrachten Sie es als eine Spende an alle.' - Satoshi Nakamoto",
+  "'Bleiben Sie bescheiden, häufen Sie Sats an.' - Matt Odell",
+  "'Bitcoin ist ein seltsames Spiel, bei dem der einzige Gewinnzug darin besteht, zu spielen.' - Bitstein",
+  "'Wenn die Privatsphäre verboten wird, werden nur noch Gesetzlose eine Privatsphäre haben.' - Phil Zimmermann"
+};
+
+String bitcoinSlogans_de_CH[] {
+  "Bitcoin isch Goud für Computerfreaks.",
+  "Mir vertroue uf Bitcoin.",
+  "Muesch dini eigeti Bank si.",
+  "HODL",
+  "Sis nid dini Wörtli, sis ou nid dini Batzeli.",
+  "Es het 100,000,000 sats i eim einzige Bitcoin.",
+  "Bitcoin isch vom Henry Ford, Friedrich Hayek u Milton Friedman vorusgseit worde.",
+  "Forsch säuber nache.",
+  "Dänk säuber.",
+  "La nid vo angere für di la dänke.",
+  "Muesch d Warheit hartnäckig verfouge.",
+  "Lieb di säuber und lieb ou die angere.",
+  "Bitcoin isch Rächt.",
+  "Bis rächt, fair und fründlech.",
+  "Wede vor öppisem Angscht hesch, de tues erforsche.",
+  "Jede het es hungrigs Härz.",
+  "Aui Mönsche wei die gliche grundlegende Sache us de gliche Gründ.",
+  "Egau, wie viu du hesch, du wirsch glich glücklech si.",
+  "No meh zha, wird di nid glücklecher mache.",
+  "Häb Mitgfüeuh und versetz di id Lag vom de angere.",
+  "Üeb di idr Ufmerksamkeit; gspühr ohni z urteile. Erfahr mit Gwunger.",
+  "Üeb di idr Dankbarkeit; fing immer Sache, wo du chasch dankbar si drfür.",
+  "Richtig handle isch besser aus dumm schnurre.",
+  "Was du machsch, bestimmt, wär du bisch.",
+  "Du hesch es Rächt uf Eigetum.",
+  "Di Körper isch dis Eigetum.",
+  "Dr Vättu dobe het di gärn.",
+  "Du bisch dr Einzig, wo für di zueständig isch.",
+  "Dis Läbe ghört dir u nume dir allei.",
+  "Nume du chasch dis Läbe läbe.",
+  "Cypherpunks schribe Code.",
+  "'We du mir nid gloubsch oder es nid tscheggsch, hani ke Zit dir das no lenger z erkläre, sorry.' - Satoshi Nakamoto",
+  "'D Wermi vo dim Computer isch nid vergüdet, wenn du dis Hus drmit heizisch.' - Satoshi Nakamoto",
+  "'Wie fingsch das B-Zeiche mit de zwöi Striche am Rand?' - Satoshi Nakamoto",
+  "'Dr Nachwis, dass öpper ächt isch, isch sini Fähigkeit Computerleischtig z liefere.' - Satoshi Nakamoto",  
+  "'Für meh Privatsphäri isch es am beschte, wede dini Bitcoin-Adrässene nume einisch bruchsch.' - Satoshi Nakamoto",
+  "'Ig bi sicher, dass es i 20 Jahr entweder henne viu oder gar keni Transaktione meh git.' - Satoshi Nakamoto",
+  "'Verloreni Coins mache d Coins vo aune angere no meh wärt. Luegsch es aus Gschänk für die angere aa.' - Satoshi Nakamoto",
+  "'nume nid zgäi, tuesch gschider no chlei sats horte.' - Matt Odell",
+  "'Bitcoin isch es komisches Spieli, u dr einzig Siegerzug isch, das Spieli spiele.' - Bitstein",
+  "'Wenn d Privatsphäri verbote wird, wärde nume no Gesetzlosi ä Privatsphäri ha.' - Phil Zimmermann"
+};
+
 // Function to get a random Bitcoin slogan from the array
 String getRandomBootSlogan() {
   if (isConfigured(localeSetting)) {
     if (strncmp(localeSetting,"nl",2) == 0) {
       return getRandomElementFromArray(bitcoinSlogans_nl, sizeof(bitcoinSlogans_nl)/sizeof(bitcoinSlogans_nl[0]));
+    } else if (strncmp(localeSetting,"de_CH",5) == 0) {
+      return getRandomElementFromArray(bitcoinSlogans_de_CH, sizeof(bitcoinSlogans_de_CH)/sizeof(bitcoinSlogans_de_CH[0]));
+    } else if (strncmp(localeSetting,"de",2) == 0) { // matches de_DE and other de_* locales
+      return getRandomElementFromArray(bitcoinSlogans_de_DE, sizeof(bitcoinSlogans_de_DE)/sizeof(bitcoinSlogans_de_DE[0]));
     }
   }
 
   // Default to Engish
-  return getRandomElementFromArray(bitcoinSlogans, sizeof(bitcoinSlogans)/sizeof(bitcoinSlogans[0]));
+  return getRandomElementFromArray(bitcoinSlogans_en, sizeof(bitcoinSlogans_en)/sizeof(bitcoinSlogans_en[0]));
 }

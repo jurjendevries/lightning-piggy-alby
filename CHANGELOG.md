@@ -1,6 +1,9 @@
-**3.1.3**
-- Update GxEPD library from 3.1.0 to 3.1.3
-- Remove workarounds for GxEPD library to make display operations 20% faster on the 2.66 inch ePaper model
+**3.2.0**
+- Migrate from GxEPD library to GxEPD2 library (faster)
+- Rebuild boot logo to show lightning bolt in "Lightning Piggy" logo
+- Integrate U8g2_for_Adafruit_GFX library to support UTF-8 fonts (non-ascii characters such as öüäß)
+- Unified firmware that supports both 2.13 and 2.66 inch ePaper display by detecting it at boot
+- Add de_DE and de_CH boot slogans (thanks @GABRI3L!)
 
 **3.0.3**
 - Re-add lost "Wifi: <ssid>" on display to indicate ongoing wifi connection at boot
