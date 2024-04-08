@@ -392,19 +392,21 @@ bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp) {
 void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchPayments) {
   lastBalance = currentBalance;
 
+  int delta = 2;
+  if (displayToUse == 2) delta = 0; // on the 2.66 we don't need this delta
   // Display balance from 0 to balanceHeight
-  setPartialWindow(0, 0, xBeforeLNURLp, balanceHeight);
+  setPartialWindow(0, 0, xBeforeLNURLp, balanceHeight+3);
   displayFirstPage();
   do {
-    displayFit(String(currentBalance) + " sats", 0, 0, xBeforeLNURLp-5, balanceHeight-1, 5, false, false, false); // no fontdecent so all the way down to balanceHeight-1
-    displayFillRect(0, balanceHeight-1, xBeforeLNURLp-5, 1, GxEPD_BLACK);
+    displayFit(String(currentBalance) + " sats", 0, 0, xBeforeLNURLp-5, balanceHeight-1+delta, 5, false, false, false); // no fontdecent so all the way down to balanceHeight-1
+    displayFillRect(0, balanceHeight+delta, xBeforeLNURLp-5, 1, GxEPD_BLACK);
   } while (displayNextPage());
 
   // Display payment amounts and comments
   int maxYforLNURLPayments = displayHeight();
   if (isConfigured(btcPriceCurrencyChar)) maxYforLNURLPayments = fiatHeight; // leave room for fiat values at the bottom (fontsize 2 = 18 + 2 extra for the black background)
   if (fetchPayments) fetchLNURLPayments(MAX_PAYMENTS);
-  displayLNURLPayments(MAX_PAYMENTS, xBeforeLNURLp - 5, balanceHeight+1, maxYforLNURLPayments);
+  displayLNURLPayments(MAX_PAYMENTS, xBeforeLNURLp - 5, balanceHeight+1+delta, maxYforLNURLPayments); //balanceHeight+2 erases the line below the balance...
 
   // Display fiat values
   showFiatValues(currentBalance, xBeforeLNURLp);
