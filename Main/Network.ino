@@ -37,7 +37,7 @@ void wifiEventCallback(WiFiEvent_t eventid, WiFiEventInfo_t info) {
     // - NO_AP_FOUND
     // - AUTH_FAIL
     // - ASSOC_FAIL
-    // - AUTH_EXPIRE : wrong password but not an end state
+    // - AUTH_EXPIRE : wrong password or slow connection but not an end state
     //
     // - 4WAY_HANDSHAKE_TIMEOUT? some kind of end state, happens with wrong password
     // - ASSOC_EXPIRE? some kind of end state, after 7 AUTH_EXPIREs
