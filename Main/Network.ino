@@ -237,7 +237,7 @@ void connectWebsocket() {
   Serial.println("Trying to connect websocket: " + String(lnbitsHost) + url);
   webSocket.beginSSL(lnbitsHost, 443, url);
   webSocket.onEvent(webSocketEvent);
-  webSocket.setReconnectInterval(5000);
+  webSocket.setReconnectInterval(1000);
 }
 
 void parseWebsocketText(String text) {
