@@ -16,7 +16,7 @@ extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 6;
 
 #define AWAKE_SECONDS_AFTER_MANUAL_WAKEUP 3*60
 
-#define CHECK_UPDATE_PERIOD_SECONDS 24*60*60
+#define CHECK_UPDATE_PERIOD_SECONDS 7*24*60*60
 
 #define UPDATE_BALANCE_PERIOD_MILLIS 1000 * 60 * 10 // fallback to updating balance every 10 minutes if the instant websocket method is unavailable
 
@@ -41,5 +41,8 @@ typedef enum {
 } str2int_errno;
 
 String websocketApiUrl = "/api/v1/ws/";
+
+#define DISPLAY_TYPE_213DEPG 1
+#define DISPLAY_TYPE_266DEPG 2
 
 #endif // #ifndef CONSTANTS_H

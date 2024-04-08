@@ -87,6 +87,7 @@ void loop() {
 
   if (getWalletID().length() > 0) {
     websocket_loop();
+    checkShowUpdateAvailable();
   } else {
     // This fallback behavior should never happen because wallet ID will always be found in the LNURLp list.
     displayStatus(xBeforeLNURLp, false);  // takes ~2000ms, which is too much to do with the websocket
