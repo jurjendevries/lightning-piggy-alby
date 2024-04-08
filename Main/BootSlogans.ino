@@ -92,6 +92,49 @@ String bitcoinSlogans_nl[] = {
   "'Als privacy illegaal wordt, zullen alleen illegalen privacy hebben.' - Phil Zimmermann"
 };
 
+String bitcoinSlogans_da[] = {
+  "Bitcoin er nørdernes guld.",
+  "Vi tror og stoler på Bitcoin.",
+  "Vær din egen bank.",
+  "HODL",
+  "Ikke dine nøgler, ikke dine bitcoin.",
+  "Der er 100.000.000 sats i 1 bitcoin.",
+  "Bitcoin blev forudsagt af Henry Ford, Friedrich Hayek og Milton Friedman",
+  "Undersøg det selv.",
+  "Tænk selv.",
+  "Lad ikke andre tænke for dig.",
+  "Opsøg altid sandheden, altid.",
+  "Elsk dig selv og elsk andre.",
+  "Bitcoin har ret.",
+  "Vær retfærdig, vær fair og vær venlig.",
+  "Hvis du er bange for noget, undersøg det.",
+  "Alle har et sultent hjerte.",
+  "Alle mennesker ønsker de samme grundlæggende ting af de samme grunde.",
+  "Uanset hvor meget du har, vil du være lige så glad.",
+  "Having more will not make you happy.",
+  "Praktiser medfølelse; sæt dig selv i andres sko.",
+  "Praktiser opmærksomhed; føl uden dom. Oplev med nysgerrighed.",
+  "Praktiser taknemmelighed; find altid ting at være taknemmelig for.",
+  "Handlinger taler højere end ord.",
+  "Hvad du gør, bestemmer hvem du er.",
+  "Du har ret til ejendom.",
+  "Din krop er din ejendom.",
+  "Du er den eneste, der bestemmer over dig selv.",
+  "Dit liv er dit og kun dit.",
+  "Kun du kan leve dit liv.",
+  "Cypherpunks skriver kode.",
+  "'Hvis du ikke tror på mig eller ikke forstår det, har jeg ikke tid til at prøve at overbevise dig, undskyld.' - Satoshi Nakamoto",
+  "'Varmen fra din computer er ikke spildt, hvis du har brug for at opvarme dit hjem.' - Satoshi Nakamoto",
+  "'Hvad synes alle om B-symbolet med de to linjer gennem ydersiden?' - Satoshi Nakamoto",
+  "'Det legitimationsbevis, der etablerer nogen som ægte, er evnen til at levere CPU-kraft.' - Satoshi Nakamoto",
+  "'For bedst mulig privatliv er det foretrukken kun at bruge bitcoin-adresser en gang.' - Satoshi Nakamoto",
+  "'Jeg er sikker på, at om 20 år vil der enten være meget stor transaktionsvolumen eller ingen volumen.' - Satoshi Nakamoto",
+  "'Mistede mønter gør kun alle andres mønter lidt mere værd. Tænk på det som en donation til alle.' - Satoshi Nakamoto",
+  "'Stay humble, stack sats.' - Matt Odell",
+  "'Bitcoin er et underligt spil, hvor den eneste vindende bevægelse er at spille.' - Bitstein",
+  "'Hvis privatliv er forbudt, vil kun lovbrydere have privatliv.' - Phil Zimmermann"
+};
+
 String bitcoinSlogans_de_DE[] = {
   "Bitcoin ist Computerfreak Gold.",
   "In Bitcoin vertrauen wir.",
@@ -184,6 +227,8 @@ String getRandomBootSlogan() {
   if (isConfigured(localeSetting)) {
     if (strncmp(localeSetting,"nl",2) == 0) {
       return getRandomElementFromArray(bitcoinSlogans_nl, sizeof(bitcoinSlogans_nl)/sizeof(bitcoinSlogans_nl[0]));
+    } else if (strncmp(localeSetting,"da",2) == 0) {
+      return getRandomElementFromArray(bitcoinSlogans_da, sizeof(bitcoinSlogans_da)/sizeof(bitcoinSlogans_da[0]));
     } else if (strncmp(localeSetting,"de_CH",5) == 0) {
       return getRandomElementFromArray(bitcoinSlogans_de_CH, sizeof(bitcoinSlogans_de_CH)/sizeof(bitcoinSlogans_de_CH[0]));
     } else if (strncmp(localeSetting,"de",2) == 0) { // matches de_DE and other de_* locales
