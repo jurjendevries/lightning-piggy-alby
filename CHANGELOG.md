@@ -1,4 +1,4 @@
-**3.2.0**
+**4.0.0**
 - Migrate from GxEPD library to GxEPD2 library (faster)
 - Rebuild boot logo to show lightning bolt in "Lightning Piggy" logo
 - Integrate U8g2_for_Adafruit_GFX library to support UTF-8 fonts (non-ascii characters such as öüäß)
@@ -6,6 +6,10 @@
 - Add de_DE and de_CH boot slogans (thanks @GABRI3L!)
 - Place currency symbols before the fiat amount
 - Use correct fiat currency symbols (€,£,$,¥)
+
+**3.1.3**
+- Debugging release for a user that had issues with v3.x on one specific board and not the other.
+- Built with ESP32 board support 1.0.6 like v2.x, instead of 2.0.14 like v3.0.x
 
 **3.0.3**
 - Re-add lost "Wifi: <ssid>" on display to indicate ongoing wifi connection at boot
