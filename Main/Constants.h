@@ -25,11 +25,11 @@ extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 6;
 #define HIBERNATE_CHECK_PERIOD_MILLIS 1000 * 30 // hibernate check every 30 seconds
 
 // In alphabetical order
-const char * deWeekdays[] = { "S", "M", "D", "M", "D", "F", "S"};
-const char * dkWeekdays[] = { "S", "M", "T", "O", "T", "F", "L"};
-const char * esWeekdays[] = { "D", "L", "M", "M", "J", "V", "S"};
-const char * enWeekdays[] = { "S", "M", "T", "W", "T", "F", "S"};
-const char * nlWeekdays[] = { "Z", "M", "D", "W", "D", "V", "Z"};
+const char * deWeekdays[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
+const char * dkWeekdays[] = { "Sø", "Ma", "Ti", "On", "To", "Fr", "Lø"};
+const char * esWeekdays[] = { "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"};
+const char * enWeekdays[] = { "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
+const char * nlWeekdays[] = { "Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"};
 
 String currentVersion = "3.2.0";
 

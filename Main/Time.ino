@@ -27,9 +27,9 @@ String getTimeFromNTP() {
 
   int dayOfWeek = doc["day_of_week"];
   String dayOfWeekAsString = getDayOfWeekString(dayOfWeek);
-  String time = datetimeAsString.substring(datetimeAsString.indexOf("T") + 1, datetimeAsString.indexOf("T") + 6); // Extract only the time (hh:mm)
+  String timeString = datetimeAsString.substring(datetimeAsString.indexOf("T") + 1, datetimeAsString.indexOf("T") + 6); // Extract only the time (hh:mm)
 
-  lastTime = dayOfWeekAsString + time;
+  lastTime = dayOfWeekAsString + " " + timeString;
   return lastTime;
 }
 
