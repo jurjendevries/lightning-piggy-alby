@@ -439,13 +439,13 @@ void displayWifiConnecting() {
 }
 
 void displayWifiStrengthBottom() {
-  displayWifiStrength(displayHeight()-14);
+  displayWifiStrength(displayHeight()-smallestFontHeight);
 }
 
 void displayWifiStrength(int y) {
   int wifiStrengthPercent = strengthPercent(getStrength(5));
   String wifiString = "Wifi:" + String(wifiStrengthPercent) + "%";
-  displayFit(wifiString, displayWidth()-8*7, y, displayWidth(), y+smallestFontHeight, 1, false, true);
+  displayFit(wifiString, displayWidth()-8*7, y, displayWidth(), displayHeight(), 1, false, true);
 }
 
 void displayFetching() {
