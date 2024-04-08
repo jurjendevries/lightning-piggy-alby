@@ -160,17 +160,17 @@ int displayWidth() {
 void setFont(int fontSize) {
   if (fontSize < 0) {
     Serial.println("ERROR: font size " + String(fontSize) + " is not supported, setting min size");
-    u8g2Fonts.setFont(u8g2_font_helvR08_tf);
+    u8g2Fonts.setFont(u8g2_font_helvR08_te);
   } else if (fontSize == 0) {
-    u8g2Fonts.setFont(u8g2_font_helvR08_tf);
+    u8g2Fonts.setFont(u8g2_font_helvR08_te);
   } else if (fontSize == 1) {
-    u8g2Fonts.setFont(u8g2_font_helvR10_tf);
+    u8g2Fonts.setFont(u8g2_font_helvR10_te);
   } else if (fontSize == 2) {
-    u8g2Fonts.setFont(u8g2_font_helvR12_tf);
+    u8g2Fonts.setFont(u8g2_font_helvR12_te);
   } else if (fontSize == 3) {
-    u8g2Fonts.setFont(u8g2_font_helvR14_tf);
+    u8g2Fonts.setFont(u8g2_font_helvR14_te);
   } else if (fontSize == 4) {
-    u8g2Fonts.setFont(u8g2_font_helvR18_tf);
+    u8g2Fonts.setFont(u8g2_font_helvR18_te);
   } else if (fontSize == 5) {
     u8g2Fonts.setFont(u8g2_font_helvR24_tf);
   } else {
