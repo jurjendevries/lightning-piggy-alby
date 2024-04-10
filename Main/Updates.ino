@@ -23,7 +23,7 @@ void checkShowUpdateAvailable() {
       Serial.println("checkNewVersion() returned '' so could not check for updates");
     }
   } else {
-    Serial.println("Already checked for updates recently, not doing it again.");
+    //Serial.println("Already checked for updates recently, not doing it again.");
   }
 }
 

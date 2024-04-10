@@ -1,4 +1,4 @@
-**4.0.0**
+**4.0.2**
 - Build unified firmware that supports both 2.13 and 2.66 inch ePaper display by detecting it at boot
 - Migrate from GxEPD library to GxEPD2 library, which supports faster partial display updates
 - Integrate U8g2_for_Adafruit_GFX library to support UTF-8 fonts (non-ascii characters such as öüäß)

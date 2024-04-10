@@ -203,7 +203,7 @@ int fitMaxText(String text, int maxWidth) {
     String textToFit = text.substring(0, maxLength+2); // end is exclusive
     w = u8g2Fonts.getUTF8Width(textToFit.c_str());
     h = u8g2Fonts.getFontAscent()-u8g2Fonts.getFontDescent();
-    Serial.println("Got text bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h) + " for text: " + textToFit);
+    //Serial.println("Got text bounds: " + String(x1) + "," + String(y1) + ","+ String(w) + "," + String(h) + " for text: " + textToFit);
     maxLength++;
   }
 
