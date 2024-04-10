@@ -16,6 +16,7 @@ void checkShowUpdateAvailable() {
       lastChecked = millis();
       if (isUpdateAvailable()) {
         Serial.println("Update available!");
+        displayStatus(xBeforeLNURLp, false);
       } else {
         Serial.println("No update available.");
       }
