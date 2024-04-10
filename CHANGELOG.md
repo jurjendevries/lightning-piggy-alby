@@ -1,12 +1,13 @@
-**4.0.2**
+**4.0.5**
 - Build unified firmware that supports both 2.13 and 2.66 inch ePaper display by detecting it at boot
-- Migrate from GxEPD library to GxEPD2 library, which supports faster partial display updates
+- Migrate from GxEPD library to GxEPD2 library for much faster display updates
 - Integrate U8g2_for_Adafruit_GFX library to support UTF-8 fonts (non-ascii characters such as öüäß)
 - Add de_DE (German) and de_CH (Swiss German) boot slogans. Thanks @GABRI3L!
 - Add da (Danish) boot slogans. Thanks @Jake21m!
 - Rebuild boot logo to show the lightning bolt in "Lightning Piggy" logo
-- Place currency symbols before the fiat amount
-- Use correct fiat currency symbols (€,£,$,¥)
+- Place currency symbols before the fiat amount when appropriate
+- Use proper fiat currency symbols (€,£,$,¥)
+- Fix update notifications (they were broken in v3.x)
 
 **3.1.3**
 - Debugging release for a user that had issues with v3.x on one specific board and not the other.
