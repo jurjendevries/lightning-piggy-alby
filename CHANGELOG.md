@@ -4,7 +4,7 @@
 - Integrate U8g2_for_Adafruit_GFX library to support UTF-8 fonts (non-ascii characters such as öüäß)
 - Add de_DE (German) and de_CH (Swiss German) boot slogans. Thanks @GABRI3L!
 - Add da (Danish) boot slogans. Thanks @Jake21m!
-- Rebuild boot logo to show the lightning bolt in "Lightning Piggy" logo
+- Rebuild boot logo to emphasize the lightning bolt in "Lightning Piggy" logo
 - Place currency symbols before the fiat amount when appropriate
 - Use proper fiat currency symbols (€,£,$,¥)
 - Fix update notifications (they were broken in v3.x)
