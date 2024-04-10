@@ -478,9 +478,8 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
     Serial.println("Displaying wifi string: " + wifiString);
     startY += drawLine(wifiString, displayWidth(), startY, false, true);
   
-    String versionString = "v";
-    if (isUpdateAvailable()) versionString = "UPD:";
-    versionString += getShortVersion();
+    String versionString = "v" + getShortVersion();
+    if (isUpdateAvailable()) versionString += " UPD!";
     startY += drawLine(versionString, displayWidth(), startY, false, true);
   
     String displayString = getShortHardwareInfo();
