@@ -1,4 +1,4 @@
-Lightninig Piggy
+Lightning Piggy
 ====
 
 Bitcoin Lightning piggybank using LNBits (for LNURLp) running on TTGO LilyGo ePaper hardware with ESP32 microcontroller.
@@ -55,6 +55,7 @@ How to release
 - In Main.ino, make sure you have:
 #define LILYGO_T5_V213
 //#define LILYGO_T5_V266
+- Copy the libraries used from C:\...\lightning-piggy\Splash\libraries\* to your Arduino libraries folder (usually C:\Users\YourUsername\Documents\Arduino\libraries).
 - Compile the project
 - Copy /tmp/build_*/Main.ino.bin to lightningpiggy.github.io/firmware/ttgo_lilygo_2.13_inch_epaper_latest/Main.ino.bin
 - Update the version number in lightningpiggy.github.io/manifests/manifest_ttgo_lilygo_2.13_inch_epaper_latest.json
