@@ -13,9 +13,11 @@ String formatFloatWithSeparator(float number)
   if (number < 1000) {
     return String(number, 0);
   }
+  return formatIntWithSeparator((int)number);
+}
 
-  int numberAsInt = (int)number; 
-  float thousands = number / 1000.0f;
+String formatIntWithSeparator(int numberAsInt) {
+  float thousands = numberAsInt / 1000.0f;
   int remainder = numberAsInt % 1000;
 
   return String(thousands, 0) + getCurrentCurrencyThousandsSeparator() + String(remainder);
