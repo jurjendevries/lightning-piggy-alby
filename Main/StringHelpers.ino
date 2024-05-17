@@ -143,45 +143,34 @@ String stringArrayToString(String stringArray[], int nrOfItems) {
 }
 
 String paymentJsonToString(JsonObject areaElems) {
-  String paymentDetail = "";
-  //Serial.println("paymentJsonToString");
-  if(areaElems["extra"] && !areaElems["pending"] && areaElems["extra"]["tag"]) {
-    // Only do lnurlp payments
-    const char* tag = areaElems["extra"]["tag"];
-    //Serial.println("tag = " + String(tag));
-    if(strncmp(tag,"lnurlp",6) == 0) {
+  if (areaElems["pending"]) return ""; // ignore pending payments
 
-      // Payment always has an amount
-      long long amount = areaElems["amount"]; // long long to support amounts above 999999000 millisats
-      long amountSmaller = amount / 1000; // millisats to sats
+  // Payment always has an amount
+  long long amount = areaElems["amount"]; // long long to support amounts above 999999000 millisats
+  long amountSmaller = amount / 1000; // millisats to sats
 
-      String paymentWalletID = areaElems["wallet_id"];
-      setFoundWalletID(paymentWalletID);
+  String paymentWalletID = areaElems["wallet_id"];
+  setFoundWalletID(paymentWalletID);
 
-      String paymentAmount(amountSmaller);
-      String units = "sats";
-      if (amountSmaller < 2) units = "sat";
-      paymentDetail = paymentAmount + " " + units;
+  String paymentAmount(amountSmaller);
+  String units = "sats";
+  if (amountSmaller < 2) units = "sat";
+  String paymentDetail = paymentAmount + " " + units;
 
-      // Payment has an optional comment
-      if (areaElems["extra"]["comment"]) {
-        //Serial.println("Getting comment...");
-        const char* comment = areaElems["extra"]["comment"];
-        if (!comment && areaElems["extra"]["comment"][0]) { // comments can also be a list
-          //Serial.println("Getting comment from list...");
-          comment = areaElems["extra"]["comment"][0];
-        }
-        String paymentComment(comment);
-        paymentDetail += ": " + paymentComment;
-      } else {
-        Serial.println("Payment has no comment.");
-        paymentDetail += "!"; // no comment so "99999999 sats!" (= almost 1 BTC) will fit on one line in big font
-      }
-    } else {
-      Serial.println("Ignoring non lnurlp payment.");
-    }
+  const char* comment;
+  if ((areaElems["extra"]["lnurlp"] && !areaElems["extra"]["comment"]) || !areaElems["memo"]) {
+    Serial.println("Payment is lnurlp without comment, or regular payment without memo.");
+    paymentDetail += "!";
   } else {
-    Serial.println("Ignoring regular payment without extra info for lnurlp.");
+    if(areaElems["extra"]["comment"]) {
+      comment = areaElems["extra"]["comment"];
+      if (!comment && areaElems["extra"]["comment"][0]) comment = areaElems["extra"]["comment"][0]; // comments can also be a list
+    } else { // areaElems["memo"]
+      Serial.println("It's a regular non-lnurlp payment, using memo field.");
+      comment = areaElems["memo"];
+    }
+    String paymentComment(comment);
+    paymentDetail += ": " + paymentComment;
   }
   return paymentDetail;
 }
