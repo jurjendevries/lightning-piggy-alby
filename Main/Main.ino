@@ -83,8 +83,6 @@ void setup() {
 }
 
 void loop() {
-  feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
-
   if (getWalletID().length() > 0) {
     websocket_loop();
     checkShowUpdateAvailable();
@@ -95,5 +93,6 @@ void loop() {
     // if some time has passed, then check balance and if it changed, then update payments
   }
 
+  feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
   if (!hibernateDependingOnBattery()) delay(200);
 }
