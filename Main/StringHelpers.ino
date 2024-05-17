@@ -158,7 +158,7 @@ String paymentJsonToString(JsonObject areaElems) {
   String paymentDetail = paymentAmount + " " + units;
 
   const char* comment;
-  if ((areaElems["extra"]["lnurlp"] && !areaElems["extra"]["comment"]) || !areaElems["memo"]) {
+  if ((areaElems["extra"]["tag"] && !areaElems["extra"]["comment"]) || !areaElems["memo"]) {
     Serial.println("Payment is lnurlp without comment, or regular payment without memo.");
     paymentDetail += "!";
   } else {

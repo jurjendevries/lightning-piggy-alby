@@ -1,3 +1,9 @@
+**4.1.1**
+- Display all incoming payments for the wallet, including non-LNURL payments that came in through a regular invoice.
+- Improve "Unknown Balance" error display
+- Improve watchdog reset timing
+- Fix potential websocket handler race condition
+
 **4.0.5**
 - Build unified firmware that supports both 2.13 and 2.66 inch ePaper display by detecting it at boot
 - Migrate from GxEPD library to GxEPD2 library for much faster display updates
