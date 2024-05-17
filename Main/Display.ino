@@ -381,12 +381,7 @@ bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp) {
   }
 
   int currentBalance = getWalletBalance();
-  if (currentBalance == NOT_SPECIFIED) {
-    displayFit("Get wallet error", 0, 0, xBeforeLNURLp, 22, 2, true);
-    return false;
-  } else if (currentBalance == lastBalance) {
-    return false; // no change (unless someone deposited and withdrew the same amount) so no need to fetch payments and fiat values
-  }
+  if (currentBalance == lastBalance) return false; // no change (unless someone deposited and withdrew the same amount) so no need to fetch payments and fiat values
 
   updateBalanceAndPayments(xBeforeLNURLp, currentBalance, true);
   return true;
@@ -398,11 +393,16 @@ void updateBalanceAndPayments(int xBeforeLNURLp, int currentBalance, bool fetchP
 
   int delta = 2;
   if (displayToUse == 2) delta = 0; // on the 2.66 we don't need this delta
+
   // Display balance from 0 to balanceHeight
   setPartialWindow(0, 0, xBeforeLNURLp, balanceHeight+3);
   displayFirstPage();
   do {
-    displayFit(String(currentBalance) + " sats", 0, 0, xBeforeLNURLp-5, balanceHeight-1+delta, 5, false, false, false); // no fontdecent so all the way down to balanceHeight-1
+    if (currentBalance == NOT_SPECIFIED) {
+      displayFit("Unknown Balance", 0, 0, xBeforeLNURLp-5, balanceHeight-1+delta, 5, false, false, false); // no fontdecent so all the way down to balanceHeight-1
+    } else {
+      displayFit(formatIntWithSeparator(currentBalance) + " sats", 0, 0, xBeforeLNURLp-5, balanceHeight-1+delta, 5, false, false, false); // no fontdecent so all the way down to balanceHeight-1
+    }
     displayFillRect(0, balanceHeight+delta, xBeforeLNURLp-5, 1, GxEPD_BLACK);
   } while (displayNextPage());
 
