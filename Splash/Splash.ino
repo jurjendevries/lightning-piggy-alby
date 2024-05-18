@@ -115,6 +115,7 @@ void setup() {
 }
 
 void loop() {
+  /*
   // Check if the tilt switch has been triggered
   if (digitalRead(32) == HIGH) {
     if (!tiltTriggered) {
@@ -127,4 +128,5 @@ void loop() {
   }
 
   delay(100); // Small delay to debounce the switch and avoid rapid triggering
+  */
 }
