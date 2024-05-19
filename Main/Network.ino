@@ -139,6 +139,7 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
   WiFiClientSecure client;
   client.setInsecure(); // see https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/README.md
   client.setHandshakeTimeout(timeout);
+  client.setTimeout(timeout * 1000);
 
   if (!client.connect(host, 443)) {
     Serial.println("Could not connect to " + String(host) + " on port 443");
