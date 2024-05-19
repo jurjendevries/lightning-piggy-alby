@@ -451,12 +451,10 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
   do {
     int startY = qrPixels;
 
-    // Battery voltage
+    // Show battery voltage if battery detected (by heuristic)
     double voltage = getLastVoltage();
     if (showsleep) voltage = getBatteryVoltage(); // only refresh voltage before going to sleep
-    String voltageString = "No battery";
-    if (voltage > 0) voltageString = "Batt:" + String(batteryVoltageToPercent(voltage)) + "%";
-    startY += drawLine(voltageString, displayWidth(), startY, false, true);
+    if (voltage > 0) startY += drawLine("Batt:" + String(batteryVoltageToPercent(voltage)) + "%", displayWidth(), startY, false, true);
 
     // wifi strength or zzzz
     String wifiString = "..zzZZZ";

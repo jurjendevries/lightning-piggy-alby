@@ -1,3 +1,6 @@
+**4.2.6**
+- Only show battery info when battery is detected so no info implies no battery detected.
+
 **4.2.5**
 - Fix long number formatting
 
