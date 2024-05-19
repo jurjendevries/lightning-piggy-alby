@@ -238,7 +238,7 @@ void hibernate(int sleepTimeSeconds) {
   // GPIO39 is active low, which ext1 doesn't support so we need ext0:
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_39,0); //1 = High, 0 = Low
 
-  // Enable GPIO32 (vibration sensor pin wakeup
+  // Enable GPIO32 (tilt sensor pin wakeup)
   // ext0 only supports a single wakeup pin so we need ext1 for an additional one:
   rtc_gpio_pullup_dis(GPIO_NUM_32);  // pullup disabled because pulldown enabled
   rtc_gpio_pulldown_en(GPIO_NUM_32); // pulldown is needed to avoid floating pin that triggers randomly
