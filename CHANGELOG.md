@@ -1,4 +1,4 @@
-**4.2.0**
+**4.2.1**
 - Refresh balance and payments every 15 minutes (even if they should come in instantly) to be more resilient against server disconnections and network glitches
 - Display all incoming payments for the wallet, including non-LNURL payments that came in through a regular invoice
 - Don't show hardware info on-screen as it's not really needed and takes up valuable screen space
