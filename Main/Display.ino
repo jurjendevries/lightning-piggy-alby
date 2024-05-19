@@ -25,8 +25,6 @@ GxEPD2_BW<GxEPD2_266_BN, MAX_HEIGHT(GxEPD2_266_BN)> display2(GxEPD2_266_BN(/*CS=
 U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
 
 long lastRefreshedVoltage = -UPDATE_VOLTAGE_PERIOD_MILLIS;  // this makes it update when first run
-long lastUpdatedBalance = -UPDATE_BALANCE_PERIOD_MILLIS;  // this makes it update when first run
-int lastBalance = -NOT_SPECIFIED;
 
 int smallestFontHeight = 14;
 
@@ -371,20 +369,9 @@ void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int p
 }
 
 // returns whether it updated the display
-bool displayBalanceAndPaymentsPeriodically(int xBeforeLNURLp) {
-  long nowUpdatedBalanceMillis = millis();
-  // if there is a lastBalance and it was recently refreshed, then don't update balance
-  if (lastBalance != -NOT_SPECIFIED && (nowUpdatedBalanceMillis - lastUpdatedBalance) < UPDATE_BALANCE_PERIOD_MILLIS) {
-    return false;
-  } else {
-    lastUpdatedBalance = nowUpdatedBalanceMillis; // even if the below operations fail, this still counts as an update, because we don't want to retry immediately if something fails
-  }
-
+void displayBalanceAndPayments(int xBeforeLNURLp) {
   int currentBalance = getWalletBalance();
-  if (currentBalance == lastBalance) return false; // no change (unless someone deposited and withdrew the same amount) so no need to fetch payments and fiat values
-
-  updateBalanceAndPayments(xBeforeLNURLp, currentBalance, true);
-  return true;
+  if (currentBalance != lastBalance) updateBalanceAndPayments(xBeforeLNURLp, currentBalance, true);
 }
 
 // fetchPayments forcing option is there to populate the walletID for the websocket (in case it's not configured)
@@ -481,9 +468,10 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
     String versionString = "v" + getShortVersion();
     if (isUpdateAvailable()) versionString += " UPD!";
     startY += drawLine(versionString, displayWidth(), startY, false, true);
-  
-    String displayString = getShortHardwareInfo();
-    startY += drawLine(displayString, displayWidth(), startY, false, true);
+
+    // Excluded because not really necessary and takes up screen space:
+    //String displayString = getShortHardwareInfo();
+    //startY += drawLine(displayString, displayWidth(), startY, false, true);
 
     double voltage = getLastVoltage();
     if (showsleep) voltage = getBatteryVoltage(); // only refresh voltage before going to sleep

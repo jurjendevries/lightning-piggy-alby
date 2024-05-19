@@ -1,5 +1,7 @@
-**4.1.1**
-- Display all incoming payments for the wallet, including non-LNURL payments that came in through a regular invoice.
+**4.2.0**
+- Refresh balance and payments every 15 minutes (even if they should come in instantly) to be more resilient against server disconnections and network glitches
+- Don't show hardware info on-screen as it's not really needed and takes up valuable screen space
+- Display all incoming payments for the wallet, including non-LNURL payments that came in through a regular invoice
 - Improve "Unknown Balance" error display
 - Improve watchdog reset timing
 - Fix potential websocket handler race condition

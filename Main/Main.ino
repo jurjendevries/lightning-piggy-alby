@@ -26,6 +26,9 @@
 
 #define roundEight(x) (((x) + 8 - 1) & -8) // round up to multiple of 8
 
+long lastUpdatedBalance = -UPDATE_BALANCE_PERIOD_MILLIS;  // this makes it update when first run
+int lastBalance = -NOT_SPECIFIED;
+bool alreadyTriedFindingWalletIDinLNURLpList = false;
 int xBeforeLNURLp;
 
 void setup() {
@@ -59,39 +62,30 @@ void setup() {
     xBeforeLNURLp = showLNURLpQR(getLNURLp());
     xBeforeLNURLp = displayWidth()-roundEight(displayWidth()-xBeforeLNURLp);
 
-    displayStatus(xBeforeLNURLp, false);
-    displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
-
-    if (wifiConnected()) checkShowUpdateAvailable();
-
     watchdogWasntTriggered();
-    hibernateDependingOnBattery();
-
-    // The wallet ID is configured statically or is found in the incoming payments.
-    // But if not, because there were no incoming payments, then fetch it from lnurlp/list.
-    if (getWalletID().length() == 0) {
-      Serial.println("No wallet ID was configured or found in incoming payments, fetching it from the LNURLp list...");
-      getLNURLp(true);
-    }
-
-    // Connect the websocket if we have a walletID
-    if (getWalletID().length() == 0) {
-      Serial.println("No wallet ID was configured or found in incoming payments or found in the LNURLp list, this should not happen.");
-    } else {
-      connectWebsocket();
-    }
 }
 
 void loop() {
-  if (getWalletID().length() > 0) {
-    websocket_loop();
-    checkShowUpdateAvailable();
-  } else {
-    // This fallback behavior should never happen because wallet ID will always be found in the LNURLp list.
+  // If there is no balance OR it has been a long time since it was refreshed, then refresh it
+  if (lastBalance == -NOT_SPECIFIED || (millis() - lastUpdatedBalance) > UPDATE_BALANCE_PERIOD_MILLIS) {
+    lastUpdatedBalance = millis();
+    disconnectWebsocket();
     displayStatus(xBeforeLNURLp, false);  // takes ~2000ms, which is too much to do with the websocket
-    displayBalanceAndPaymentsPeriodically(xBeforeLNURLp);
-    // if some time has passed, then check balance and if it changed, then update payments
+    displayBalanceAndPayments(xBeforeLNURLp);
+    checkShowUpdateAvailable();
+    connectWebsocket();
   }
+
+  // The wallet ID (needed for the websocket) is configured statically or is found in the incoming payments.
+  // But if not, because there were no incoming payments, then fetch it from lnurlp/list.
+  // Only attempt to do this once, to avoid becoming very slow here
+  if (getWalletID().length() == 0 && !alreadyTriedFindingWalletIDinLNURLpList) {
+    Serial.println("No wallet ID was configured or found in incoming payments, fetching it from the LNURLp list...");
+    alreadyTriedFindingWalletIDinLNURLpList = true;
+    getLNURLp(true);
+    connectWebsocket(); // slow operation so make sure websocket is connected
+  }
+  if (getWalletID().length() > 0) websocket_loop();
 
   feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
   if (!hibernateDependingOnBattery()) delay(200);

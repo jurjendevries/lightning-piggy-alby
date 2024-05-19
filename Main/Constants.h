@@ -16,9 +16,9 @@ extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 6;
 
 #define AWAKE_SECONDS_AFTER_MANUAL_WAKEUP 3*60
 
-#define CHECK_UPDATE_PERIOD_SECONDS 7*24*60*60
+#define CHECK_UPDATE_PERIOD_SECONDS 7*24*60*60 // every week
 
-#define UPDATE_BALANCE_PERIOD_MILLIS 1000 * 60 * 10 // fallback to updating balance every 10 minutes if the instant websocket method is unavailable
+#define UPDATE_BALANCE_PERIOD_MILLIS 1000 * 60 * 15 // fallback to updating balance every 10 minutes if the instant websocket method is unavailable
 
 #define UPDATE_VOLTAGE_PERIOD_MILLIS 1000 * 60 * 5 // update voltage display every 5 minutes
 
@@ -31,7 +31,7 @@ const char * esWeekdays[] = { "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"};
 const char * enWeekdays[] = { "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 const char * nlWeekdays[] = { "Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"};
 
-String currentVersion = "4.1.1";
+String currentVersion = "4.2.0";
 
 typedef enum {
     STR2INT_SUCCESS,
