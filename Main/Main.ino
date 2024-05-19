@@ -29,6 +29,7 @@
 long lastUpdatedBalance = -UPDATE_BALANCE_PERIOD_MILLIS;  // this makes it update when first run
 int lastBalance = -NOT_SPECIFIED;
 bool alreadyTriedFindingWalletIDinLNURLpList = false;
+bool forceRefreshBalanceAndPayments = false;
 int xBeforeLNURLp;
 
 void setup() {
@@ -67,8 +68,9 @@ void setup() {
 
 void loop() {
   // If there is no balance OR it has been a long time since it was refreshed, then refresh it
-  if (lastBalance == -NOT_SPECIFIED || (millis() - lastUpdatedBalance) > UPDATE_BALANCE_PERIOD_MILLIS) {
+  if (lastBalance == -NOT_SPECIFIED || (millis() - lastUpdatedBalance) > UPDATE_BALANCE_PERIOD_MILLIS || forceRefreshBalanceAndPayments) {
     lastUpdatedBalance = millis();
+    forceRefreshBalanceAndPayments = false;
     disconnectWebsocket();
     displayStatus(xBeforeLNURLp, false);  // takes ~2000ms, which is too much to do with the websocket
     displayBalanceAndPayments(xBeforeLNURLp);
@@ -89,4 +91,8 @@ void loop() {
 
   feed_watchdog(); // Feed the watchdog regularly, otherwise it will "bark" (= reboot the device)
   if (!hibernateDependingOnBattery()) delay(200);
+}
+
+void nextRefreshBalanceAndPayments() {
+  forceRefreshBalanceAndPayments = true;
 }

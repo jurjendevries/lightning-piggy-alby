@@ -59,6 +59,9 @@ void wifiEventCallback(WiFiEvent_t eventid, WiFiEventInfo_t info) {
     } // else it's a non-final error and still early after boot so do nothing
   } else if(eventid == ARDUINO_EVENT_WIFI_STA_GOT_IP) {
       details = "Obtained IP address: " + ipToString(WiFi.localIP());
+  } else if (eventid == ARDUINO_EVENT_WIFI_STA_CONNECTED) {
+    Serial.println("Got ARDUINO_EVENT_WIFI_STA_CONNECTED; flagging balance and payments for refresh to clear any error messages that might linger on the display.");
+    nextRefreshBalanceAndPayments();
   }
 
   Serial.println(details);
