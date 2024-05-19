@@ -26,7 +26,7 @@ U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;
 
 long lastRefreshedVoltage = -UPDATE_VOLTAGE_PERIOD_MILLIS;  // this makes it update when first run
 
-int smallestFontHeight = 14;
+int smallestFontHeight = 16;
 
 int statusAreaVoltageHeight = -1; // this value is cached after it's calculated so it can be reused later to updated only the voltage
 

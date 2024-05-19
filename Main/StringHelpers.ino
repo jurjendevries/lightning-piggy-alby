@@ -8,18 +8,38 @@ bool isConfigured(const char * configName) {
   }
 }
 
+// pad integer to 3 digits
+// doesn't support negative numbers
+String padInt(int number) {
+  String padded = "";
+  int zerosToAdd = 0;
+
+  if (number < 0) {
+    return ""; // negative not supported
+  } else if (number < 10) {
+    zerosToAdd = 2;
+  } else if (number < 100) {
+    zerosToAdd = 1;
+  } // else if number < 1000 then no padding needed
+  Serial.println("Padding " + String(number) + " needs " + zerosToAdd + " zeroes.");
+  for (int i=0;i<zerosToAdd;i++) {
+    padded = padded + "0";
+  }
+  return padded + String(number);
+}
+
 String formatIntWithSeparator(int numberAsInt) {
   if (numberAsInt < 1000) {
     return String(numberAsInt);
   } else if (numberAsInt < 1000000) {
     float thousands = numberAsInt / 1000.0f;
     int remainder = numberAsInt % 1000;
-    return String(thousands, 0) + getCurrentCurrencyThousandsSeparator() + String(remainder);
+    return String(thousands) + getCurrentCurrencyThousandsSeparator() + padInt(remainder);
   } else {
     float millions = numberAsInt / 1000000.0f;
-    float thousands = numberAsInt / 1000.0f;
+    float thousands = (numberAsInt % 1000000) / 1000;
     int remainder = numberAsInt % 1000;
-    return String(millions, 0) + getCurrentCurrencyThousandsSeparator() + String(thousands, 0) + getCurrentCurrencyThousandsSeparator() + String(remainder);
+    return String(millions, 0) + getCurrentCurrencyThousandsSeparator() + padInt(thousands) + getCurrentCurrencyThousandsSeparator() + padInt(remainder);
   }
 }
 
