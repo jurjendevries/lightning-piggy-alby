@@ -29,17 +29,16 @@ String padInt(int number) {
 }
 
 String formatIntWithSeparator(int numberAsInt) {
+  int millions = numberAsInt / 1000000;
+  int thousands = (numberAsInt % 1000000) / 1000;
+  int remainder = numberAsInt % 1000;
+
   if (numberAsInt < 1000) {
     return String(numberAsInt);
   } else if (numberAsInt < 1000000) {
-    float thousands = numberAsInt / 1000.0f;
-    int remainder = numberAsInt % 1000;
     return String(thousands) + getCurrentCurrencyThousandsSeparator() + padInt(remainder);
   } else {
-    float millions = numberAsInt / 1000000.0f;
-    float thousands = (numberAsInt % 1000000) / 1000;
-    int remainder = numberAsInt % 1000;
-    return String(millions, 0) + getCurrentCurrencyThousandsSeparator() + padInt(thousands) + getCurrentCurrencyThousandsSeparator() + padInt(remainder);
+    return String(millions) + getCurrentCurrencyThousandsSeparator() + padInt(thousands) + getCurrentCurrencyThousandsSeparator() + padInt(remainder);
   }
 }
 

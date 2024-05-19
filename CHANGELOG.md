@@ -1,6 +1,8 @@
-**4.2.4**
-- Flag balance and payments for refresh when wifi (re)connects to clear display of any error messages
+**4.2.5**
 - Fix long number formatting
+
+**4.2.3**
+- Flag balance and payments for refresh when wifi (re)connects to clear display of any error messages
 
 **4.2.2**
 - Retry SSL (https) connections up to 3 times in case of failure
