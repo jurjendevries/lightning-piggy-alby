@@ -459,7 +459,7 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
     startY += drawLine(voltageString, displayWidth(), startY, false, true);
 
     // wifi strength or zzzz
-    String wifiString = "..zzzZZZZ";
+    String wifiString = "..zzZZZ";
     if (!showsleep) {
       wifiString = "Wifi:";
       if (wifiConnected()) {
