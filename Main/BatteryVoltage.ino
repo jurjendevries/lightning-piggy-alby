@@ -51,3 +51,18 @@ double getBatteryVoltage() {
     //return 3.7; // for testing low battery situation
     return voltage;
 }
+
+/*
+ * 4.2 - 3.7 = 0.5 * 200 = 100 (%)
+ */
+int batteryVoltageToPercent(double voltage) {
+  voltage = voltage - 3.7;
+  voltage = voltage * 200;
+  if (voltage < 0) {
+    return 0;
+  } else if (voltage > 100) {
+    return 100;
+  } else {
+    return int(voltage);
+  }
+}

@@ -451,6 +451,13 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
   do {
     int startY = qrPixels;
 
+    // Battery voltage
+    double voltage = getLastVoltage();
+    if (showsleep) voltage = getBatteryVoltage(); // only refresh voltage before going to sleep
+    String voltageString = "No battery";
+    if (voltage > 0) voltageString = "Batt:" + String(batteryVoltageToPercent(voltage)) + "%";
+    startY += drawLine(voltageString, displayWidth(), startY, false, true);
+
     // wifi strength or zzzz
     String wifiString = "..zzzZZZZ";
     if (!showsleep) {
@@ -464,7 +471,7 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
     }
     Serial.println("Displaying wifi string: " + wifiString);
     startY += drawLine(wifiString, displayWidth(), startY, false, true);
-  
+
     String versionString = "v" + getShortVersion();
     if (isUpdateAvailable()) versionString += " UPD!";
     startY += drawLine(versionString, displayWidth(), startY, false, true);
@@ -472,12 +479,6 @@ void displayStatus(int xBeforeLNURLp, bool showsleep) {
     // Excluded because not really necessary and takes up screen space:
     //String displayString = getShortHardwareInfo();
     //startY += drawLine(displayString, displayWidth(), startY, false, true);
-
-    double voltage = getLastVoltage();
-    if (showsleep) voltage = getBatteryVoltage(); // only refresh voltage before going to sleep
-    String voltageString = "NOBAT";
-    if (voltage > 0) voltageString = String(voltage, 2) + "V";
-    startY += drawLine(voltageString, displayWidth(), startY, false, true);
 
     // Time is only shown before sleep
     if (showsleep) {
