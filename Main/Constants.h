@@ -24,6 +24,9 @@ extern const int SLEEP_HOURS_AFTER_MAX_WATCHDOG_REBOOTS = 6;
 
 #define HIBERNATE_CHECK_PERIOD_MILLIS 1000 * 30 // hibernate check every 30 seconds
 
+#define HTTPS_TIMEOUT_SECONDS 15
+#define MAX_HTTPS_CONNECTION_ATTEMPTS 3
+
 // In alphabetical order
 const char * deWeekdays[] = { "So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
 const char * dkWeekdays[] = { "Sø", "Ma", "Ti", "On", "To", "Fr", "Lø"};
@@ -31,7 +34,7 @@ const char * esWeekdays[] = { "Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sá"};
 const char * enWeekdays[] = { "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 const char * nlWeekdays[] = { "Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"};
 
-String currentVersion = "4.2.1";
+String currentVersion = "4.2.2";
 
 typedef enum {
     STR2INT_SUCCESS,

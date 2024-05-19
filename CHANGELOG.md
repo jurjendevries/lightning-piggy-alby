@@ -1,3 +1,6 @@
+**4.2.2**
+- Retry SSL (https) connections up to 3 times in case of failure
+
 **4.2.1**
 - Refresh balance and payments every 15 minutes (even if they should come in instantly) to be more resilient against server disconnections and network glitches
 - Display all incoming payments for the wallet, including non-LNURL payments that came in through a regular invoice

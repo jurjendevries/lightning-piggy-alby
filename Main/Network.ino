@@ -133,20 +133,21 @@ int strengthPercent(float strength) {
  * @return String 
  */
 String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
+  int connectionAttempts = 0;
+
   Serial.println("Fetching URL: " + endpointUrl);
-  int timeout = 15;
   feed_watchdog(); // feed before this long running and potentially hanging operation
+
   WiFiClientSecure client;
   client.setInsecure(); // see https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/README.md
-  client.setHandshakeTimeout(timeout);
-  client.setTimeout(timeout * 1000);
+  client.setHandshakeTimeout(HTTPS_TIMEOUT_SECONDS);
+  client.setTimeout(HTTPS_TIMEOUT_SECONDS * 1000);
 
-  if (!client.connect(host, 443)) {
-    Serial.println("Could not connect to " + String(host) + " on port 443");
-    return "";
-  } else {
-    client.setTimeout(timeout);
+  while (connectionAttempts < MAX_HTTPS_CONNECTION_ATTEMPTS && !client.connect(host, 443)) {
+      connectionAttempts++;
+      Serial.println("Couldn't connect to " + String(host) + " on port 443 (attempt " + String(connectionAttempts) + "/" + String(MAX_HTTPS_CONNECTION_ATTEMPTS) + ")");
   }
+  if (!client.connected()) return "";
 
   String request = "GET " + endpointUrl + " HTTP/1.1\r\n" +
                "Host: " + String(host) + "\r\n" +
@@ -158,7 +159,7 @@ String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
 
   client.print(request);
 
-  long maxTime = millis() + timeout * 1000;
+  long maxTime = millis() + HTTPS_TIMEOUT_SECONDS * 1000;
 
   int chunked = 0;
   String line = "";
