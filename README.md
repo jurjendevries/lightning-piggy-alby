@@ -78,6 +78,6 @@ To make a new release available on the web installer:
 - Update CHANGELOG.md
 - Copy the libraries used from C:\...\lightning-piggy\Splash\libraries\ to your Arduino libraries folder (usually C:\Users\YourUsername\Documents\Arduino\libraries).
 - Compile the project using Sketch > Compile.
-- Copy /tmp/build_*/Main.ino.bin to lightningpiggy.github.io/firmware/ttgo_lilygo_2.66_inch_epaper_latest/Main.ino.bin
-- Update the version number in lightningpiggy.github.io/manifests/manifest_ttgo_lilygo_2.66_inch_epaper_latest.json
+- Copy /tmp/build_*/Main.ino.bin to firmware/ttgo_lilygo_2.13_and_2.66_inch_epaper_4.x/
+- Update the version number in lightningpiggy.github.io/manifests/manifest_ttgo_lilygo_2.13_and_2.66_inch_epaper_4.x.json
 - Revert back to default code with custom config (cp /tmp/config.h Main/config.h; git checkout Main/Main.ino)
