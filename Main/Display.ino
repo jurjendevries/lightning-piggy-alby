@@ -540,9 +540,9 @@ void showFiatValues(int balance, int maxX) {
 
   // Add the Bitcoin price
   if (prependCurrencySymbol()) {
-    toDisplay += " (" + getCurrentCurrencyCode() + " " + formatFloatWithSeparator(btcPrice) + ")";
+    toDisplay += " (" + getCurrentCurrencyCode() + " " + formatIntWithSeparator((int)btcPrice) + ")";
   } else {
-    toDisplay += " (" + formatFloatWithSeparator(btcPrice) + " " + getCurrentCurrencyCode() + ")";
+    toDisplay += " (" + formatIntWithSeparator((int)btcPrice) + " " + getCurrentCurrencyCode() + ")";
   }
 
   displayFit(toDisplay, 0, fiatHeight, maxX, displayHeight(), 2, true);

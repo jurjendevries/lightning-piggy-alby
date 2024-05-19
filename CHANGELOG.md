@@ -1,6 +1,7 @@
-**4.2.3**
+**4.2.4**
 - Retry SSL (https) connections up to 3 times in case of failure
 - Flag balance and payments for refresh when wifi (re)connects to clear display of any error messages
+- Improve long number formatting
 
 **4.2.1**
 - Refresh balance and payments every 15 minutes (even if they should come in instantly) to be more resilient against server disconnections and network glitches

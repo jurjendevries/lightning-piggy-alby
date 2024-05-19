@@ -8,19 +8,19 @@ bool isConfigured(const char * configName) {
   }
 }
 
-String formatFloatWithSeparator(float number) 
-{
-  if (number < 1000) {
-    return String(number, 0);
-  }
-  return formatIntWithSeparator((int)number);
-}
-
 String formatIntWithSeparator(int numberAsInt) {
-  float thousands = numberAsInt / 1000.0f;
-  int remainder = numberAsInt % 1000;
-
-  return String(thousands, 0) + getCurrentCurrencyThousandsSeparator() + String(remainder);
+  if (numberAsInt < 1000) {
+    return String(numberAsInt);
+  } else if (numberAsInt < 1000000) {
+    float thousands = numberAsInt / 1000.0f;
+    int remainder = numberAsInt % 1000;
+    return String(thousands, 0) + getCurrentCurrencyThousandsSeparator() + String(remainder);
+  } else {
+    float millions = numberAsInt / 1000000.0f;
+    float thousands = numberAsInt / 1000.0f;
+    int remainder = numberAsInt % 1000;
+    return String(millions, 0) + getCurrentCurrencyThousandsSeparator() + String(thousands, 0) + getCurrentCurrencyThousandsSeparator() + String(remainder);
+  }
 }
 
 // Should the currency symbol be prepended (= placed before the amount) or not?
