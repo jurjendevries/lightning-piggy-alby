@@ -80,11 +80,9 @@ void fetchLNURLPayments(int limit) {
   Serial.println("Displaying payment amounts and comments...");
   for (JsonObject areaElems : doc.as<JsonArray>()) {
     String paymentDetail = paymentJsonToString(areaElems);
-    if (paymentDetail.length() > 0) {
+    if (paymentDetail.length() > 0 && nroflnurlPayments<MAX_PAYMENTS) {
       lnurlPayments[nroflnurlPayments] = paymentDetail;
       nroflnurlPayments++;
-    } else {
-      Serial.println("paymentJsonToString returned empty String.");
     }
   }
 
@@ -170,11 +168,11 @@ String getWalletID() {
 
 void addLNURLpayment(String toadd) {
   // first move them all down one spot
-  for (int i=min(nroflnurlPayments,MAX_PAYMENTS-1);i>0;i--) {
+  for (int i=min(nroflnurlPayments-1,MAX_PAYMENTS-1);i>0;i--) {
     lnurlPayments[i] = lnurlPayments[i-1];
   }
   lnurlPayments[0] = toadd;
-  nroflnurlPayments++;
+  if (nroflnurlPayments<MAX_PAYMENTS) nroflnurlPayments++;
   Serial.println("After parsing LNURL payments, the list contains:" + stringArrayToString(lnurlPayments, nroflnurlPayments));
 }
 
