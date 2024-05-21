@@ -174,6 +174,7 @@ void addLNURLpayment(String toadd) {
     lnurlPayments[i] = lnurlPayments[i-1];
   }
   lnurlPayments[0] = toadd;
+  nroflnurlPayments++;
   Serial.println("After parsing LNURL payments, the list contains:" + stringArrayToString(lnurlPayments, nroflnurlPayments));
 }
 

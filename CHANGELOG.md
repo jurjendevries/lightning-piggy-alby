@@ -1,5 +1,6 @@
 **4.2.7**
 - Feed watchdog while retrying HTTPS connections, otherwise it might think it's hanging and restart the device.
+- Fix bug that caused incoming payments not to show up when starting with an empty wallet
 
 **4.2.6**
 - Only show battery info when battery is detected so no info implies no battery detected.
