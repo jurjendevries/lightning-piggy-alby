@@ -80,4 +80,4 @@ To make a new release available on the web installer:
 - Compile the project using Sketch > Compile.
 - Copy /tmp/build_*/Main.ino.bin to firmware/ttgo_lilygo_2.13_and_2.66_inch_epaper_4.x/
 - Update the version number in lightningpiggy.github.io/manifests/manifest_ttgo_lilygo_2.13_and_2.66_inch_epaper_4.x.json
-- Revert back to default code with custom config (cp /tmp/config.h Main/config.h; git checkout Main/Main.ino)
+- Revert back to default code with custom config (cp /tmp/config.h Main/config.h)

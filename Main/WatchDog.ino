@@ -102,11 +102,13 @@ void long_watchdog_timeout() {
   enable_watchdog(WDT_TIMEOUT_LONG);
 }
 
-// Meant to be called from the loop function
-void feed_watchdog() {
+// Meant to be called regularly, otherwise the watchdog will thing the device hung and reset it.
+// Returns true so it can be used in if statements.
+bool feed_watchdog() {
     //Serial.println("Feeding watchdog...");
     rtc_wdt_feed(); // for rtc watchdog
     //esp_task_wdt_reset(); // for task watchdog
     lastFeed = millis();
     count_watchdog_kicks++;
+    return true;
 }
