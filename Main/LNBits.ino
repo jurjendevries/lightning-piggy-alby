@@ -9,7 +9,7 @@ int getWalletBalance() {
   Serial.println("Getting wallet details...");
   const String url = "/api/v1/wallet";
 
-  int balanceBiasInt = getBalanceBiasAsInt();
+  int balanceBiasInt = getConfigValueAsInt((char*)balanceBias, 0);
 
   #ifdef DEBUG
   return 12345678 + balanceBiasInt;
@@ -120,18 +120,6 @@ String getLNURLp(bool mustFetchWalletID) {
 
   Serial.println("Fetched LNURLp: " + lnurlp + " and found LNURLp wallet ID:" + localWalletIDfromLNURLp);
   return lnurlp;
-}
-
-int getBalanceBiasAsInt() {
-  int balanceBiasInt = 0;
-  if (isConfigured(balanceBias)) {
-    if (str2int(&balanceBiasInt, (char*)balanceBias, 10) != STR2INT_SUCCESS) {
-      Serial.println("WARNING: failed to convert balanceBias ('" + String(balanceBias) + "') to integer, ignoring...");
-    } else {
-      Serial.println("Adding balanceBias value of " + String(balanceBiasInt) + " to balance.");
-    }
-  }
-  return balanceBiasInt;
 }
 
 void setFoundWalletID(String walletID) {

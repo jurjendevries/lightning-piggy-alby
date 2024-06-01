@@ -8,7 +8,7 @@
 // MANDATORY:
 // ==========
 
-// The logic with invoiceKey, saticLNURLp and walletID is as follows:
+// The logic with invoiceKey, staticLNURLp and walletID is as follows:
 // - invoiceKey is mandatory (otherwise we can't check balance or payments)
 // - staticLNURLp is recommended because then no need to fetch it so it's faster
 // - walletID is recommended because it's need for the websocket, which then allows for instant incoming payments
@@ -22,6 +22,7 @@
 const char* ssid     = "REPLACETHISBYWIFISSID_REPLACETHISBYWIFISSID_REPLACETHISBYWIFISSID"; // wifi SSID here
 const char* password = "REPLACETHISBYWIFIKEY_REPLACETHISBYWIFIKEY_REPLACETHISBYWIFIKEY"; // wifi password here
 const char* lnbitsHost = "REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST_REPLACETHISBYLNBITSHOST"; // HOST NAME HERE E.G. legend.lnbits.com
+const char* lnbitsPort = "REPLACETHISBYLNBITSPORT_REPLACETHISBYLNBITSPORT_REPLACETHISBYLNBITSPORT"; // PORT NUMBER HERE E.G. 443
 const char* invoiceKey = "REPLACETHISBYLNBITSKEY_REPLACETHISBYLNBITSKEY_REPLACETHISBYLNBITSKEY"; // lnbits wallet invoice hey here
 
 // OPTIONAL:

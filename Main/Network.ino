@@ -138,16 +138,18 @@ int strengthPercent(float strength) {
 String getEndpointData(const char * host, String endpointUrl, bool sendApiKey) {
   int connectionAttempts = 0;
 
-  Serial.println("Fetching URL: " + endpointUrl);
+  int lnbitsPortInteger = getConfigValueAsInt((char*)lnbitsPort, DEFAULT_LNBITS_PORT);
+
+  Serial.println("Fetching " + endpointUrl + " from " + String(host) + " on port " + String(lnbitsPortInteger));
 
   WiFiClientSecure client;
   client.setInsecure(); // see https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFiClientSecure/README.md
   client.setHandshakeTimeout(HTTPS_TIMEOUT_SECONDS);
   client.setTimeout(HTTPS_TIMEOUT_SECONDS * 1000);
 
-  while (feed_watchdog() && connectionAttempts < MAX_HTTPS_CONNECTION_ATTEMPTS && !client.connect(host, 443)) {
+  while (feed_watchdog() && connectionAttempts < MAX_HTTPS_CONNECTION_ATTEMPTS && !client.connect(host, lnbitsPortInteger)) {
       connectionAttempts++;
-      Serial.println("Couldn't connect to " + String(host) + " on port 443 (attempt " + String(connectionAttempts) + "/" + String(MAX_HTTPS_CONNECTION_ATTEMPTS) + ")");
+      Serial.println("Couldn't connect to " + String(host) + " on port " + String(lnbitsPortInteger) + " (attempt " + String(connectionAttempts) + "/" + String(MAX_HTTPS_CONNECTION_ATTEMPTS) + ")");
   }
   if (!client.connected()) return "";
 
@@ -239,10 +241,11 @@ void connectWebsocket() {
     Serial.println("Can't connect to websocket because no wallet ID is configured nor found in the LNURLp list. Aborting.");
     return;
   }
-  Serial.println("Trying to connect websocket: " + String(lnbitsHost) + url);
+  int lnbitsPortInteger = getConfigValueAsInt((char*)lnbitsPort, DEFAULT_LNBITS_PORT);
+  Serial.println("Trying to connect websocket: https://" + String(lnbitsHost) + ":" + String(lnbitsPortInteger) + url);
   webSocket.onEvent(webSocketEvent);
   webSocket.setReconnectInterval(1000);
-  webSocket.beginSSL(lnbitsHost, 443, url);
+  webSocket.beginSSL(lnbitsHost, lnbitsPortInteger, url);
 }
 
 void parseWebsocketText(String text) {
@@ -257,7 +260,7 @@ void parseWebsocketText(String text) {
   }
 
   int walletBalance = doc["wallet_balance"];
-  int balanceBiasInt = getBalanceBiasAsInt();
+  int balanceBiasInt = getConfigValueAsInt((char*)balanceBias, 0);
   Serial.println("Wallet now contains " + String(walletBalance) + " sats and balance bias of " + String(balanceBiasInt) + " sats.");
 
   if (doc["payment"]) {

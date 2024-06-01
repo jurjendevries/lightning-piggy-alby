@@ -8,6 +8,18 @@ bool isConfigured(const char * configName) {
   }
 }
 
+int getConfigValueAsInt(char* configValue, int defaultValue) {
+  int configInt = defaultValue;
+  if (isConfigured(configValue)) {
+    if (str2int(&configInt, (char*)configValue, 10) != STR2INT_SUCCESS) {
+      Serial.println("WARNING: failed to convert config value ('" + String(configValue) + "') to integer, ignoring...");
+    } else {
+      Serial.println("Returning config value as int: " + String(configInt));
+    }
+  }
+  return configInt;
+}
+
 // pad integer to 3 digits
 // doesn't support negative numbers
 String padInt(int number) {
