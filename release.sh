@@ -1,12 +1,21 @@
 #!/bin/sh
 
+echo "0) make sure all changes are committed"
+diff=$(git diff | wc -l)
+if [ $diff -gt 0 ]; then
+        echo "You have diff"
+        exit 1
+fi
+
+echo "1) make sure you've incremented the version number in Main/Constants.h"
+read yes
+
 builddir=/tmp/arduino_build_release
 cachedir=/tmp/arduino_cache_release
 
 mkdir "$builddir"
 
 now=$(date +%Y%m%d_%H%M%S)
-
 cp Main/config.h Main/config.h_"$now"
 git checkout -- Main/config.h
 
@@ -14,6 +23,7 @@ git checkout -- Main/config.h
 
 echo "Done, see:"
 ls -al "$builddir"/Main.ino.bin
+
 
 exit
 

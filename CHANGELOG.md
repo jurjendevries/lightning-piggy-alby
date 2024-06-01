@@ -1,3 +1,6 @@
+**4.2.11**
+- Add support for alternative LNBits HTTPS port configuration (instead of default 443)
+
 **4.2.10**
 - Fix bug that caused incoming payments not to show up when starting with an empty wallet
 
