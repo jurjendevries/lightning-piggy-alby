@@ -54,6 +54,9 @@ double getBatteryVoltage() {
 
 /*
  * 4.2 - 3.7 = 0.5 * 200 = 100 (%)
+ *
+ * Precentage = (V - 3.7) * 200
+ * Voltage = (percent / 200) + 3.7
  */
 int batteryVoltageToPercent(double voltage) {
   voltage = voltage - 3.7;
