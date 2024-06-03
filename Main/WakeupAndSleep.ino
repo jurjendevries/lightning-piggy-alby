@@ -143,7 +143,7 @@ Method to print the GPIO that triggered the wakeup
 */
 void print_GPIO_wake_up(){
   uint64_t GPIO_reason = esp_sleep_get_ext1_wakeup_status();
-  Serial.print("GPIO that triggered the wake up: GPIO ");
+  Serial.print("GPIO pin(s) that woke it up: " + String(GPIO_reason) + " which translates to pin: ");
   Serial.println((log(GPIO_reason))/log(2), 0);
 }
 
