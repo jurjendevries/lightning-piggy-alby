@@ -4,6 +4,7 @@ String getTimeFromNTP() {
   // Later on, this could validate the timezone even more,
   // and show a clear error if there's something wrong with it.
   if (!isConfigured(timezone)) return "";
+  if (!wifiConnected()) return "NoNetwork";
 
   #ifdef DEBUG
   lastTime = "W23:39";
