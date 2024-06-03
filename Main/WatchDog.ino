@@ -1,5 +1,5 @@
 #include <esp_task_wdt.h>
-#include "soc/rtc_wdt.h"
+#include <rtc_wdt.h>
 
 // When to restart (s)
 #define WDT_TIMEOUT 30
