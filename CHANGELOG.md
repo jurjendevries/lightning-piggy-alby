@@ -1,3 +1,6 @@
+**4.3.1**
+- Reduce "Back up!" after tilt from 5 seconds to 2.
+
 **4.3.0**
 - Refresh display when device is tilted (if tilt sensor is present between pin 32 and 3V3)
 - Fix erroneous usage of LNBits HTTPS port for non-LNBits hosts

@@ -5,7 +5,7 @@ bool interruptTriggered = false;
 long minTimeBetweenInterrupts = 250; // milliseconds
 long lastInterrupt = -minTimeBetweenInterrupts;
 
-long minTimeBetweenTilts = 5000;
+long minTimeBetweenTilts = 2000;
 long lastTilted = NOT_SPECIFIED;
 bool tiltMessageShown = false;
 
