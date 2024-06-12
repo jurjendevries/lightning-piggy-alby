@@ -44,13 +44,12 @@ void setup() {
     print_reset_reasons();
     print_wakeup_reason();
 
-    setup_display();
+    setup_watchdog(); // do this as soon as possible, to workaround potential hangs, but not before turing on the power LED and printing debug info
 
+    setup_display();
     displayVoltageWarning();
     showBootSlogan();
     showLogo(epd_bitmap_Lightning_Piggy, 104, 250, displayHeight() - 104, (displayWidth() - 250) / 2); // width and height are swapped because display rotation
-
-    setup_watchdog();
 
     displayWifiConnecting();
     #ifndef DEBUG
@@ -60,20 +59,25 @@ void setup() {
     #endif
     displayFetching();
 
-    xBeforeLNURLp = showLNURLpQR(getLNURLp());
-    xBeforeLNURLp = displayWidth()-roundEight(displayWidth()-xBeforeLNURLp);
-
     watchdogWasntTriggered();
+
+    setup_interrupts(); // interrupts only make sense right before the loop
 }
 
 void loop() {
+  loop_interrupts();
+
   // If there is no balance OR it has been a long time since it was refreshed, then refresh it
   if (lastBalance == -NOT_SPECIFIED || (millis() - lastUpdatedBalance) > UPDATE_BALANCE_PERIOD_MILLIS || forceRefreshBalanceAndPayments) {
     lastUpdatedBalance = millis();
-    forceRefreshBalanceAndPayments = false;
     disconnectWebsocket();
+
+    xBeforeLNURLp = showLNURLpQR(getLNURLp());
+    xBeforeLNURLp = displayWidth()-roundEight(displayWidth()-xBeforeLNURLp);
     displayStatus(xBeforeLNURLp, false);  // takes ~2000ms, which is too much to do with the websocket
-    displayBalanceAndPayments(xBeforeLNURLp);
+    displayBalanceAndPayments(xBeforeLNURLp, forceRefreshBalanceAndPayments);
+    forceRefreshBalanceAndPayments = false;
+
     checkShowUpdateAvailable();
     connectWebsocket();
   }

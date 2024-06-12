@@ -1,12 +1,13 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-String currentVersion = "4.2.11";
+String currentVersion = "4.3.0";
 
 extern const int NOT_SPECIFIED = -1; 
 
 const char * NOTCONFIGURED = "REPLACETHISBY";
 const unsigned int NOTCONFIGURED_LENGTH = 13;
+#define MAX_CONFIG_LENGTH 131
 
 // Maximum time to show the bootslogan
 extern const int MAX_BOOTSLOGAN_SECONDS = 15;

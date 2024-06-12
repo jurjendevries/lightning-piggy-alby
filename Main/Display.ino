@@ -369,9 +369,9 @@ void showLogo(const unsigned char logo [], int sizeX, int sizeY, int posX, int p
 }
 
 // returns whether it updated the display
-void displayBalanceAndPayments(int xBeforeLNURLp) {
+void displayBalanceAndPayments(int xBeforeLNURLp, bool forceRefresh) {
   int currentBalance = getWalletBalance();
-  if (currentBalance != lastBalance) updateBalanceAndPayments(xBeforeLNURLp, currentBalance, true);
+  if (currentBalance != lastBalance || forceRefresh) updateBalanceAndPayments(xBeforeLNURLp, currentBalance, true);
 }
 
 // fetchPayments forcing option is there to populate the walletID for the websocket (in case it's not configured)

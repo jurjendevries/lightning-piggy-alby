@@ -1,3 +1,9 @@
+**4.3.0**
+- Refresh display when device is tilted (if tilt sensor is present between pin 32 and 3V3)
+- Fix erroneous usage of LNBits HTTPS port for non-LNBits hosts
+- Fix crash when trying to request time from network when network is not connected
+- Make compilation work on both arduino-esp 2.x and 3.x
+
 **4.2.11**
 - Add support for alternative LNBits HTTPS port configuration (instead of default 443)
 
