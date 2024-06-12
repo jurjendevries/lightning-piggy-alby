@@ -5,6 +5,8 @@ String foundWalletID = "";
 String lnurlPayments[MAX_PAYMENTS];
 int nroflnurlPayments = 0;
 
+String cachedLNURLp = "";
+
 int getWalletBalance() {
   Serial.println("Getting wallet details...");
   const String url = "/api/v1/wallet";
@@ -101,6 +103,10 @@ String getLNURLp(bool mustFetchWalletID) {
     return staticLNURLp;
   }
 
+  if (cachedLNURLp.length() > 0) {
+    return cachedLNURLp;
+  }
+
   Serial.println("Getting LNURLp link list...");
 
   // Get the first lnurlp
@@ -119,6 +125,7 @@ String getLNURLp(bool mustFetchWalletID) {
   setFoundWalletID(localWalletIDfromLNURLp);
 
   Serial.println("Fetched LNURLp: " + lnurlp + " and found LNURLp wallet ID:" + localWalletIDfromLNURLp);
+  cachedLNURLp = lnurlp;
   return lnurlp;
 }
 
